@@ -15,6 +15,7 @@ export default function RootLayout() {
     "QuickSand-SemiBold": require("../assets/fonts/Quicksand-SemiBold.ttf"),
   })
 
+
   useEffect(() => {
     if (error) throw error
     if (fontsLoaded) SplashScreen.hideAsync()
