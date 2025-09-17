@@ -1,29 +1,32 @@
-import { useFonts } from 'expo-font';
+import useAuthStore from "@/store/auth.store";
+import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import "./global.css";
 
-
-
 export default function RootLayout() {
+  const { isLoading, fetchAuthenticatedUser } = useAuthStore();
+
   const [fontsLoaded, error] = useFonts({
     "QuickSand-Bold": require("../assets/fonts/Quicksand-Bold.ttf"),
     "QuickSand-Light": require("../assets/fonts/Quicksand-Light.ttf"),
     "QuickSand-Medium": require("../assets/fonts/Quicksand-Medium.ttf"),
     "QuickSand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
     "QuickSand-SemiBold": require("../assets/fonts/Quicksand-SemiBold.ttf"),
-  })
-
+  });
 
   useEffect(() => {
-    if (error) throw error
-    if (fontsLoaded) SplashScreen.hideAsync()
-  }, [fontsLoaded, error])
+    if (error) throw error;
+    if (fontsLoaded) SplashScreen.hideAsync();
+  }, [fontsLoaded, error]);
 
+  useEffect(() => {
+    fetchAuthenticatedUser();
+  }, []);
   const colorScheme = useColorScheme();
 
-  return (
-    <Stack screenOptions={{ headerShown: false }} />
-  );
+  if (!fontsLoaded || isLoading) return null;
+
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
