@@ -1,4 +1,6 @@
+import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
+import PageHeader from "@/components/PageHeader/PageHeader";
 import { ISignInForm } from "@/src/interfaces/interfaces";
 import { useAuthStore } from "@/src/store/authStore";
 import { FontAwesome } from "@expo/vector-icons";
@@ -7,7 +9,7 @@ import axios from "axios";
 import { Link } from "expo-router";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 //icons
 
@@ -42,12 +44,10 @@ const SignInScreen = () => {
 
   return (
     <SafeAreaView className="px-6 py-10 bg-white flex-1">
-      <View className="mb-6">
-        <Text className="text-h1 font-semibold">Bem vindo de volta!</Text>
-        <Text className="caption text-gray-600">
-          Digite suas credenciais para entrar na sua conta
-        </Text>
-      </View>
+      <PageHeader
+        title="Bem vindo de volta!"
+        subtitle="Digite suas credenciais para entrar na sua conta"
+      />
 
       <View className="gap-4">
         <CustomInput
@@ -71,12 +71,7 @@ const SignInScreen = () => {
       </View>
 
       <View className="mt-auto items-center">
-        <TouchableOpacity
-          onPress={handleSubmit(handleSignIn)}
-          className="px-4 py-4 bg-primary rounded-lg flex items-center w-full"
-        >
-          <Text className="text-white font-semibold text-body">Entrar</Text>
-        </TouchableOpacity>
+        <Button text="Entrar" onPress={handleSubmit(handleSignIn)} />
 
         <Text className="mt-4 ">
           Não tem uma conta ?{" "}

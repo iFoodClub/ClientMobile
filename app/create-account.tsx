@@ -1,6 +1,7 @@
+import { Link } from "expo-router";
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Alert, Button, TextInput, View } from "react-native";
+import { Alert, Button, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface IFormInput {
@@ -71,6 +72,9 @@ const CreateAccount = () => {
           )}
         />
         <Button title="Enviar" onPress={handleSubmit(onSubmit)} />
+        <Text>
+          Já tem uma conta? <Link href="/sign-in">Login</Link>{" "}
+        </Text>
       </View>
     </SafeAreaView>
   );
