@@ -1,61 +1,76 @@
-import { COLORS } from "@/src/constants/colors";
-import { UserType } from "@/src/interfaces/interfaces";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import React, { useState } from "react";
-import { Text, View } from "react-native";
+import React from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Alert, Button, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type UserTypeSelectionProps = {
-  text: string;
-  isActive: boolean;
-  children: React.ReactNode;
-};
-
-const UserTypeSelection = ({
-  text,
-  isActive,
-  children,
-}: UserTypeSelectionProps) => {
-  return (
-    <View
-      className={`border self-start border-round rounded-md w-32 h-32 items-center justify-center gap-y-2 ${
-        isActive ? "bg-bgPrimary border-primary" : ""
-      }`}
-    >
-      {children}
-      <Text>{text}</Text>
-    </View>
-  );
-};
+interface IFormInput {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
 
 const CreateAccount = () => {
-  const [userTypeSelected, setUserTypeSelected] = useState<UserType>(
-    UserType.restaurant
-  );
+  // Para React Native, usamos o `control`
+  const { control, handleSubmit } = useForm<IFormInput>();
+
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    console.log(data);
+    Alert.alert("Dados Enviados", JSON.stringify(data));
+  };
 
   return (
     <SafeAreaView>
-      <Text className="text-2xl font-bold">Criar conta</Text>
-      <Text className="text-lg">Que tipo de conta deseja criar?</Text>
-      <View className="flex-row gap-6  px-4">
-        <UserTypeSelection text="Pessoa física" isActive={false}>
-          <FontAwesome
-            name="building-o"
-            size={60}
-            color={
-              userTypeSelected === UserType.company ? COLORS.primary : "black"
-            }
-          />
-        </UserTypeSelection>
+      {/* 1. Trocamos a tag <form> por <View> */}
+      <View style={{ padding: 20, gap: 15 }}>
+        {/* 2. Trocamos <input> com `register` pelo componente <Controller> */}
+        <Controller
+          control={control}
+          name="firstName"
+          rules={{ required: true, maxLength: 20 }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Primeiro Nome"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={{ borderWidth: 1, padding: 10 }}
+              secureTextEntry
+            />
+          )}
+        />
 
-        {/* <View className="border self-start border-round rounded-md w-32 h-32 items-center justify-center gap-y-2 bg-bgPrimary border-primary ">
-          <FontAwesome name="building-o" size={60} color={COLORS.primary} />
-          <Text className="text-primary font-semibold">Empresa</Text>
-        </View>
-        <View className="border self-start border-round rounded-md w-32 h-32 items-center justify-center gap-y-2">
-          <Ionicons name="restaurant-outline" size={60} color="black" />
-          <Text>Restaurante</Text>
-        </View> */}
+        <Controller
+          control={control}
+          name="lastName"
+          rules={{ pattern: /^[A-Za-z]+$/i }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Último Nome"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={{ borderWidth: 1, padding: 10 }}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="age"
+          rules={{ min: 18, max: 99 }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Idade"
+              onBlur={onBlur}
+              // O `onChange` espera uma string, então garantimos a conversão
+              onChangeText={(text) => onChange(Number(text) || 0)}
+              value={value ? String(value) : ""}
+              keyboardType="numeric"
+              style={{ borderWidth: 1, padding: 10 }}
+            />
+          )}
+        />
+        <Button title="Enviar" onPress={handleSubmit(onSubmit)} />
       </View>
     </SafeAreaView>
   );

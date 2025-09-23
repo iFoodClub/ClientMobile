@@ -12,17 +12,16 @@ type IAuthStore = {
   reset: () => void;
 };
 
-// Correção na sintaxe do `create` e `persist`
 export const useAuthStore = create<IAuthStore>()(
   persist(
     (set) => ({
       isLoggedIn: false,
-      shouldCreateAccount: true,
+      shouldCreateAccount: false,
       login: () => set({ isLoggedIn: true, shouldCreateAccount: false }),
       logout: () => set({ isLoggedIn: false, shouldCreateAccount: true }),
       createAccount: () =>
         set({ isLoggedIn: false, shouldCreateAccount: true }),
-      reset: () => set({ isLoggedIn: false, shouldCreateAccount: true }),
+      reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
     }),
     {
       name: "auth-store",
