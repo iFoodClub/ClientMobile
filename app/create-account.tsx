@@ -5,19 +5,22 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Alert, Text, View } from "react-native";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface IFormInput {
-  firstName: string;
-  lastName: string;
-  age: number;
+  userType: "company" | "restaurant" | null;
 }
 
 const CreateAccount = () => {
-  const { control, handleSubmit } = useForm<IFormInput>();
+  const { control, handleSubmit, watch, setValue } = useForm<IFormInput>({
+    defaultValues: {
+      userType: null,
+    },
+  });
   const [step, steStep] = useState<number>(1);
+  const watchedUserType = useWatch({ control, name: "userType" });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     Alert.alert("Dados Enviados", JSON.stringify(data));
@@ -35,22 +38,34 @@ const CreateAccount = () => {
           <View>
             <Text className="text-2xl mb-10">Eu sou um(a): </Text>
             <View className="flex-row justify-around">
-              <USerType
-                label="Empresa"
-                icon={
-                  <FontAwesome name="building-o" size={100} color="black" />
-                }
-              />
-              <USerType
-                label="Restaurante"
-                icon={
-                  <Ionicons
-                    name="restaurant-outline"
-                    size={100}
-                    color="black"
-                  />
-                }
-              />
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setValue("userType", "company")}
+              >
+                <USerType
+                  active={watchedUserType === "company"}
+                  label="Empresa"
+                  icon={
+                    <FontAwesome name="building-o" size={100} color="black" />
+                  }
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setValue("userType", "restaurant")}
+              >
+                <USerType
+                  label="Restaurante"
+                  active={watchedUserType === "restaurant"}
+                  icon={
+                    <Ionicons
+                      name="restaurant-outline"
+                      size={100}
+                      color="black"
+                    />
+                  }
+                />
+              </TouchableOpacity>
             </View>
           </View>
         )}
