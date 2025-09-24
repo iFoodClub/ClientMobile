@@ -43,7 +43,7 @@ const SignInScreen = () => {
   const onSubmit: SubmitHandler<ISignInForm> = (data) => console.log(data);
 
   return (
-    <SafeAreaView className="px-6 py-10 bg-white flex-1">
+    <SafeAreaView className="px-6 py-4 bg-white flex-1">
       <PageHeader
         title="Bem vindo de volta!"
         subtitle="Digite suas credenciais para entrar na sua conta"
