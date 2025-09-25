@@ -13,7 +13,7 @@ const Button = ({ onPress, text, disabled = false }: ButtonProps) => {
       disabled={disabled}
       onPress={onPress}
       className={`px-4 py-4 ${
-        disabled ? "bg-gray-400" : "bg-primary"
+        disabled ? "bg-gray-200" : "bg-primary"
       } rounded-lg flex items-center w-full`}
     >
       <Text className="text-white font-semibold text-body">{text}</Text>

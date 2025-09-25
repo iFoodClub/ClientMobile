@@ -1,30 +1,50 @@
 import Button from "@/components/Button/Button";
+import CompanyForm from "@/components/Forms/CompanyForm/CompanyForm";
+import RestaurantForm from "@/components/Forms/RestaurantForm/RestaurantForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import USerType from "@/components/UserType/USerType";
+import { COLORS } from "@/src/constants/colors";
+import { ICreateAccountForm } from "@/src/interfaces/interfaces";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-interface IFormInput {
-  userType: "company" | "restaurant" | null;
-}
-
 const CreateAccount = () => {
-  const { control, handleSubmit, watch, setValue } = useForm<IFormInput>({
-    defaultValues: {
-      userType: null,
-    },
-  });
-  const [step, steStep] = useState<number>(1);
+  const { control, handleSubmit, watch, setValue, trigger } =
+    useForm<ICreateAccountForm>({
+      mode: "onBlur",
+      defaultValues: {
+        userType: null,
+      },
+    });
+  const [step, setStep] = useState<number>(1);
   const watchedUserType = useWatch({ control, name: "userType" });
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    Alert.alert("Dados Enviados", JSON.stringify(data));
+  console.log(watchedUserType);
+
+  const onSubmit: SubmitHandler<ICreateAccountForm> = (data) => {
+    setStep((prev) => prev + 1);
   };
+
+  async function handleNextStep() {
+    let fieldsToValidate: (keyof ICreateAccountForm)[] = [];
+
+    if (step === 1) {
+      fieldsToValidate = ["userType"];
+    } else if (step === 2) {
+      fieldsToValidate = ["email", "password", "confirmPassword"];
+    }
+
+    const isStepValid = await trigger(fieldsToValidate);
+
+    if (isStepValid) {
+      setStep((prev) => prev + 1);
+    }
+  }
 
   return (
     <SafeAreaView className="bg-white">
@@ -46,7 +66,13 @@ const CreateAccount = () => {
                   active={watchedUserType === "company"}
                   label="Empresa"
                   icon={
-                    <FontAwesome name="building-o" size={100} color="black" />
+                    <FontAwesome
+                      name="building-o"
+                      size={60}
+                      color={
+                        watchedUserType === "company" ? COLORS.primary : "black"
+                      }
+                    />
                   }
                 />
               </TouchableOpacity>
@@ -60,8 +86,12 @@ const CreateAccount = () => {
                   icon={
                     <Ionicons
                       name="restaurant-outline"
-                      size={100}
-                      color="black"
+                      size={60}
+                      color={
+                        watchedUserType === "restaurant"
+                          ? COLORS.primary
+                          : "black"
+                      }
                     />
                   }
                 />
@@ -70,8 +100,28 @@ const CreateAccount = () => {
           </View>
         )}
 
+        {step != 1 && (
+          <View>
+            {watchedUserType === "company" && (
+              <CompanyForm setValue={setValue} step={step} setStep={setStep} />
+            )}
+            {watchedUserType === "restaurant" && (
+              <RestaurantForm
+                setValue={setValue}
+                step={step}
+                setStep={setStep}
+                control={control}
+              />
+            )}
+          </View>
+        )}
+
         <View className="mt-auto items-center ">
-          <Button text="Seguir" onPress={handleSubmit(onSubmit)} />
+          <Button
+            disabled={(!watchedUserType && step === 1) || step === 2}
+            text="Seguir"
+            onPress={handleSubmit(onSubmit)}
+          />
           <Text className="mt-4">
             Já tem uma conta?{" "}
             <Link className="text-primary font-semibold" href="/sign-in">
