@@ -25,6 +25,7 @@ const CreateAccount = () => {
   const watchedUserType = useWatch({ control, name: "userType" });
 
   console.log(watchedUserType);
+  console.log("step", step);
 
   const onSubmit: SubmitHandler<ICreateAccountForm> = (data) => {
     setStep((prev) => prev + 1);
@@ -103,7 +104,12 @@ const CreateAccount = () => {
         {step != 1 && (
           <View>
             {watchedUserType === "company" && (
-              <CompanyForm setValue={setValue} step={step} setStep={setStep} />
+              <CompanyForm
+                control={control}
+                setValue={setValue}
+                step={step}
+                setStep={setStep}
+              />
             )}
             {watchedUserType === "restaurant" && (
               <RestaurantForm
@@ -117,11 +123,15 @@ const CreateAccount = () => {
         )}
 
         <View className="mt-auto items-center ">
-          <Button
-            disabled={(!watchedUserType && step === 1) || step === 2}
-            text="Seguir"
-            onPress={handleSubmit(onSubmit)}
-          />
+          {step === 1 ? (
+            <Button
+              disabled={!watchedUserType && step === 1}
+              text="Seguir"
+              onPress={handleSubmit(onSubmit)}
+            />
+          ) : (
+            <Button disabled={false} text="Seguir" onPress={handleNextStep} />
+          )}
           <Text className="mt-4">
             Já tem uma conta?{" "}
             <Link className="text-primary font-semibold" href="/sign-in">
