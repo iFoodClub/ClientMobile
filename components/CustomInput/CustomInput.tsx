@@ -14,6 +14,7 @@ interface CustomInputProps<T extends FieldValues> extends TextInputProps {
   label?: string;
   rules?: RegisterOptions<T, Path<T>>;
   icon?: React.ReactNode;
+  maxLength?: number;
 }
 
 const CustomInput = <T extends FieldValues>({
@@ -22,6 +23,7 @@ const CustomInput = <T extends FieldValues>({
   label,
   rules = {},
   icon,
+  maxLength,
   ...textInputProps
 }: CustomInputProps<T>) => {
   return (
@@ -46,11 +48,10 @@ const CustomInput = <T extends FieldValues>({
                 error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
               }`}
             >
-              {/* 2. Posicione o ícone de forma absoluta */}
               {icon && <View className="w-10">{icon}</View>}
 
               <TextInput
-                // Seus estilos originais são mantidos aqui
+                maxLength={maxLength}
                 className={` text-base flex-1  ${
                   error
                     ? "border-red-500 bg-red-50"

@@ -8,9 +8,40 @@ export interface ISignInForm {
   password: string;
 }
 
+export interface IRestaurant {
+  name: string;
+  cep: string;
+  number: string;
+}
+export interface ICompany {
+  name: string;
+  cep: string;
+  number: string;
+}
+
 export interface ICreateAccountForm {
   userType: "company" | "restaurant" | null;
   email: string;
   password: string;
+  profileImage: string;
   confirmPassword: string;
+  cnpj: string;
+  restaurant?: IRestaurant;
+  company?: IRestaurant;
+}
+
+export interface ICepResponse {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  unidade: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  estado: string;
+  regiao: string;
+  ibge: string;
+  gia: string;
+  ddd: string;
+  siafi: string;
 }

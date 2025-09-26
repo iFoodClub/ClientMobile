@@ -24,9 +24,6 @@ const CreateAccount = () => {
   const [step, setStep] = useState<number>(1);
   const watchedUserType = useWatch({ control, name: "userType" });
 
-  console.log(watchedUserType);
-  console.log("step", step);
-
   const onSubmit: SubmitHandler<ICreateAccountForm> = (data) => {
     setStep((prev) => prev + 1);
   };

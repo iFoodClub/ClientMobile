@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ICepResponse } from "../interfaces/interfaces";
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -9,11 +10,21 @@ export async function isAvaliableEmail(email: string) {
     const response = await api.get<{ exists: boolean }>(
       `/user/check-email/${email}`
     );
-    // A API retorna `{ exists: true }` ou `{ exists: false }`
     return response.data.exists;
   } catch (error) {
-    // Se a API falhar, não podemos validar, então relançamos o erro
     console.error("API de verificação de email falhou:", error);
     throw new Error("Não foi possível verificar o email. Tente novamente.");
+  }
+}
+
+export async function getAddress(cep: string) {
+  try {
+    const response = await axios.get<ICepResponse>(
+      `https://viacep.com.br/ws/${cep}/json/`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Não foi possível buscar o endereço.", error);
+    throw new Error("Não foi possível buscar o endereço. Tente novamente.");
   }
 }
