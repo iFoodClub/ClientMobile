@@ -15,12 +15,19 @@ const RestaurantInfoForm = ({ control }: RestaurantInfoFormProps) => {
         name="restaurant.name"
         label="Nome do restaurante"
         control={control}
+        rules={{ required: { value: true, message: "O nome é obrigatório" } }}
       />
-      <CustomInput name="cnpj" label="CNPJ do Restaurante" control={control} />
+      <CustomInput
+        name="cnpj"
+        label="CNPJ do Restaurante"
+        control={control}
+        rules={{ required: { value: true, message: "O CNPJ é obrigatório" } }}
+      />
       <CustomInput
         name="profileImage"
         label="Imagem do Restaurante"
         control={control}
+        rules={{ required: { value: true, message: "A imagem é obrigatória" } }}
       />
     </View>
   );

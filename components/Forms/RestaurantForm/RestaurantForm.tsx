@@ -41,13 +41,13 @@ const RestaurantForm = ({
     <View>
       <View className="flex flex-row justify-between items-baseline">
         <Text className="text-2xl mb-10">
-          {restaurantStepsInfo[step - 1].title}
+          {restaurantStepsInfo[step - 2].title}
         </Text>
         <TouchableOpacity onPress={() => setStep((prev) => prev - 1)}>
           <Text className="text-primary">Voltar</Text>
         </TouchableOpacity>
       </View>
-      {restaurantStepsInfo[step - 1].component}
+      {restaurantStepsInfo[step - 2].component}
     </View>
   );
 };

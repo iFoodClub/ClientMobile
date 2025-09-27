@@ -11,6 +11,7 @@ import { Text, TextInput, TextInputProps, View } from "react-native";
 interface CustomInputProps<T extends FieldValues> extends TextInputProps {
   control: Control<T>;
   name: Path<T>;
+  keyboardType?: TextInputProps["keyboardType"];
   label?: string;
   rules?: RegisterOptions<T, Path<T>>;
   icon?: React.ReactNode;
@@ -21,6 +22,7 @@ const CustomInput = <T extends FieldValues>({
   control,
   name,
   label,
+  keyboardType = "default",
   rules = {},
   icon,
   maxLength,
@@ -52,6 +54,7 @@ const CustomInput = <T extends FieldValues>({
 
               <TextInput
                 maxLength={maxLength}
+                keyboardType={keyboardType}
                 className={` text-base flex-1  ${
                   error
                     ? "border-red-500 bg-red-50"

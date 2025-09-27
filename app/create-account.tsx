@@ -9,7 +9,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { Path, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -29,17 +29,21 @@ const CreateAccount = () => {
   };
 
   async function handleNextStep() {
-    let fieldsToValidate: (keyof ICreateAccountForm)[] = [];
+    let fieldsToValidate: Path<ICreateAccountForm>[] = [];
 
     if (step === 1) {
       fieldsToValidate = ["userType"];
     } else if (step === 2) {
       fieldsToValidate = ["email", "password", "confirmPassword"];
+    } else if (step === 3) {
+      fieldsToValidate = ["restaurant.name", "cnpj", "profileImage"];
     }
+
+    console.log(step);
 
     const isStepValid = await trigger(fieldsToValidate);
 
-    if (isStepValid) {
+    if (isStepValid && step <= 3) {
       setStep((prev) => prev + 1);
     }
   }
@@ -54,7 +58,9 @@ const CreateAccount = () => {
 
         {step === 1 && (
           <View>
-            <Text className="text-2xl mb-10">Eu sou um(a): </Text>
+            <Text className="text-2xl mb-10">
+              Você quer se cadastrar como um(a):{" "}
+            </Text>
             <View className="flex-row justify-around">
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -120,15 +126,7 @@ const CreateAccount = () => {
         )}
 
         <View className="mt-auto items-center ">
-          {step === 1 ? (
-            <Button
-              disabled={!watchedUserType && step === 1}
-              text="Seguir"
-              onPress={handleSubmit(onSubmit)}
-            />
-          ) : (
-            <Button disabled={false} text="Seguir" onPress={handleNextStep} />
-          )}
+          <Button text="Seguir" onPress={handleNextStep} />
           <Text className="mt-4">
             Já tem uma conta?{" "}
             <Link className="text-primary font-semibold" href="/sign-in">
