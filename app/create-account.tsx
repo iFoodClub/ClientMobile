@@ -39,8 +39,6 @@ const CreateAccount = () => {
       fieldsToValidate = ["restaurant.name", "cnpj", "profileImage"];
     }
 
-    console.log(step);
-
     const isStepValid = await trigger(fieldsToValidate);
 
     if (isStepValid && step <= 3) {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ICepResponse } from "../interfaces/interfaces";
+import { ICepResponse, ILoginResponse } from "../interfaces/interfaces";
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -27,4 +27,8 @@ export async function getAddress(cep: string) {
     console.error("Não foi possível buscar o endereço.", error);
     throw new Error("Não foi possível buscar o endereço. Tente novamente.");
   }
+}
+
+export async function login(email: string, password: string) {
+  return api.post<ILoginResponse>("/user/login", { email, password });
 }

@@ -5,39 +5,19 @@ import { ISignInForm } from "@/src/interfaces/interfaces";
 import { useAuthStore } from "@/src/store/authStore";
 import { FontAwesome } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import axios from "axios";
 import { Link } from "expo-router";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 //icons
 
 const SignInScreen = () => {
-  const { login } = useAuthStore();
+  const { login, user } = useAuthStore();
   const { control, handleSubmit } = useForm<ISignInForm>({ mode: "onBlur" });
 
   const handleSignIn: SubmitHandler<ISignInForm> = async (data) => {
-    try {
-      console.log("Enviando dados para a API:", data);
-
-      const response = await axios.post(
-        "https://foodclubserver-2r7n.onrender.com/user/login",
-
-        {
-          email: data.email,
-          password: data.password,
-        }
-      );
-
-      console.log("Resposta da API:", response.data);
-      Alert.alert("Sucesso", "Login realizado!");
-
-      login(response.data);
-    } catch (error) {
-      console.error("Erro no login:", error);
-      Alert.alert("Erro", "Não foi possível fazer o login.");
-    }
+    login(data.email, data.password);
   };
 
   const onSubmit: SubmitHandler<ISignInForm> = (data) => console.log(data);

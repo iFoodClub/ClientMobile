@@ -45,3 +45,18 @@ export interface ICepResponse {
   ddd: string;
   siafi: string;
 }
+
+export interface IUserDetailsResponse {
+  id: number;
+  email: string;
+  name: string;
+  profileImage: string;
+  userType: "restaurant" | "company" | "admin";
+  restaurant: IRestaurant;
+}
+
+// Interface principal para a resposta completa da API
+export interface ILoginResponse {
+  token: string;
+  userDetails: IUserDetailsResponse;
+}
