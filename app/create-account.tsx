@@ -25,7 +25,6 @@ const CreateAccount = () => {
   const onSubmit: SubmitHandler<IBusiness> = async (data) => {
     try {
       const response = await createBusiness(data);
-      console.log(response.data);
 
       Alert.alert("Sucesso", "Conta criada com sucesso!");
     } catch (error) {

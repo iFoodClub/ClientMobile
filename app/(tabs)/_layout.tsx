@@ -5,10 +5,6 @@ import React from "react";
 const TabsLayout = () => {
   const { user, isRestaurant, isCompany, isEmployee } = useAuthStore();
 
-  console.log(isRestaurant);
-  console.log(isCompany);
-  console.log(isEmployee);
-
   return (
     <Tabs screenOptions={{ headerShown: false }}>
       <Tabs.Screen name="index" options={{ title: "Home" }} />
