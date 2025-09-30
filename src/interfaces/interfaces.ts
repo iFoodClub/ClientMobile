@@ -1,6 +1,7 @@
 export enum UserType {
   restaurant = "restaurant",
   company = "company",
+  employee = "employee",
 }
 
 export interface ISignInForm {
@@ -20,7 +21,7 @@ export interface ICompany {
 }
 
 export interface ICreateAccountForm {
-  userType: "company" | "restaurant" | null;
+  userType: UserType;
   email: string;
   password: string;
   profileImage: string;
@@ -51,7 +52,7 @@ export interface IUserDetailsResponse {
   email: string;
   name: string;
   profileImage: string;
-  userType: "restaurant" | "company" | "admin";
+  userType: UserType;
   restaurant: IRestaurant;
 }
 

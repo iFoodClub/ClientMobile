@@ -4,7 +4,7 @@ import RestaurantForm from "@/components/Forms/RestaurantForm/RestaurantForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import USerType from "@/components/UserType/USerType";
 import { COLORS } from "@/src/constants/colors";
-import { ICreateAccountForm } from "@/src/interfaces/interfaces";
+import { ICreateAccountForm, UserType } from "@/src/interfaces/interfaces";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
@@ -17,9 +17,6 @@ const CreateAccount = () => {
   const { control, handleSubmit, watch, setValue, trigger } =
     useForm<ICreateAccountForm>({
       mode: "onBlur",
-      defaultValues: {
-        userType: null,
-      },
     });
   const [step, setStep] = useState<number>(1);
   const watchedUserType = useWatch({ control, name: "userType" });
@@ -62,7 +59,7 @@ const CreateAccount = () => {
             <View className="flex-row justify-around">
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setValue("userType", "company")}
+                onPress={() => setValue("userType", UserType.company)}
               >
                 <USerType
                   active={watchedUserType === "company"}
@@ -80,7 +77,7 @@ const CreateAccount = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setValue("userType", "restaurant")}
+                onPress={() => setValue("userType", UserType.restaurant)}
               >
                 <USerType
                   label="Restaurante"

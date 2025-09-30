@@ -1,10 +1,9 @@
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-// Correção nos nomes das importações
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { Alert } from "react-native";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-import { IUserDetailsResponse } from "../interfaces/interfaces";
+import { IUserDetailsResponse, UserType } from "../interfaces/interfaces";
 import { login } from "../repository/authRepository";
 
 type IAuthStore = {
@@ -15,11 +14,18 @@ type IAuthStore = {
   createAccount: () => void;
   reset: () => void;
   user: IUserDetailsResponse | null;
+
+  isRestaurant: boolean;
+  isCompany: boolean;
+  isEmployee: boolean;
 };
 
 export const useAuthStore = create<IAuthStore>()(
   persist(
     (set) => ({
+      isRestaurant: false,
+      isCompany: false,
+      isEmployee: false,
       isLoggedIn: false,
       shouldCreateAccount: false,
       user: null,
@@ -31,13 +37,25 @@ export const useAuthStore = create<IAuthStore>()(
             isLoggedIn: true,
             shouldCreateAccount: false,
             user: response.data.userDetails,
+            isRestaurant:
+              response.data.userDetails.userType === UserType.restaurant,
+            isEmployee:
+              response.data.userDetails.userType === UserType.employee,
+            isCompany: response.data.userDetails.userType === UserType.company,
           });
         } catch (error) {
           console.error("Erro no login:", error);
           Alert.alert("Erro", "Não foi possível fazer o login.");
         }
       },
-      logout: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
+      logout: () =>
+        set({
+          isLoggedIn: false,
+          user: null,
+          isCompany: false,
+          isEmployee: false,
+          isRestaurant: false,
+        }),
       createAccount: () =>
         set({ isLoggedIn: false, shouldCreateAccount: true }),
       reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
