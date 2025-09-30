@@ -25,12 +25,12 @@ const CreateAccount = () => {
   const onSubmit: SubmitHandler<IBusiness> = async (data) => {
     try {
       const response = await createBusiness(data);
-
       Alert.alert("Sucesso", "Conta criada com sucesso!");
     } catch (error) {
-      console.error("❌ Erro ao chamar createBusiness:", error);
-
-      Alert.alert("Erro", error.message);
+      if (error instanceof Error) {
+        console.error("❌ Erro ao chamar createBusiness:", error.message);
+        Alert.alert("Erro", error.message);
+      }
     }
   };
 
