@@ -12,7 +12,11 @@ export interface ISignInForm {
 export interface IRestaurant {
   name: string;
   cep: string;
+  rua: string;
+  cidade: string;
+  estado: string;
   number: string;
+  complemento: string;
 }
 export interface ICompany {
   name: string;
@@ -20,7 +24,8 @@ export interface ICompany {
   number: string;
 }
 
-export interface ICreateAccountForm {
+export interface IBusiness {
+  name: string;
   userType: UserType;
   email: string;
   password: string;
@@ -60,4 +65,20 @@ export interface IUserDetailsResponse {
 export interface ILoginResponse {
   token: string;
   userDetails: IUserDetailsResponse;
+}
+
+export interface ICepResponse {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  unidade: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  estado: string;
+  regiao: string;
+  ibge: string;
+  gia: string;
+  ddd: string;
+  siafi: string;
 }

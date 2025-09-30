@@ -1,5 +1,9 @@
 import axios from "axios";
-import { ICepResponse, ILoginResponse } from "../interfaces/interfaces";
+import {
+  IBusiness,
+  ICepResponse,
+  ILoginResponse,
+} from "../interfaces/interfaces";
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -31,4 +35,8 @@ export async function getAddress(cep: string) {
 
 export async function login(email: string, password: string) {
   return api.post<ILoginResponse>("/user/login", { email, password });
+}
+
+export async function createBusiness(data: IBusiness) {
+  return api.post("/user", data);
 }

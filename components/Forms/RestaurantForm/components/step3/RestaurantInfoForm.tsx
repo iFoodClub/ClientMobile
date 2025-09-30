@@ -1,14 +1,21 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
-import { ICreateAccountForm } from "@/src/interfaces/interfaces";
-import React from "react";
-import { Control } from "react-hook-form";
+import { IBusiness } from "@/src/interfaces/interfaces";
+import React, { useEffect } from "react";
+import { Control, UseFormSetValue, useWatch } from "react-hook-form";
 import { View } from "react-native";
 
 type RestaurantInfoFormProps = {
-  control: Control<ICreateAccountForm>;
+  control: Control<IBusiness>;
+  setValue: UseFormSetValue<IBusiness>;
 };
 
-const RestaurantInfoForm = ({ control }: RestaurantInfoFormProps) => {
+const RestaurantInfoForm = ({ control, setValue }: RestaurantInfoFormProps) => {
+  const watchedRestaurantName = useWatch({ control, name: "restaurant.name" });
+
+  useEffect(() => {
+    setValue("name", watchedRestaurantName);
+  }, [watchedRestaurantName]);
+
   return (
     <View>
       <CustomInput
@@ -21,6 +28,7 @@ const RestaurantInfoForm = ({ control }: RestaurantInfoFormProps) => {
         name="cnpj"
         label="CNPJ do Restaurante"
         control={control}
+        maxLength={14}
         rules={{ required: { value: true, message: "O CNPJ é obrigatório" } }}
       />
       <CustomInput

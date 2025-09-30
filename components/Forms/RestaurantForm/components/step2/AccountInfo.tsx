@@ -1,12 +1,12 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
-import { ICreateAccountForm } from "@/src/interfaces/interfaces";
+import { IBusiness } from "@/src/interfaces/interfaces";
 import { isAvaliableEmail } from "@/src/repository/authRepository";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { Control, useWatch } from "react-hook-form";
 import { View } from "react-native";
 
 type AccountInfoProps = {
-  control: Control<ICreateAccountForm>;
+  control: Control<IBusiness>;
 };
 export const AccountInfo = ({ control }: AccountInfoProps) => {
   const password = useWatch({ control, name: "password" });

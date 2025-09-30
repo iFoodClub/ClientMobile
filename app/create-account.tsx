@@ -4,29 +4,39 @@ import RestaurantForm from "@/components/Forms/RestaurantForm/RestaurantForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import USerType from "@/components/UserType/USerType";
 import { COLORS } from "@/src/constants/colors";
-import { ICreateAccountForm, UserType } from "@/src/interfaces/interfaces";
+import { IBusiness, UserType } from "@/src/interfaces/interfaces";
+import { createBusiness } from "@/src/repository/authRepository";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { Path, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const CreateAccount = () => {
   const { control, handleSubmit, watch, setValue, trigger } =
-    useForm<ICreateAccountForm>({
+    useForm<IBusiness>({
       mode: "onBlur",
     });
   const [step, setStep] = useState<number>(1);
   const watchedUserType = useWatch({ control, name: "userType" });
 
-  const onSubmit: SubmitHandler<ICreateAccountForm> = (data) => {
-    setStep((prev) => prev + 1);
+  const onSubmit: SubmitHandler<IBusiness> = async (data) => {
+    try {
+      const response = await createBusiness(data);
+      console.log(response.data);
+
+      Alert.alert("Sucesso", "Conta criada com sucesso!");
+    } catch (error) {
+      console.error("❌ Erro ao chamar createBusiness:", error);
+
+      Alert.alert("Erro", error.message);
+    }
   };
 
   async function handleNextStep() {
-    let fieldsToValidate: Path<ICreateAccountForm>[] = [];
+    let fieldsToValidate: Path<IBusiness>[] = [];
 
     if (step === 1) {
       fieldsToValidate = ["userType"];
@@ -121,7 +131,10 @@ const CreateAccount = () => {
         )}
 
         <View className="mt-auto items-center ">
-          <Button text="Seguir" onPress={handleNextStep} />
+          {step != 4 && <Button text="Seguir" onPress={handleNextStep} />}
+          {step === 4 && (
+            <Button text="Criar conta" onPress={handleSubmit(onSubmit)} />
+          )}
           <Text className="mt-4">
             Já tem uma conta?{" "}
             <Link className="text-primary font-semibold" href="/sign-in">

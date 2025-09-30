@@ -1,4 +1,4 @@
-import { ICreateAccountForm } from "@/src/interfaces/interfaces";
+import { IBusiness } from "@/src/interfaces/interfaces";
 import React from "react";
 import { Control, UseFormSetValue } from "react-hook-form";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -6,13 +6,13 @@ import { AccountInfo } from "./components/step2/AccountInfo";
 import RestaurantInfoForm from "./components/step3/RestaurantInfoForm";
 import AddressForm from "./components/step4/AddressForm";
 type AccountInfoProps = {
-  control: Control<ICreateAccountForm>;
+  control: Control<IBusiness>;
 };
 
 type RestaurantFormProps = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
-  setValue: UseFormSetValue<ICreateAccountForm>;
+  setValue: UseFormSetValue<IBusiness>;
   control: Control<any>;
 };
 
@@ -29,11 +29,11 @@ const RestaurantForm = ({
     },
     {
       title: "Dados do restaurante",
-      component: <RestaurantInfoForm control={control} />,
+      component: <RestaurantInfoForm control={control} setValue={setValue} />,
     },
     {
       title: "Endereço",
-      component: <AddressForm control={control} />,
+      component: <AddressForm control={control} setValue={setValue} />,
     },
   ];
 
