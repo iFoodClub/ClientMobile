@@ -1,0 +1,22 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://foodclubserver-2r7n.onrender.com/user/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "admin@tech.com",
+    "password": "restaurante123"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
