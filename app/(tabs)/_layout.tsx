@@ -52,7 +52,7 @@ const TabsLayout = () => {
     },
     {
       name: "settings",
-      title: "Configurações",
+      title: "Perfil",
       icon: ({ focused, color }: TabBarIconProps) => (
         <Octicons
           name="person"
@@ -85,8 +85,10 @@ const TabsLayout = () => {
           key={name}
           name={name}
           options={{
+            sceneStyle: { padding: 12 },
             title,
             href,
+            tabBarLabelStyle: { fontSize: 12 },
             tabBarIcon: icon,
             tabBarActiveTintColor: COLORS.primary,
             ...options,
