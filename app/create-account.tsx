@@ -1,6 +1,5 @@
 import Button from "@/components/Button/Button";
-import CompanyForm from "@/components/Forms/CompanyForm/CompanyForm";
-import RestaurantForm from "@/components/Forms/RestaurantForm/RestaurantForm";
+import BusinessForm from "@/components/Forms/BusinessForm/BusinessForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import USerType from "@/components/UserType/USerType";
 import { COLORS } from "@/src/constants/colors";
@@ -111,19 +110,21 @@ const CreateAccount = () => {
         {step != 1 && (
           <View>
             {watchedUserType === "company" && (
-              <CompanyForm
-                control={control}
+              <BusinessForm
                 setValue={setValue}
                 step={step}
                 setStep={setStep}
+                control={control}
+                watchedUserType={watchedUserType}
               />
             )}
             {watchedUserType === "restaurant" && (
-              <RestaurantForm
+              <BusinessForm
                 setValue={setValue}
                 step={step}
                 setStep={setStep}
                 control={control}
+                watchedUserType={watchedUserType}
               />
             )}
           </View>
