@@ -42,7 +42,11 @@ const CreateAccount = () => {
     } else if (step === 2) {
       fieldsToValidate = ["email", "password", "confirmPassword"];
     } else if (step === 3) {
-      fieldsToValidate = ["restaurant.name", "cnpj", "profileImage"];
+      if (watchedUserType === UserType.company) {
+        fieldsToValidate = ["company.name", "cnpj", "profileImage"];
+      } else {
+        fieldsToValidate = ["restaurant.name", "cnpj", "profileImage"];
+      }
     }
 
     const isStepValid = await trigger(fieldsToValidate);

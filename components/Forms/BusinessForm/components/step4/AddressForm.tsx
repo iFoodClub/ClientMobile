@@ -1,6 +1,9 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
+import { formIconSize } from "@/src/constants/constants";
 import { IBusiness, UserType } from "@/src/interfaces/interfaces";
 import { isValidCep } from "@/src/utils/utils";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
 import React from "react";
 import { Control, UseFormSetValue } from "react-hook-form";
 import { Alert, TextInputChangeEvent, View } from "react-native";
@@ -49,7 +52,9 @@ const AddressForm = ({
         control={control}
         keyboardType="numeric"
         onChange={handleCEP}
+        placeholder="Digite o CEP"
         maxLength={9}
+        icon={<EvilIcons name="location" size={formIconSize} color="black" />}
       />
       <CustomInput
         name={
@@ -57,6 +62,11 @@ const AddressForm = ({
         }
         label="Número"
         control={control}
+        placeholder="Digite o número "
+        icon={
+          <AntDesign name="field-number" size={formIconSize} color="grey" />
+        }
+        keyboardType="numeric"
       />
     </View>
   );
