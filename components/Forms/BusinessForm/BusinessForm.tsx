@@ -1,39 +1,55 @@
-import { IBusiness } from "@/src/interfaces/interfaces";
+import { IBusiness, UserType } from "@/src/interfaces/interfaces";
 import React from "react";
 import { Control, UseFormSetValue } from "react-hook-form";
 import { Text, TouchableOpacity, View } from "react-native";
 import { AccountInfo } from "./components/step2/AccountInfo";
-import RestaurantInfoForm from "./components/step3/RestaurantInfoForm";
+import BusinessInfo from "./components/step3/BusinessInfo";
 import AddressForm from "./components/step4/AddressForm";
 type AccountInfoProps = {
   control: Control<IBusiness>;
 };
 
-type RestaurantFormProps = {
+type BusinessFormProps = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   step: number;
   setValue: UseFormSetValue<IBusiness>;
   control: Control<any>;
+  watchedUserType: UserType;
 };
 
-const RestaurantForm = ({
+const BusinessForm = ({
   setStep,
   step,
   setValue,
   control,
-}: RestaurantFormProps) => {
+  watchedUserType,
+}: BusinessFormProps) => {
   const restaurantStepsInfo = [
     {
       title: "Dados da conta",
-      component: <AccountInfo control={control} />,
+      component: (
+        <AccountInfo control={control} watchedUserType={watchedUserType} />
+      ),
     },
     {
-      title: "Dados do restaurante",
-      component: <RestaurantInfoForm control={control} setValue={setValue} />,
+      title: "Dados do estabelecimento",
+      component: (
+        <BusinessInfo
+          control={control}
+          setValue={setValue}
+          watchedUserType={watchedUserType}
+        />
+      ),
     },
     {
-      title: "Endereço",
-      component: <AddressForm control={control} setValue={setValue} />,
+      title: "Informações de endereço",
+      component: (
+        <AddressForm
+          control={control}
+          setValue={setValue}
+          watchedUserType={watchedUserType}
+        />
+      ),
     },
   ];
 
@@ -52,4 +68,4 @@ const RestaurantForm = ({
   );
 };
 
-export default RestaurantForm;
+export default BusinessForm;

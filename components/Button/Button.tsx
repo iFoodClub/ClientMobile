@@ -5,9 +5,10 @@ type ButtonProps = {
   onPress: () => void;
   text: string;
   disabled?: boolean;
+  icon?: React.ReactNode;
 };
 
-const Button = ({ onPress, text, disabled = false }: ButtonProps) => {
+const Button = ({ onPress, text, disabled = false, icon }: ButtonProps) => {
   return (
     <TouchableOpacity
       disabled={disabled}
@@ -16,6 +17,7 @@ const Button = ({ onPress, text, disabled = false }: ButtonProps) => {
         disabled ? "bg-gray-200" : "bg-primary"
       } rounded-lg flex items-center w-full`}
     >
+      {icon && icon}
       <Text className="text-white font-semibold text-body">{text}</Text>
     </TouchableOpacity>
   );

@@ -1,11 +1,14 @@
+import Button from "@/components/Button/Button";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const dishes = () => {
   return (
-    <View>
+    <SafeAreaView>
       <Text>dishes</Text>
-    </View>
+      <Button text="Novo prato" onPress={() => {}} />
+    </SafeAreaView>
   );
 };
 

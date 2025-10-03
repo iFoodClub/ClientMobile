@@ -1,5 +1,6 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
-import { IBusiness } from "@/src/interfaces/interfaces";
+import { formIconSize } from "@/src/constants/constants";
+import { IBusiness, UserType } from "@/src/interfaces/interfaces";
 import { isAvaliableEmail } from "@/src/repository/authRepository";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { Control, useWatch } from "react-hook-form";
@@ -7,8 +8,9 @@ import { View } from "react-native";
 
 type AccountInfoProps = {
   control: Control<IBusiness>;
+  watchedUserType: UserType;
 };
-export const AccountInfo = ({ control }: AccountInfoProps) => {
+export const AccountInfo = ({ control, watchedUserType }: AccountInfoProps) => {
   const password = useWatch({ control, name: "password" });
 
   return (
@@ -17,9 +19,11 @@ export const AccountInfo = ({ control }: AccountInfoProps) => {
         name="email"
         label="Email"
         control={control}
-        placeholder="Email"
+        placeholder="Digite o seu Email"
         keyboardType="email-address"
-        icon={<FontAwesome name="envelope-o" size={20} color="black" />}
+        icon={
+          <FontAwesome name="envelope-o" size={formIconSize} color="black" />
+        }
         rules={{
           required: { value: true, message: "O e-mail é obrigatório" },
 
@@ -43,9 +47,9 @@ export const AccountInfo = ({ control }: AccountInfoProps) => {
         name="password"
         label="Senha"
         control={control}
-        placeholder="Senha"
+        placeholder="Digite a sua senha"
         secureTextEntry
-        icon={<AntDesign name="lock" size={20} color="black" />}
+        icon={<AntDesign name="lock" size={formIconSize} color="black" />}
         rules={{
           required: { value: true, message: "A senha é obrigatória" },
           minLength: {
@@ -58,9 +62,9 @@ export const AccountInfo = ({ control }: AccountInfoProps) => {
         name="confirmPassword"
         label="Confirmar senha"
         control={control}
-        placeholder="Senha"
+        placeholder="Digite a sua senha novamente"
         secureTextEntry
-        icon={<AntDesign name="lock" size={20} color="black" />}
+        icon={<AntDesign name="lock" size={formIconSize} color="black" />}
         rules={{
           required: { value: true, message: "A senha é obrigatória" },
           minLength: {

@@ -1,6 +1,5 @@
 import Button from "@/components/Button/Button";
-import CompanyForm from "@/components/Forms/CompanyForm/CompanyForm";
-import RestaurantForm from "@/components/Forms/RestaurantForm/RestaurantForm";
+import BusinessForm from "@/components/Forms/BusinessForm/BusinessForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import USerType from "@/components/UserType/USerType";
 import { COLORS } from "@/src/constants/colors";
@@ -8,7 +7,7 @@ import { IBusiness, UserType } from "@/src/interfaces/interfaces";
 import { createBusiness } from "@/src/repository/authRepository";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useState } from "react";
 import { Path, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
@@ -24,13 +23,14 @@ const CreateAccount = () => {
 
   const onSubmit: SubmitHandler<IBusiness> = async (data) => {
     try {
-      const response = await createBusiness(data);
-
+      await createBusiness(data);
       Alert.alert("Sucesso", "Conta criada com sucesso!");
+      router.replace("/sign-in");
     } catch (error) {
-      console.error("❌ Erro ao chamar createBusiness:", error);
-
-      Alert.alert("Erro", error.message);
+      if (error instanceof Error) {
+        console.error("❌ Erro ao chamar createBusiness:", error.message);
+        Alert.alert("Erro", error.message);
+      }
     }
   };
 
@@ -42,7 +42,11 @@ const CreateAccount = () => {
     } else if (step === 2) {
       fieldsToValidate = ["email", "password", "confirmPassword"];
     } else if (step === 3) {
-      fieldsToValidate = ["restaurant.name", "cnpj", "profileImage"];
+      if (watchedUserType === UserType.company) {
+        fieldsToValidate = ["company.name", "cnpj", "profileImage"];
+      } else {
+        fieldsToValidate = ["restaurant.name", "cnpj", "profileImage"];
+      }
     }
 
     const isStepValid = await trigger(fieldsToValidate);
@@ -111,19 +115,21 @@ const CreateAccount = () => {
         {step != 1 && (
           <View>
             {watchedUserType === "company" && (
-              <CompanyForm
-                control={control}
+              <BusinessForm
                 setValue={setValue}
                 step={step}
                 setStep={setStep}
+                control={control}
+                watchedUserType={watchedUserType}
               />
             )}
             {watchedUserType === "restaurant" && (
-              <RestaurantForm
+              <BusinessForm
                 setValue={setValue}
                 step={step}
                 setStep={setStep}
                 control={control}
+                watchedUserType={watchedUserType}
               />
             )}
           </View>
