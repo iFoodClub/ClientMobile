@@ -22,11 +22,10 @@ const AddressForm = ({
       cep = e.nativeEvent.text.replace("-", "");
     }
 
-    if (isValidCep(cep)) {
+    if (isValidCep(cep) && watchedUserType === UserType.restaurant) {
       try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
-
         setValue("restaurant.cep", cep);
         setValue("restaurant.rua", data.logradouro);
         setValue("restaurant.cidade", data.localidade);
@@ -36,20 +35,29 @@ const AddressForm = ({
         console.error("Erro ao buscar CEP:", error);
         Alert.alert("Erro", "Erro ao buscar CEP.");
       }
+    } else {
+      setValue("company.cep", cep);
+      setValue("company.restaurantId", 1);
     }
   }
 
   return (
     <View>
       <CustomInput
-        name="restaurant.cep"
+        name={watchedUserType === "company" ? "company.cep" : "restaurant.cep"}
         label="CEP"
         control={control}
         keyboardType="numeric"
         onChange={handleCEP}
         maxLength={9}
       />
-      <CustomInput name="restaurant.number" label="Número" control={control} />
+      <CustomInput
+        name={
+          watchedUserType === "company" ? "company.number" : "restaurant.number"
+        }
+        label="Número"
+        control={control}
+      />
     </View>
   );
 };

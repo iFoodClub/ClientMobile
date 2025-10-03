@@ -7,7 +7,7 @@ import { IBusiness, UserType } from "@/src/interfaces/interfaces";
 import { createBusiness } from "@/src/repository/authRepository";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useState } from "react";
 import { Path, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
@@ -23,8 +23,9 @@ const CreateAccount = () => {
 
   const onSubmit: SubmitHandler<IBusiness> = async (data) => {
     try {
-      const response = await createBusiness(data);
+      await createBusiness(data);
       Alert.alert("Sucesso", "Conta criada com sucesso!");
+      router.replace("/sign-in");
     } catch (error) {
       if (error instanceof Error) {
         console.error("❌ Erro ao chamar createBusiness:", error.message);

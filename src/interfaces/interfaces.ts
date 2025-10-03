@@ -22,6 +22,7 @@ export interface ICompany {
   name: string;
   cep: string;
   number: string;
+  restaurantId?: number;
 }
 
 export interface IBusiness {
@@ -33,7 +34,7 @@ export interface IBusiness {
   confirmPassword: string;
   cnpj: string;
   restaurant?: IRestaurant;
-  company?: IRestaurant;
+  company?: ICompany;
 }
 
 export interface ICepResponse {

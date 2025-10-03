@@ -24,21 +24,30 @@ const BusinessInfo = ({
   return (
     <View>
       <CustomInput
-        name="restaurant.name"
-        label="Nome do restaurante"
+        name={
+          watchedUserType === "company" ? "company.name" : "restaurant.name"
+        }
+        label={
+          watchedUserType === "company"
+            ? "Nome da Empresa"
+            : "Nome do Restaurante"
+        }
+        placeholder={"Digite o nome da empresa "}
         control={control}
         rules={{ required: { value: true, message: "O nome é obrigatório" } }}
       />
       <CustomInput
         name="cnpj"
-        label="CNPJ do Restaurante"
+        label="CNPJ"
+        placeholder="Digite o CNPJ"
         control={control}
         maxLength={14}
         rules={{ required: { value: true, message: "O CNPJ é obrigatório" } }}
       />
       <CustomInput
         name="profileImage"
-        label="Imagem do Restaurante"
+        placeholder="Digite o link da imagem"
+        label="Imagem do Perfil"
         control={control}
         rules={{ required: { value: true, message: "A imagem é obrigatória" } }}
       />
