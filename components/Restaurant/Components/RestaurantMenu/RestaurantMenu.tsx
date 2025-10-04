@@ -11,8 +11,6 @@ const RestaurantMenu = ({ restaurantId }: RestaurantMenuProps) => {
     const response = await DishRepository.fetchDishesByRestaurantId(
       restaurantId
     );
-
-    console.log(JSON.stringify(response.data, null, 2));
   }
 
   return (

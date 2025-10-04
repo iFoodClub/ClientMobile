@@ -1,13 +1,14 @@
 import axios from "axios";
+import { IRestaurantResponse } from "../interfaces/apiResponses";
 
-const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL + "/restaurant";
+const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const api = axios.create({ baseURL });
 
-const UserRepository = {
+const RestaurantRepository = {
   async fetchRestaurants() {
-    const response = await api.get("/");
-    return response.data;
+    const response = await api.get<IRestaurantResponse[]>("/Restaurant");
+    return response;
   },
 };
 
-export default UserRepository;
+export default RestaurantRepository;

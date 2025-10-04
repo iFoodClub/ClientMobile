@@ -16,3 +16,20 @@ export interface IDishesResponse {
   ratingCount: number;
   ratings: IRating[];
 }
+
+export interface IRestaurantResponse {
+  id: number;
+  name: string;
+  userId: number;
+  cnpj: string;
+  cep: string;
+  number: string;
+  rua: string;
+  cidade: string;
+  estado: string;
+  complemento: string;
+  profileImage: string;
+  averageRating: number;
+  numberDishes?: number;
+  cheapeastDishAt?: number;
+}
