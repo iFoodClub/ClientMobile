@@ -31,17 +31,6 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
   return (
     <>
       <Pressable onPress={handlePress}>
-        {/* <View className="flex flex-col items-center bg-gray-200 p-4 w-28 gap-y-2 h-40 rounded-xl">
-          <Image
-            width={64}
-            height={64}
-            borderRadius={50}
-            source={{ uri: image }}
-          />
-          <Text className="text-center text-sm text-gray-600 font-semibold ">
-            {name}
-          </Text>
-        </View> */}
         <View className="flex flex-row w-full justify-between h-20  ">
           <View className="flex flex-row gap-x-4">
             <Image
