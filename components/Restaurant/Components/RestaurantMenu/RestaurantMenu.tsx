@@ -1,4 +1,4 @@
-import DishRepository from "@/src/repository/dishRepository";
+import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
 import React from "react";
 import { Text, View } from "react-native";
 
@@ -7,15 +7,13 @@ type RestaurantMenuProps = {
 };
 
 const RestaurantMenu = ({ restaurantId }: RestaurantMenuProps) => {
-  async function fetchRestaurantMenu(restaurantId: number) {
-    const response = await DishRepository.fetchDishesByRestaurantId(
-      restaurantId
-    );
-  }
+  const { selectedRestaurant } = useSelectedRestaurant({ restaurantId });
+
+  console.log(JSON.stringify(selectedRestaurant, null, 2));
 
   return (
     <View>
-      <Text>Restaurant</Text>
+      <Text>{selectedRestaurant?.name}</Text>
     </View>
   );
 };
