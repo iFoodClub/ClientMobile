@@ -41,7 +41,7 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
             <View className="flex flex-col justify-between ">
               <Text
                 style={{ color: COLORS.textBody }}
-                className="text-base font-bold text-lg"
+                className=" font-bold text-lg"
               >
                 {name}
               </Text>
