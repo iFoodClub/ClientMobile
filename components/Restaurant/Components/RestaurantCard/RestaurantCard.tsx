@@ -18,8 +18,8 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
     name,
     profileImage: image,
     averageRating,
-    numberDishes,
-    cheapeastDishAt,
+    dishCount,
+    minPrice,
   } = restaurant;
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -81,7 +81,7 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
                   <Text style={{ color: COLORS.textDescription }}>
                     Pratos:{" "}
                     <Text className="font-semibold">
-                      {numberDishes ? numberDishes : "16"}
+                      {dishCount ? dishCount : "16"}
                     </Text>
                   </Text>
                 </View>
@@ -96,8 +96,7 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
                   style={{ color: COLORS.priceText }}
                   className="text-sm text-gray-600 font-semibold"
                 >
-                  Pratos a partir de{" "}
-                  {cheapeastDishAt ? cheapeastDishAt : "R$ 5,00"}
+                  Pratos a partir de {minPrice ? minPrice : "R$ 5,00"}
                 </Text>
               </View>
             </View>

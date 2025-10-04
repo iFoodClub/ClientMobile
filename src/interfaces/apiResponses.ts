@@ -30,8 +30,8 @@ export interface IRestaurantResponse {
   complemento: string;
   profileImage: string;
   averageRating: number;
-  numberDishes?: number;
-  cheapeastDishAt?: number;
+  dishCount: number;
+  minPrice: number;
 }
 
 export interface IDish {
