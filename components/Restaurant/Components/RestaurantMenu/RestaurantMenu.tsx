@@ -10,7 +10,7 @@ const RestaurantMenu = ({ restaurantId }: RestaurantMenuProps) => {
 
   return (
     <View>
-      <Text>RestaurantMenu</Text>
+      <Text>Restaurant</Text>
     </View>
   );
 };

@@ -10,8 +10,6 @@ type RestaurantCardProps = {
 };
 
 const RestaurantCard = ({ id, image, name }: RestaurantCardProps) => {
-  console.log(JSON.stringify({ id, image, name }, null, 2));
-
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   function handlePress() {
