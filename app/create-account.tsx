@@ -4,7 +4,7 @@ import PageHeader from "@/components/PageHeader/PageHeader";
 import USerType from "@/components/UserType/USerType";
 import { COLORS } from "@/src/constants/colors";
 import { IBusiness, UserType } from "@/src/interfaces/interfaces";
-import { createBusiness } from "@/src/repository/authRepository";
+import AuthRepository from "@/src/repository/authRepository";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, router } from "expo-router";
@@ -23,7 +23,7 @@ const CreateAccount = () => {
 
   const onSubmit: SubmitHandler<IBusiness> = async (data) => {
     try {
-      await createBusiness(data);
+      await AuthRepository.createBusiness(data);
       Alert.alert("Sucesso", "Conta criada com sucesso!");
       router.replace("/sign-in");
     } catch (error) {

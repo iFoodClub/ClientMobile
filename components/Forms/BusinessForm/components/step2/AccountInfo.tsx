@@ -1,7 +1,7 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
 import { formIconSize } from "@/src/constants/constants";
 import { IBusiness, UserType } from "@/src/interfaces/interfaces";
-import { isAvaliableEmail } from "@/src/repository/authRepository";
+import AuthRepository from "@/src/repository/authRepository";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { Control, useWatch } from "react-hook-form";
 import { View } from "react-native";
@@ -35,7 +35,7 @@ export const AccountInfo = ({ control, watchedUserType }: AccountInfoProps) => {
           validate: async (value) => {
             try {
               if (!value) return "O e-mail é obrigatório";
-              const isUsedEmail = await isAvaliableEmail(value);
+              const isUsedEmail = await AuthRepository.isAvaliableEmail(value);
               return !isUsedEmail || "Este e-mail já está em uso.";
             } catch (error) {
               return "Não foi possível verificar o e-mail. Tente novamente.";

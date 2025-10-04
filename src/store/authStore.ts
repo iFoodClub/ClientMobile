@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { IUserDetailsResponse, UserType } from "../interfaces/interfaces";
-import { login } from "../repository/authRepository";
+import AuthRepository from "../repository/authRepository";
 
 type IAuthStore = {
   isLoggedIn: boolean;
@@ -31,7 +31,7 @@ export const useAuthStore = create<IAuthStore>()(
       user: null,
       login: async (email, password) => {
         try {
-          const response = await login(email, password);
+          const response = await AuthRepository.login(email, password);
 
           set({
             isLoggedIn: true,
