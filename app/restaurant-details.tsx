@@ -1,5 +1,6 @@
 import PressableButton from "@/components/Button/PressableButton";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
+import { useToastAll } from "@/src/components/Toast";
 import { COLORS } from "@/src/constants/colors";
 import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
 import { UserType } from "@/src/interfaces/interfaces";
@@ -14,6 +15,8 @@ import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const RestaurantDetails = () => {
+  const { showSuccess } = useToastAll();
+
   const { id } = useLocalSearchParams();
   const { selectedRestaurant } = useSelectedRestaurant({
     restaurantId: Number(id),
@@ -40,9 +43,9 @@ const RestaurantDetails = () => {
           restaurantId: selectedRestaurant.id,
         }
       );
-
       user.company.restaurantId = selectedRestaurant.id;
       updateSelectedRestaurant(selectedRestaurant.id);
+      showSuccess("Restaurante escolhido com sucesso!");
     } catch (error) {
       console.error(error);
     }

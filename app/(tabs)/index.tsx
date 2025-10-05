@@ -1,6 +1,5 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
 import RestaurantCard from "@/components/Restaurant/Components/RestaurantCard/RestaurantCard";
-import { ToastExample } from "@/src/components/Toast/ToastExample";
 import { useFetchRestaurants } from "@/src/hooks/useRestaurants";
 import React from "react";
 import { View } from "react-native";
@@ -21,8 +20,6 @@ const HomeScreen = () => {
           <RestaurantCard key={restaurant.id} restaurant={restaurant} />
         ))}
       </View>
-
-      <ToastExample />
     </SafeAreaView>
   );
 };
