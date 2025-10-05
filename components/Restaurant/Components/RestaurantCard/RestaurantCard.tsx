@@ -1,45 +1,103 @@
-import Button from "@/components/Button/Button";
-import React, { useState } from "react";
-import { Image, Modal, Pressable, Text, View } from "react-native";
-import RestaurantMenu from "../RestaurantMenu/RestaurantMenu";
+import { COLORS } from "@/src/constants/colors";
+import { IRestaurantResponse } from "@/src/interfaces/apiResponses";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Entypo from "@expo/vector-icons/Entypo";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
+import React from "react";
+import { Image, Pressable, Text, View } from "react-native";
 
 type RestaurantCardProps = {
-  id: number;
-  image: string;
-  name: string;
+  restaurant: IRestaurantResponse;
 };
 
-const RestaurantCard = ({ id, image, name }: RestaurantCardProps) => {
-  console.log(JSON.stringify({ id, image, name }, null, 2));
-
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
+  const {
+    id,
+    name,
+    profileImage: image,
+    averageRating,
+    dishCount,
+    minPrice,
+  } = restaurant;
 
   function handlePress() {
-    setModalOpen(true);
+    router.push({
+      pathname: "/restaurant-details",
+      params: { id },
+    });
   }
 
   return (
     <>
-      <Pressable
-        onPress={handlePress}
-        className="flex flex-col items-center bg-gray-200 p-4 w-32 gap-y-2 h-40 rounded-xl"
-      >
-        <View className="flex flex-col items-center bg-gray-200 p-4 w-32 gap-y-2 h-40 rounded-xl">
-          <Image
-            width={64}
-            height={64}
-            borderRadius={50}
-            source={{ uri: image }}
+      <Pressable onPress={handlePress}>
+        <View className="flex flex-row w-full justify-between h-20  ">
+          <View className="flex flex-row gap-x-4">
+            <Image
+              className="h-full w-20 object-cover rounded-full border-2  border-white  "
+              source={{ uri: image }}
+              alt=""
+            />
+            <View className="flex flex-col justify-between ">
+              <Text
+                style={{ color: COLORS.textBody }}
+                className=" font-bold text-lg"
+              >
+                {name}
+              </Text>
+              <View className="flex flex-row gap-x-4 ">
+                <View className="flex flex-row gap-x-1 ">
+                  <AntDesign
+                    name="star"
+                    size={12}
+                    color={COLORS.starsRating}
+                    className="flex align-middle justify-center"
+                  />
+                  <Text
+                    className="font-semibold"
+                    style={{ color: COLORS.starsRating }}
+                  >
+                    {averageRating}
+                  </Text>
+                </View>
+                <View className="flex flex-row gap-x-1">
+                  <Ionicons
+                    name="restaurant-outline"
+                    className="flex align-middle justify-center"
+                    size={14}
+                    color={COLORS.textDescription}
+                  />
+                  <Text style={{ color: COLORS.textDescription }}>
+                    Pratos:{" "}
+                    <Text className="font-semibold">
+                      {dishCount ? dishCount : "16"}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+              <View className="flex align-middle flex-row gap-x-2 ">
+                <Ionicons
+                  name="cash-outline"
+                  size={16}
+                  color={COLORS.priceText}
+                />
+                <Text
+                  style={{ color: COLORS.priceText }}
+                  className="text-sm text-gray-600 font-semibold"
+                >
+                  Pratos a partir de {minPrice ? minPrice : "R$ 5,00"}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <Entypo
+            name="heart-outlined"
+            size={20}
+            color="black"
+            className=" flex align-middle justify-center border-gray-300 rounded-full p-1 "
           />
-          <Text className="text-center text-sm text-gray-600 font-semibold">
-            {name}
-          </Text>
         </View>
       </Pressable>
-      <Modal visible={modalOpen}>
-        <RestaurantMenu restaurantId={id} />
-        <Button text="Fechar" onPress={() => setModalOpen(false)}></Button>
-      </Modal>
     </>
   );
 };

@@ -1,3 +1,4 @@
+import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
 import React from "react";
 import { Text, View } from "react-native";
 
@@ -6,11 +7,11 @@ type RestaurantMenuProps = {
 };
 
 const RestaurantMenu = ({ restaurantId }: RestaurantMenuProps) => {
-  async function fetchRestaurantMenu(restaurantId: number) {}
+  const { selectedRestaurant } = useSelectedRestaurant({ restaurantId });
 
   return (
     <View>
-      <Text>RestaurantMenu</Text>
+      <Text>{selectedRestaurant?.name}</Text>
     </View>
   );
 };

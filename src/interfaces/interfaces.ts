@@ -62,7 +62,6 @@ export interface IUserDetailsResponse {
   restaurant: IRestaurant;
 }
 
-// Interface principal para a resposta completa da API
 export interface ILoginResponse {
   token: string;
   userDetails: IUserDetailsResponse;

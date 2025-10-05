@@ -23,8 +23,6 @@ const SignInScreen = () => {
     login(data.email, data.password);
   };
 
-  const onSubmit: SubmitHandler<ISignInForm> = (data) => console.log(data);
-
   return (
     <SafeAreaView className="px-6 py-4 bg-white flex-1">
       <PageHeader

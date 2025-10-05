@@ -11,13 +11,17 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="restaurant-details"
+          options={{ headerShown: false }}
+        />
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn}>
         <Stack.Screen name="sign-in" options={{ headerShown: false }} />
       </Stack.Protected>
-      {/* <Stack.Protected guard={!isLoggedIn}>
+      <Stack.Protected guard={!isLoggedIn}>
         <Stack.Screen name="create-account" options={{ headerShown: false }} />
-      </Stack.Protected> */}
+      </Stack.Protected>
       <Stack.Screen name="modal" options={{ presentation: "modal" }} />
     </Stack>
   );

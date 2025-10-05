@@ -8,6 +8,11 @@ module.exports = {
       colors: {
         primary: "#FE8C00",
         bgPrimary: "#FFE8CC",
+        starsRating: "#fec24b",
+        bgBlackTransparent: "rgba(0, 0, 0, 0.5)",
+        border: "#f4f4f4",
+        textDescription: "#8d8d8d",
+        textBody: "#161717",
       },
       fontSize: {
         h1: ["32px", { lineHeight: "40px" }],
