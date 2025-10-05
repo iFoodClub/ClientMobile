@@ -1,66 +1,39 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button } from '../../components/Button/Button';
+import React from "react";
+import { Button, View } from "react-native";
 import {
-    useToastDanger,
-    useToastError,
-    useToastInfo,
-    useToastSuccess,
-    useToastWarning
-} from '../../hooks/useToastHooks';
+  useToastError,
+  useToastInfo,
+  useToastSuccess,
+  useToastWarning,
+} from "../Toast";
 
 export const ToastExample: React.FC = () => {
   const { showSuccess } = useToastSuccess();
   const { showError } = useToastError();
   const { showWarning } = useToastWarning();
   const { showInfo } = useToastInfo();
-  const { showError: showDanger } = useToastDanger();
 
   return (
-    <View style={styles.container}>
+    <View>
       <Button
         title="Sucesso"
-        onPress={() => showSuccess('Operação realizada com sucesso!')}
-        style={styles.button}
+        onPress={() => showSuccess("Operação realizada com sucesso!")}
       />
-      
+
       <Button
         title="Erro"
-        onPress={() => showError('Ocorreu um erro inesperado!')}
-        style={styles.button}
+        onPress={() => showError("Ocorreu um erro inesperado!")}
       />
-      
+
       <Button
         title="Aviso"
-        onPress={() => showWarning('Atenção: Verifique os dados!')}
-        style={styles.button}
+        onPress={() => showWarning("Atenção: Verifique os dados!")}
       />
-      
+
       <Button
         title="Informação"
-        onPress={() => showInfo('Nova atualização disponível!')}
-        style={styles.button}
-      />
-      
-      <Button
-        title="Perigo (Danger)"
-        onPress={() => showDanger('Ação perigosa detectada!')}
-        style={styles.button}
+        onPress={() => showInfo("Nova atualização disponível!")}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    gap: 16,
-  },
-  button: {
-    width: '100%',
-    maxWidth: 300,
-  },
-});
