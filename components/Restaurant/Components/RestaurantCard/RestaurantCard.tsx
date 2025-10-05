@@ -1,12 +1,11 @@
-import Button from "@/components/Button/Button";
 import { COLORS } from "@/src/constants/colors";
 import { IRestaurantResponse } from "@/src/interfaces/apiResponses";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useState } from "react";
-import { Image, Modal, Pressable, Text, View } from "react-native";
-import RestaurantMenu from "../RestaurantMenu/RestaurantMenu";
+import { router } from "expo-router";
+import React from "react";
+import { Image, Pressable, Text, View } from "react-native";
 
 type RestaurantCardProps = {
   restaurant: IRestaurantResponse;
@@ -22,10 +21,11 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
     minPrice,
   } = restaurant;
 
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-
   function handlePress() {
-    setModalOpen(true);
+    router.push({
+      pathname: "/restaurant-details",
+      params: { id },
+    });
   }
 
   return (
@@ -98,10 +98,6 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
           />
         </View>
       </Pressable>
-      <Modal visible={modalOpen}>
-        <RestaurantMenu restaurantId={id} />
-        <Button text="Fechar" onPress={() => setModalOpen(false)}></Button>
-      </Modal>
     </>
   );
 };

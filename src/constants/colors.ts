@@ -7,5 +7,5 @@ export const COLORS = {
   priceBg: "#c6f3de",
 
   textBody: "#545454",
-  textDescription: "#a9a9a9",
+  textDescription: "#8d8d8d",
 };

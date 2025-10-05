@@ -9,8 +9,6 @@ type RestaurantMenuProps = {
 const RestaurantMenu = ({ restaurantId }: RestaurantMenuProps) => {
   const { selectedRestaurant } = useSelectedRestaurant({ restaurantId });
 
-  console.log(JSON.stringify(selectedRestaurant, null, 2));
-
   return (
     <View>
       <Text>{selectedRestaurant?.name}</Text>
