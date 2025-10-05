@@ -6,16 +6,19 @@ type ButtonProps = {
   text: string;
   disabled?: boolean;
   icon?: React.ReactNode;
+  className?: string;
 };
 
-const Button = ({ onPress, text, disabled = false, icon }: ButtonProps) => {
+const Button = ({ onPress, text, disabled = false, icon, className }: ButtonProps) => {
+  const defaultClassName = `px-4 py-4 ${
+    disabled ? "bg-gray-200" : "bg-primary"
+  } rounded-lg flex items-center w-full`;
+  
   return (
     <TouchableOpacity
       disabled={disabled}
       onPress={onPress}
-      className={`px-4 py-4 ${
-        disabled ? "bg-gray-200" : "bg-primary"
-      } rounded-lg flex items-center w-full`}
+      className={className || defaultClassName}
     >
       {icon && icon}
       <Text className="text-white font-semibold text-body">{text}</Text>
