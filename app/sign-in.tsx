@@ -19,6 +19,7 @@ const SignInScreen = () => {
     defaultValues: { email: "admin@tech.com", password: "restaurante123" },
   });
 
+
   const handleSignIn: SubmitHandler<ISignInForm> = async (data) => {
     login(data.email, data.password);
   };
@@ -55,6 +56,7 @@ const SignInScreen = () => {
 
       <View className="mt-auto items-center">
         <Button text="Entrar" onPress={handleSubmit(handleSignIn)} />
+
 
         <Text className="mt-4 ">
           Não tem uma conta ?{" "}
