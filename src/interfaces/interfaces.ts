@@ -19,10 +19,13 @@ export interface IRestaurant {
   complemento: string;
 }
 export interface ICompany {
+  id: number;
+  userId: number;
   name: string;
+  cnpj: string;
   cep: string;
   number: string;
-  restaurantId?: number;
+  restaurantId: number;
 }
 
 export interface IBusiness {
@@ -59,7 +62,8 @@ export interface IUserDetailsResponse {
   name: string;
   profileImage: string;
   userType: UserType;
-  restaurant: IRestaurant;
+  restaurant?: IRestaurant;
+  company?: ICompany;
 }
 
 export interface ILoginResponse {

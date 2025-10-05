@@ -14,10 +14,10 @@ const DishCard = ({ dish }: DishCardProps) => {
         className="w-full h-28 object-cover rounded-xl mb-4"
         source={{ uri: dish?.image }}
       />
-      <Text className="font-medium text-textBody text-xl mb-2">
-        {dish && formatPrice(dish.price)}
+      <Text className="font-medium text-textBody text-base mb-2">
+        {dish && formatPrice(dish?.price)}
       </Text>
-      <Text className="text-textBody text-lg font-medium"> {dish?.name}</Text>
+      <Text className="text-textBody text-base font-medium"> {dish?.name}</Text>
     </View>
   );
 };

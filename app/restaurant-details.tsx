@@ -3,7 +3,9 @@ import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
 import { COLORS } from "@/src/constants/colors";
 import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
 import { UserType } from "@/src/interfaces/interfaces";
+import CompanyRepository from "@/src/repository/companyRepository";
 import { useAuthStore } from "@/src/store/authStore";
+import { formatPrice } from "@/src/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router, useLocalSearchParams } from "expo-router";
@@ -24,6 +26,25 @@ const RestaurantDetails = () => {
     });
   }
 
+  async function handleChooseRestaurant() {
+    try {
+      if (!selectedRestaurant || !user || !user.company) return;
+      const response = CompanyRepository.updateCompanySelectedRestaurant(
+        user.id,
+        {
+          userId: user.id,
+          name: user.name,
+          cnpj: user.company.cnpj,
+          cep: user.company.cep,
+          number: user.company.number,
+          restaurantId: selectedRestaurant.id,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const cheapeastDishes = selectedRestaurant?.dishes.reduce(
     (prev, current) => (prev.price < current.price ? prev : current),
     selectedRestaurant?.dishes[0]
@@ -39,8 +60,14 @@ const RestaurantDetails = () => {
       {user?.userType === UserType.company && (
         <PressableButton
           className="absolute top-10 right-4 z-10"
-          icon={<Ionicons name="restaurant-outline" size={20} color="white" />}
-          onPress={handleBkackPress}
+          icon={
+            user?.company?.restaurantId === selectedRestaurant?.id ? (
+              <Ionicons name="restaurant" size={20} color="white" />
+            ) : (
+              <Ionicons name="restaurant-outline" size={20} color="white" />
+            )
+          }
+          onPress={handleChooseRestaurant}
         />
       )}
       <Image
@@ -104,7 +131,7 @@ const RestaurantDetails = () => {
                   style={{ color: COLORS.priceText }}
                   className="text-sm text-gray-600 font-semibold"
                 >
-                  Pratos a partir de {cheapeastDishes?.price}
+                  Pratos a partir de {formatPrice(cheapeastDishes?.price)}
                 </Text>
               </View>
             </View>

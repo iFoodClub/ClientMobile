@@ -6,8 +6,8 @@ type PressableButtonProps = {
   disabled?: boolean;
   text?: string;
   icon?: React.ReactNode;
-  className?: string; // Adicionado para permitir estilos extras
-  // ... outras props
+  className?: string;
+  loading?: boolean;
 };
 
 const PressableButton = ({
@@ -15,6 +15,7 @@ const PressableButton = ({
   text,
   icon,
   className,
+  loading,
   ...props
 }: PressableButtonProps) => {
   return (
@@ -23,7 +24,13 @@ const PressableButton = ({
       onPress={onPress}
       {...props}
     >
-      {icon}
+      {loading ? (
+        <Text className="text-white font-semibold text-body">
+          Carregando...
+        </Text>
+      ) : (
+        icon
+      )}
 
       {text && (
         <Text
