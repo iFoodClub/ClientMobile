@@ -4,6 +4,7 @@ import {
   ICepResponse,
   ILoginResponse,
 } from "../interfaces/interfaces";
+import { useAuthStore } from "../store/authStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const api = axios.create({ baseURL });
@@ -39,6 +40,12 @@ const AuthRepository = {
 
   createBusiness(data: IBusiness) {
     return api.post("/user", data);
+  },
+
+  logout() {
+    const { user } = useAuthStore();
+
+    return api.post("/user/logout");
   },
 };
 

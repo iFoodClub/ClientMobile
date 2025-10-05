@@ -57,6 +57,7 @@ export interface ICepResponse {
 }
 
 export interface IUserDetailsResponse {
+  token: string;
   id: number;
   email: string;
   name: string;

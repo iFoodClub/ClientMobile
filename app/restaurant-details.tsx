@@ -18,7 +18,7 @@ const RestaurantDetails = () => {
   const { selectedRestaurant } = useSelectedRestaurant({
     restaurantId: Number(id),
   });
-  const { user } = useAuthStore();
+  const { token, user, updateSelectedRestaurant } = useAuthStore();
 
   function handleBkackPress() {
     router.push({
@@ -29,8 +29,8 @@ const RestaurantDetails = () => {
   async function handleChooseRestaurant() {
     try {
       if (!selectedRestaurant || !user || !user.company) return;
-      const response = CompanyRepository.updateCompanySelectedRestaurant(
-        user.id,
+      const response = await CompanyRepository.updateCompanySelectedRestaurant(
+        user.company.id,
         {
           userId: user.id,
           name: user.name,
@@ -40,6 +40,9 @@ const RestaurantDetails = () => {
           restaurantId: selectedRestaurant.id,
         }
       );
+
+      user.company.restaurantId = selectedRestaurant.id;
+      updateSelectedRestaurant(selectedRestaurant.id);
     } catch (error) {
       console.error(error);
     }

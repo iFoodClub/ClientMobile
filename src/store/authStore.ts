@@ -9,12 +9,14 @@ import AuthRepository from "../repository/authRepository";
 type IAuthStore = {
   isLoggedIn: boolean;
   shouldCreateAccount: boolean;
-  login: (email: string, password: string) => void;
+  token: string;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   createAccount: () => void;
   reset: () => void;
-  user: IUserDetailsResponse | null;
+  updateSelectedRestaurant: (id: number) => void;
 
+  user: IUserDetailsResponse | null;
   isRestaurant: boolean;
   isCompany: boolean;
   isEmployee: boolean;
@@ -23,6 +25,7 @@ type IAuthStore = {
 export const useAuthStore = create<IAuthStore>()(
   persist(
     (set) => ({
+      token: "",
       isRestaurant: false,
       isCompany: false,
       isEmployee: false,
@@ -34,6 +37,7 @@ export const useAuthStore = create<IAuthStore>()(
           const response = await AuthRepository.login(email, password);
 
           set({
+            token: response.data.token,
             isLoggedIn: true,
             shouldCreateAccount: false,
             user: response.data.userDetails,
@@ -46,16 +50,47 @@ export const useAuthStore = create<IAuthStore>()(
         } catch (error) {
           console.error("Erro no login:", error);
           Alert.alert("Erro", "Não foi possível fazer o login.");
+          throw error;
         }
       },
-      logout: () =>
-        set({
-          isLoggedIn: false,
-          user: null,
-          isCompany: false,
-          isEmployee: false,
-          isRestaurant: false,
-        }),
+      logout: async () => {
+        try {
+          await AuthRepository.logout();
+          set({
+            isLoggedIn: false,
+            user: null,
+            isCompany: false,
+            isEmployee: false,
+            isRestaurant: false,
+          });
+        } catch (error) {
+          console.log("Erro no logout:", error);
+          set({
+            isLoggedIn: false,
+            user: null,
+            isCompany: false,
+            isEmployee: false,
+            isRestaurant: false,
+          });
+        }
+      },
+      updateSelectedRestaurant: (id: number) => {
+        set((state) => {
+          if (!state.user || !state.user.company) {
+            return state;
+          }
+
+          return {
+            user: {
+              ...state.user,
+              company: {
+                ...state.user.company,
+                restaurantId: id,
+              },
+            },
+          };
+        });
+      },
       createAccount: () =>
         set({ isLoggedIn: false, shouldCreateAccount: true }),
       reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
