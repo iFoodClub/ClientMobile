@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const SignInScreen = () => {
   const { login, user } = useAuthStore();
+
   const { control, handleSubmit, reset } = useForm<ISignInForm>({
     mode: "onBlur",
     defaultValues: { email: "admin@tech.com", password: "restaurante123" },

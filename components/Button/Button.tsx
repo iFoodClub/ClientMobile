@@ -7,16 +7,24 @@ type ButtonProps = {
   disabled?: boolean;
   icon?: React.ReactNode;
   className?: string;
+  loading?: boolean;
 };
 
-const Button = ({ onPress, text, disabled = false, icon, className }: ButtonProps) => {
+const Button = ({
+  onPress,
+  text,
+  disabled = false,
+  icon,
+  className,
+  loading,
+}: ButtonProps) => {
   const defaultClassName = `px-4 py-4 ${
     disabled ? "bg-gray-200" : "bg-primary"
   } rounded-lg flex items-center w-full`;
-  
+
   return (
     <TouchableOpacity
-      disabled={disabled}
+      disabled={loading || disabled}
       onPress={onPress}
       className={className || defaultClassName}
     >

@@ -6,3 +6,12 @@ export interface IUpdateCompanyDTO {
   restaurantId?: number;
   profileImage?: string;
 }
+
+export interface IUpdateRestaurantDTO {
+  userId: number;
+  name: string;
+  cnpj: string;
+  cep: string;
+  number: string;
+  profileImage: string;
+}

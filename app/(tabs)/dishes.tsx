@@ -7,8 +7,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const dishes = () => {
   const { user } = useAuthStore();
 
-  console.log(JSON.stringify(user, null, 2));
-
   return (
     <SafeAreaView>
       <Image

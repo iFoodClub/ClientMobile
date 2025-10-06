@@ -10,13 +10,17 @@ export interface ISignInForm {
 }
 
 export interface IRestaurant {
+  id: number;
+  userId: number;
   name: string;
+  cnpj: string;
   cep: string;
   rua: string;
   cidade: string;
   estado: string;
   number: string;
   complemento: string;
+  image: string;
 }
 export interface ICompany {
   id: number;
