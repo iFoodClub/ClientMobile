@@ -22,8 +22,6 @@ const RestaurantDetails = () => {
   });
   const { token, user, updateSelectedRestaurant } = useAuthStore();
 
-  console.log(JSON.stringify(user, null, 2));
-
   function handleBkackPress() {
     router.push({
       pathname: "/",

@@ -42,7 +42,7 @@ const SettingsScreen = () => {
       <PageHeader title="Configurações" subtitle="Configure a sua conta" />
 
       <View className="border border-gray-200 w-11/12 mx-auto p-4  rounded-2xl flex flex-row justify-between  ">
-        <View className="flex flex-col justify-center items-center  w-2/3 ">
+        <View className="flex flex-col justify-center items-center  w-3/5 ">
           <Image
             className="w-28 h-28 rounded-full border-4 border-white shadow-md"
             source={{ uri: user?.profileImage }}
@@ -52,22 +52,15 @@ const SettingsScreen = () => {
             <Text className="text-gray-400 font-medium">
               {user?.restaurant?.cidade}, {user?.restaurant?.estado}
             </Text>
-            {/* <Text>
-              {user?.userType === UserType.restaurant
-                ? "Restaurante"
-                : user?.userType === UserType.company
-                ? "Empresa"
-                : "Funcionário"}
-            </Text> */}
           </View>
         </View>
-        <View>
+        <View className="flex flex-col justify-around">
           <Text className="font-semibold">Email</Text>
           <Text>{user?.email}</Text>
-          <Text className="font-semibold">Email</Text>
-          <Text>{user?.email}</Text>
-          <Text className="font-semibold">Email</Text>
-          <Text>{user?.email}</Text>
+          <Text className="font-semibold">CEP</Text>
+          <Text>{user?.restaurant?.cep}</Text>
+          <Text className="font-semibold">CNPJ</Text>
+          <Text>{user?.restaurant?.cnpj}</Text>
         </View>
       </View>
 
