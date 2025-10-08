@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { IUpdateRestaurantDTO } from "../interfaces/dtos";
 import { IUserDetailsResponse, UserType } from "../interfaces/interfaces";
 import AuthRepository from "../repository/authRepository";
 
@@ -15,6 +16,7 @@ type IAuthStore = {
   createAccount: () => void;
   reset: () => void;
   updateSelectedRestaurant: (id: number) => void;
+  updateUserRestaurant: (id: number, data: IUpdateRestaurantDTO) => void;
 
   user: IUserDetailsResponse | null;
   isRestaurant: boolean;
@@ -86,6 +88,23 @@ export const useAuthStore = create<IAuthStore>()(
               company: {
                 ...state.user.company,
                 restaurantId: id,
+              },
+            },
+          };
+        });
+      },
+      updateUserRestaurant: (id: number, data: IUpdateRestaurantDTO) => {
+        set((state) => {
+          if (!state.user || !state.user.restaurant) {
+            return state;
+          }
+
+          return {
+            user: {
+              ...state.user,
+              restaurant: {
+                ...state.user.restaurant,
+                ...data,
               },
             },
           };

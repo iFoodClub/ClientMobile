@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 
 type ButtonProps = {
   onPress: () => void;
@@ -15,21 +15,15 @@ const Button = ({
   text,
   disabled = false,
   icon,
-  className,
   loading,
 }: ButtonProps) => {
-  const defaultClassName = `px-4 py-4 ${
-    disabled ? "bg-gray-200" : "bg-primary"
-  } rounded-lg flex items-center w-full`;
+  const defaultClassName = `px-4 py-4 bg-primary rounded-lg flex-row items-center justify-center w-full`;
 
   return (
-    <TouchableOpacity
-      disabled={loading || disabled}
-      onPress={onPress}
-      className={className || defaultClassName}
-    >
+    <TouchableOpacity onPress={onPress} className={defaultClassName}>
       {icon && icon}
       <Text className="text-white font-semibold text-body">{text}</Text>
+      {loading && <ActivityIndicator size="small" color="white" />}
     </TouchableOpacity>
   );
 };

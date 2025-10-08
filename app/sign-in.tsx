@@ -62,13 +62,12 @@ const SignInScreen = () => {
       </View>
 
       <View className="mt-auto items-center">
-        {__DEV__ && ( // Dica: `__DEV__` garante que isso só apareça em modo de desenvolvimento
+        {__DEV__ && (
           <View className="flex-row flex-wrap justify-center gap-2 mb-4">
             {testAccounts.map((account) => (
               <TouchableOpacity
                 key={account.label}
                 className="bg-gray-200 px-3 py-2 rounded-md"
-                // 4. Chame `reset` com os dados da conta ao pressionar
                 onPress={() =>
                   reset({ email: account.email, password: account.password })
                 }

@@ -1,3 +1,4 @@
+import PageHeader from "@/components/PageHeader/PageHeader";
 import ConfigItem from "@/components/ui/ConfigItem/ConfigItem";
 import { COLORS } from "@/src/constants/colors";
 import { UserType } from "@/src/interfaces/interfaces";
@@ -19,7 +20,7 @@ const SettingsScreen = () => {
 
   const configItens = [
     {
-      icon: <Entypo name="text-document" size={20} color={COLORS.textBody} />,
+      icon: <Entypo name="text-document" size={24} color={COLORS.textBody} />,
       label: `Informações ${
         user?.userType === UserType.company
           ? "da empresa"
@@ -30,7 +31,7 @@ const SettingsScreen = () => {
       onPress: handleUpdateInfo,
     },
     {
-      icon: <MaterialIcons name="logout" size={20} color={COLORS.textBody} />,
+      icon: <MaterialIcons name="logout" size={24} color={COLORS.textBody} />,
       label: "Sair",
       onPress: logout,
     },
@@ -38,24 +39,39 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 ">
-      <View className="flex flex-row items-center gap-x-4 mb-4">
-        <Image
-          className="w-20 h-20 rounded-full border-4 border-white shadow-md"
-          source={{ uri: user?.profileImage }}
-        />
+      <PageHeader title="Configurações" subtitle="Configure a sua conta" />
+
+      <View className="border border-gray-200 w-11/12 mx-auto p-4  rounded-2xl flex flex-row justify-between  ">
+        <View className="flex flex-col justify-center items-center  w-2/3 ">
+          <Image
+            className="w-28 h-28 rounded-full border-4 border-white shadow-md"
+            source={{ uri: user?.profileImage }}
+          />
+          <View className="flex flex-col items-center ">
+            <Text className=" font-bold text-xl">{user?.restaurant?.name}</Text>
+            <Text className="text-gray-400 font-medium">
+              {user?.restaurant?.cidade}, {user?.restaurant?.estado}
+            </Text>
+            {/* <Text>
+              {user?.userType === UserType.restaurant
+                ? "Restaurante"
+                : user?.userType === UserType.company
+                ? "Empresa"
+                : "Funcionário"}
+            </Text> */}
+          </View>
+        </View>
         <View>
-          <Text className="text-2xl font-semibold">{user?.name}</Text>
-          <Text>
-            {user?.userType === UserType.restaurant
-              ? "Restaurante"
-              : user?.userType === UserType.company
-              ? "Empresa"
-              : "Funcionário"}
-          </Text>
+          <Text className="font-semibold">Email</Text>
+          <Text>{user?.email}</Text>
+          <Text className="font-semibold">Email</Text>
+          <Text>{user?.email}</Text>
+          <Text className="font-semibold">Email</Text>
+          <Text>{user?.email}</Text>
         </View>
       </View>
 
-      <View className="pt-8">
+      <View className="mt-8 px-6">
         {configItens.map((item, index) => (
           <ConfigItem key={index} {...item} />
         ))}

@@ -12,17 +12,20 @@ type ConfigItemProps = {
 const ConfigItem = ({ icon, label, onPress }: ConfigItemProps) => {
   return (
     <Pressable
-      className="flex flex-row items-center justify-between border-b mb-4 pb-4 border-gray-200"
+      className="flex flex-row items-center justify-between  mb-4 pb-4 border-gray-200"
+      // className="flex flex-row items-center justify-between border-b mb-4 pb-4 border-gray-200"
       onPress={onPress}
     >
       <View className="flex flex-row gap-x-2 items-center ">
         {icon}
-        <Text>{label}</Text>
+        <Text className="text-body font-medium text-textDescription">
+          {label}
+        </Text>
       </View>
       <MaterialIcons
         name="arrow-forward-ios"
         size={16}
-        color={COLORS.textBody}
+        color={COLORS.textDescription}
       />
     </Pressable>
   );

@@ -9,7 +9,7 @@ const HomeScreen = () => {
   const { restaurants, loading, error } = useFetchRestaurants();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white w-full h-full">
       <PageHeader
         title="Restaurantes"
         subtitle="Navegue entre nossos restaurantes parceiros"

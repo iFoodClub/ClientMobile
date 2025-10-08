@@ -1,34 +1,65 @@
 import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
+import { useToastAll } from "@/src/components/Toast";
 import { IUpdateRestaurantDTO } from "@/src/interfaces/dtos";
+import RestaurantRepository from "@/src/repository/restaurantRepository";
 import { useAuthStore } from "@/src/store/authStore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
 
 const RestaurantForm = () => {
-  const { user } = useAuthStore();
-  const { control, handleSubmit, reset } = useForm<IUpdateRestaurantDTO>({
+  const { user, updateUserRestaurant } = useAuthStore();
+  const { showSuccess, showError, showInfo } = useToastAll();
+  const [loading, setLoading] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<IUpdateRestaurantDTO>({
     mode: "onBlur",
-    defaultValues: {
-      name: user?.name,
+  });
+
+  useEffect(() => {
+    reset({
+      userId: user?.id,
+      name: user?.restaurant?.name,
       cnpj: user?.restaurant?.cnpj,
       cep: user?.restaurant?.cep,
       number: user?.restaurant?.number,
       profileImage: user?.restaurant?.image,
-    },
-  });
+    });
+  }, [user, reset]);
 
-  const [initialValues, safetInitialValues] = useState({
-    name: user?.name,
-    cnpj: user?.restaurant?.cnpj,
-    cep: user?.restaurant?.cep,
-    number: user?.restaurant?.number,
-    profileImage: user?.restaurant?.image,
-  });
+  async function onSubmit(data: IUpdateRestaurantDTO) {
+    try {
+      if (!isDirty) {
+        showInfo("Sem dados para atualizar.");
+        return;
+      }
+      setLoading(true);
+      if (!user?.restaurant?.id) return;
+      const response = await RestaurantRepository.updateRestaurant(
+        user?.restaurant?.id,
+        data
+      );
+
+      if (response.status === 200) {
+        updateUserRestaurant(user?.restaurant?.id, data);
+        showSuccess("Restaurante atualizado com sucesso!");
+      }
+    } catch (error) {
+      console.error(error);
+      showError("Erro ao atualizar restaurante.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <View className="px-8">
+    <View className="px-4">
       <CustomInput control={control} name="name" label="Nome" />
       <CustomInput
         control={control}
@@ -53,7 +84,12 @@ const RestaurantForm = () => {
       />
       <CustomInput control={control} name="profileImage" label="Imagem" />
 
-      <Button text="Salvar" onPress={() => {}} />
+      <Button
+        className="flex flex-row"
+        text="Atualizar"
+        onPress={handleSubmit(onSubmit)}
+        loading={loading}
+      />
     </View>
   );
 };

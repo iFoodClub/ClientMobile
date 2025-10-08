@@ -12,7 +12,6 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Image, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const RestaurantDetails = () => {
   const { showSuccess } = useToastAll();
@@ -59,7 +58,7 @@ const RestaurantDetails = () => {
   );
 
   return (
-    <SafeAreaView className="relative">
+    <View className="relative">
       <PressableButton
         className="absolute top-10 left-4 z-10"
         icon={<AntDesign name="arrow-left" size={14} color="white" />}
@@ -155,7 +154,7 @@ const RestaurantDetails = () => {
           ))}
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
