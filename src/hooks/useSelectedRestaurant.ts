@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import RestaurantRepository from "../repository/restaurantRepository";
 import { IRestaurantDetailsResponse } from "../interfaces/apiResponses";
+import RestaurantRepository from "../repository/restaurantRepository";
 
 type useSelectedRestaurantProps = {
-  restaurantId: number;
+  restaurantId: number | undefined;
 };
 
 export const useSelectedRestaurant = ({
@@ -16,6 +16,7 @@ export const useSelectedRestaurant = ({
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!restaurantId) return;
       try {
         setLoading(true);
         const response = await RestaurantRepository.fetchSelectedRestaurant(
