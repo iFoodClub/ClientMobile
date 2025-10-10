@@ -1,5 +1,6 @@
 import PressableButton from "@/components/Button/PressableButton";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
+import DishCardSkeleton from "@/components/Restaurant/Components/DishCard/DishCardSkeleton";
 import { useToastAll } from "@/src/components/Toast";
 import { COLORS } from "@/src/constants/colors";
 import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
@@ -11,13 +12,13 @@ import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Image, Text, View } from "react-native";
+// 1. Importe a ScrollView
+import { Image, ScrollView, Text, View } from "react-native";
 
 const RestaurantDetails = () => {
   const { showSuccess } = useToastAll();
-
   const { id } = useLocalSearchParams();
-  const { selectedRestaurant } = useSelectedRestaurant({
+  const { selectedRestaurant, loading } = useSelectedRestaurant({
     restaurantId: Number(id),
   });
   const { token, user, updateSelectedRestaurant } = useAuthStore();
@@ -29,6 +30,7 @@ const RestaurantDetails = () => {
   }
 
   async function handleChooseRestaurant() {
+    // ... sua lógica continua a mesma
     try {
       if (!selectedRestaurant || !user || !user.company) return;
       const response = await CompanyRepository.updateCompanySelectedRestaurant(
@@ -55,8 +57,10 @@ const RestaurantDetails = () => {
     selectedRestaurant?.dishes[0]
   );
 
+  // 2. A View principal agora usa flex-1 para ocupar a tela toda
   return (
-    <View className="relative">
+    <View className="flex-1 bg-gray-50">
+      {/* OS BOTÕES FICAM FORA DA SCROLLVIEW PARA PERMANECEREM FIXOS */}
       <PressableButton
         className="absolute top-10 left-4 z-10"
         icon={<AntDesign name="arrow-left" size={14} color="white" />}
@@ -75,83 +79,90 @@ const RestaurantDetails = () => {
           onPress={handleChooseRestaurant}
         />
       )}
-      <Image
-        className="w-full h-40"
-        source={{ uri: selectedRestaurant?.profileImage }}
-      />
-      <View className="absolute top-36 w-full">
-        <View className="w-11/12 mx-auto pb-6 bg-white rounded-3xl border border-gray-100 ">
-          <Image
-            className="
-            w-24 h-24 rounded-full border-4 border-white object-cover absolute -top-12 z-10  left-1/2 -ml-12
-          "
-            source={{ uri: selectedRestaurant?.profileImage }}
-          />
 
-          <View className="pt-12 px-4">
-            <View className="mb-2 border-b pb-2 border-gray-200">
-              <Text className="text-2xl font-semibold text-textBody">
-                {selectedRestaurant?.name}
-              </Text>
-              <View className="flex flex-row gap-x-1 ">
-                <AntDesign
-                  name="star"
-                  size={12}
-                  color={COLORS.starsRating}
-                  className="flex align-middle justify-center"
-                />
-                <Text
-                  className="font-semibold"
-                  style={{ color: COLORS.starsRating }}
-                >
-                  {selectedRestaurant?.averageRating}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Image
+          className="w-full h-40"
+          source={{ uri: selectedRestaurant?.profileImage }}
+        />
+
+        <View className="-mt-6">
+          <View className="w-11/12 mx-auto pb-6 bg-white rounded-3xl border border-gray-100 ">
+            <Image
+              className="w-24 h-24 rounded-full border-4 border-white object-cover absolute -top-12 z-10 left-1/2 -ml-12"
+              source={{ uri: selectedRestaurant?.profileImage }}
+            />
+            <View className="pt-12 px-4">
+              <View className="mb-2 border-b pb-2 border-gray-200">
+                <Text className="text-2xl font-semibold text-textBody">
+                  {selectedRestaurant?.name}
                 </Text>
-                <Text className="text-textDescription">{`(${selectedRestaurant?.restaurantRatings.length} avaliações)`}</Text>
-              </View>
-            </View>
-            <View className="flex flex-row gap-x-4">
-              <View className="flex flex-row gap-x-4 ">
-                <View className="flex flex-row gap-x-1">
-                  <Ionicons
-                    name="restaurant-outline"
+                <View className="flex flex-row gap-x-1 ">
+                  <AntDesign
+                    name="star"
+                    size={12}
+                    color={COLORS.starsRating}
                     className="flex align-middle justify-center"
-                    size={14}
-                    color={COLORS.textDescription}
                   />
-                  <Text className="text-textDescription">
-                    Pratos:{" "}
-                    <Text className="font-semibold">
-                      {selectedRestaurant?.dishes.length}
-                    </Text>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: COLORS.starsRating }}
+                  >
+                    {selectedRestaurant?.averageRating}
                   </Text>
+                  <Text className="text-textDescription">{`(${selectedRestaurant?.restaurantRatings.length} avaliações)`}</Text>
                 </View>
               </View>
-              <View className="flex align-middle flex-row gap-x-2 ">
-                <Ionicons
-                  name="cash-outline"
-                  size={16}
-                  color={COLORS.priceText}
-                />
-                <Text
-                  style={{ color: COLORS.priceText }}
-                  className="text-sm text-gray-600 font-semibold"
-                >
-                  Pratos a partir de {formatPrice(cheapeastDishes?.price)}
-                </Text>
+              <View className="flex flex-row gap-x-4">
+                <View className="flex flex-row gap-x-4 ">
+                  <View className="flex flex-row gap-x-1">
+                    <Ionicons
+                      name="restaurant-outline"
+                      className="flex align-middle justify-center"
+                      size={14}
+                      color={COLORS.textDescription}
+                    />
+                    <Text className="text-textDescription">
+                      Pratos:{" "}
+                      <Text className="font-semibold">
+                        {selectedRestaurant?.dishes.length}
+                      </Text>
+                    </Text>
+                  </View>
+                </View>
+                <View className="flex align-middle flex-row gap-x-2 ">
+                  <Ionicons
+                    name="cash-outline"
+                    size={16}
+                    color={COLORS.priceText}
+                  />
+                  <Text
+                    style={{ color: COLORS.priceText }}
+                    className="text-sm text-gray-600 font-semibold"
+                  >
+                    Pratos a partir de {formatPrice(cheapeastDishes?.price)}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
         </View>
-      </View>
 
-      <View className="pt-6 px-8 border-t border-gray-200 absolute top-80 border w-full ">
-        <Text className="text-xl font-semibold text-textBody mb-4">Pratos</Text>
-        <View className="flex flex-row flex-wrap gap-x-8">
-          {selectedRestaurant?.dishes?.map((dish) => (
-            <DishCard key={dish.id} dish={dish} />
-          ))}
+        <View className="pt-6 px-4">
+          <Text className="text-xl font-semibold text-textBody mb-4">
+            Pratos
+          </Text>
+          <View className="flex flex-row flex-wrap gap-8">
+            {loading &&
+              Array.from({ length: 3 }).map((_, index) => (
+                <DishCardSkeleton key={index} />
+              ))}
+            {selectedRestaurant?.dishes?.map((dish) => (
+              <DishCard key={dish.id} dish={dish} />
+            ))}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };

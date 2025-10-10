@@ -1,9 +1,10 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
+import DishCardSkeleton from "@/components/Restaurant/Components/DishCard/DishCardSkeleton";
 import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
 import { useAuthStore } from "@/src/store/authStore";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const dishes = () => {
@@ -18,10 +19,11 @@ const dishes = () => {
         title="Pratos"
         subtitle="Gerencie os pratos do seu restaurante"
       />
-      <View className="flex flex-row items-center gap-x-6 mx-auto">
-        {loading && <Text>Carregando...</Text>}
+      <View className="flex flex-row flex-wrap gap-8 mx-auto">
+        {loading &&
+          Array.from({ length: 2 }).map((_, index) => <DishCardSkeleton />)}
         {selectedRestaurant?.dishes.map((dish) => (
-          <DishCard dish={dish} />
+          <DishCard key={dish.id} dish={dish} />
         ))}
       </View>
     </SafeAreaView>

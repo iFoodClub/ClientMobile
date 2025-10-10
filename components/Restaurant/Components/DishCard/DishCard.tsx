@@ -18,9 +18,9 @@ function handleDetails(dish: IDish) {
 const DishCard = ({ dish }: DishCardProps) => {
   return (
     <Pressable onPress={() => handleDetails(dish)}>
-      <View className="flex flex-col  w-28  h-52">
+      <View className="flex flex-col  w-24  h-60 ">
         <Image
-          className="w-full h-28 object-cover rounded-xl mb-4"
+          className="w-full h-24 object-cover rounded-xl mb-4"
           source={{ uri: dish?.image }}
         />
         <Text className="font-semibold text-textBody text-base mb-2">

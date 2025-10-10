@@ -22,9 +22,7 @@ const HomeScreen = () => {
             <RestaurantCardSkeleton key={index} />
           ))}
         {restaurants.map((restaurant) => (
-          <>
-            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-          </>
+          <RestaurantCard key={restaurant.id} restaurant={restaurant} />
         ))}
       </View>
     </SafeAreaView>
