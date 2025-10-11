@@ -18,7 +18,7 @@ const HomeScreen = () => {
           title="Restaurantes"
           subtitle="Navegue entre nossos restaurantes parceiros"
         />
-        <View className="mt-4 space-y-4">
+        <View className="mt-4 space-y-4 gap-y-4">
           {Array.from({ length: 5 }).map((_, index) => (
             <RestaurantCardSkeleton key={index} />
           ))}
@@ -33,6 +33,7 @@ const HomeScreen = () => {
         title="Restaurantes"
         subtitle="Navegue entre nossos restaurantes parceiros"
       />
+
       <FlatList
         data={restaurants}
         renderItem={({ item }) => (

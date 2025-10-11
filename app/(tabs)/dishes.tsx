@@ -6,20 +6,27 @@ import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
 import { useAuthStore } from "@/src/store/authStore";
 import React, { useState } from "react";
 
+import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
-import { COLORS } from "@/src/constants/colors";
+import { useToastAll } from "@/src/components/Toast";
 import { ICreateDishDTO } from "@/src/interfaces/interfaces";
+import DishRepository from "@/src/repository/dishRepository";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useForm } from "react-hook-form";
-import { Button, FlatList, Modal, Text, View } from "react-native";
+import { FlatList, Modal, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const DishesScreen = () => {
   const { user } = useAuthStore();
   const [modalVisible, setModalVisible] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const { showSuccess, showError } = useToastAll();
   const { selectedRestaurant, loading } = useSelectedRestaurant({
     restaurantId: user?.restaurant?.id,
   });
+
+  console.log(user?.restaurant?.id, selectedRestaurant?.id);
+
   const {
     control,
     handleSubmit,
@@ -28,6 +35,25 @@ const DishesScreen = () => {
   } = useForm<ICreateDishDTO>({
     mode: "onBlur",
   });
+
+  async function handleCreateDish(data: ICreateDishDTO) {
+    try {
+      setCreateLoading(true);
+      if (!selectedRestaurant?.id) return;
+      data = { ...data, restaurantId: selectedRestaurant?.id };
+      console.log("Dados sendo enviados", JSON.stringify(data, null, 2));
+      const response = await DishRepository.createDish(data);
+      console.log(JSON.stringify(response.data, null, 2));
+      showSuccess("Prato criado com sucesso!");
+      setModalVisible(false);
+      reset();
+    } catch (error) {
+      console.error(error);
+      showError("Erro ao criar prato.");
+    } finally {
+      setCreateLoading(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -72,19 +98,19 @@ const DishesScreen = () => {
           </View>
         )}
       />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View className="flex-1 items-center justify-center bg-black/70">
           <View className="bg-white p-4 rounded-lg w-11/12">
             <Text className="text-lg font-semibold mb-4">Novo Prato</Text>
 
-            <CustomInput control={control} name="image" label="Imagem" />
+            <CustomInput
+              control={control}
+              name="image"
+              label="Imagem"
+              rules={{
+                required: { value: true, message: "A imagem é obrigatória" },
+              }}
+            />
             <CustomInput
               control={control}
               name="name"
@@ -105,18 +131,14 @@ const DishesScreen = () => {
             />
             <View className="flex flex-col gap-y-2">
               <Button
-                color={COLORS.textDescription}
+                type="secondary"
                 onPress={() => setModalVisible(false)}
-                title="Cancelar"
+                text="Cancelar"
               />
               <Button
-                color={COLORS.primary}
-                onPress={handleSubmit((data) => {
-                  // selectedRestaurant?.createDish(data);
-                  setModalVisible(false);
-                  reset();
-                })}
-                title="Salvar"
+                loading={createLoading}
+                text="Criar"
+                onPress={handleSubmit(handleCreateDish)}
               />
             </View>
           </View>
@@ -124,7 +146,10 @@ const DishesScreen = () => {
       </Modal>
       <PressableButton
         className="absolute bottom-8 right-8"
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          setModalVisible(true);
+          reset();
+        }}
         icon={<AntDesign name="plus" size={24} color="white" />}
       />
     </View>

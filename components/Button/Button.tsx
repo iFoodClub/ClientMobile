@@ -8,6 +8,7 @@ type ButtonProps = {
   icon?: React.ReactNode;
   className?: string;
   loading?: boolean;
+  type?: "primary" | "secondary";
 };
 
 const Button = ({
@@ -16,15 +17,17 @@ const Button = ({
   disabled = false,
   icon,
   className,
+  type = "primary",
   loading,
 }: ButtonProps) => {
   const isDisabled = disabled || loading;
 
-  const finalClassName = `
-    px-4 py-4 bg-primary rounded-lg flex-row items-center justify-center w-full 
+  const finalClassName =
+    type === "primary"
+      ? ` px-4 py-2 bg-primary rounded-lg flex-row items-center justify-center w-full 
     ${isDisabled ? "opacity-70" : ""} 
-    ${className}
-  `;
+    ${className}`
+      : "border border-primary px-4 py-2 rounded-lg flex-row items-center justify-center w-full text-primary";
 
   return (
     <Pressable
@@ -36,9 +39,9 @@ const Button = ({
         {icon && !loading && icon}
 
         <Text
-          className={`text-white font-semibold text-body ${
-            icon && !loading ? "ml-2" : ""
-          }`}
+          className={`${
+            type === "primary" ? "text-white" : "text-primary"
+          } font-semibold text-body ${icon && !loading ? "ml-2" : ""}`}
         >
           {text}
         </Text>

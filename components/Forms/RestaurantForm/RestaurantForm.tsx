@@ -89,6 +89,7 @@ const RestaurantForm = () => {
         text="Atualizar"
         onPress={handleSubmit(onSubmit)}
         loading={loading}
+        disabled={isDirty ? false : true}
       />
     </View>
   );
