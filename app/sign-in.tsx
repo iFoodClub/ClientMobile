@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 //icons
 
 const SignInScreen = () => {
-  const { login, user } = useAuthStore();
+  const { login, user, loading } = useAuthStore();
 
   const { control, handleSubmit, reset } = useForm<ISignInForm>({
     mode: "onBlur",
@@ -77,7 +77,11 @@ const SignInScreen = () => {
             ))}
           </View>
         )}
-        <Button text="Entrar" onPress={handleSubmit(handleSignIn)} />
+        <Button
+          loading={loading}
+          text="Entrar"
+          onPress={handleSubmit(handleSignIn)}
+        />
 
         <Text className="mt-4 ">
           Não tem uma conta ?{" "}

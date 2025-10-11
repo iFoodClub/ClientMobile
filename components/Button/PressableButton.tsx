@@ -34,9 +34,7 @@ const PressableButton = ({
 
       {text && (
         <Text
-          className={`${
-            icon ? "ml-2" : ""
-          } text-primary font-semibold text-body`}
+          className={`${icon ? "ml-2" : ""} text-white font-semibold text-body`}
         >
           {text}
         </Text>

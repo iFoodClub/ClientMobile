@@ -11,6 +11,7 @@ type IAuthStore = {
   isLoggedIn: boolean;
   shouldCreateAccount: boolean;
   token: string;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   createAccount: () => void;
@@ -27,6 +28,7 @@ type IAuthStore = {
 export const useAuthStore = create<IAuthStore>()(
   persist(
     (set) => ({
+      loading: false,
       token: "",
       isRestaurant: false,
       isCompany: false,
@@ -36,8 +38,8 @@ export const useAuthStore = create<IAuthStore>()(
       user: null,
       login: async (email, password) => {
         try {
+          set({ loading: true });
           const response = await AuthRepository.login(email, password);
-
           set({
             token: response.data.token,
             isLoggedIn: true,
@@ -50,9 +52,9 @@ export const useAuthStore = create<IAuthStore>()(
             isCompany: response.data.userDetails.userType === UserType.company,
           });
         } catch (error) {
-          console.error("Erro no login:", error);
           Alert.alert("Erro", "Não foi possível fazer o login.");
-          throw error;
+        } finally {
+          set({ loading: false });
         }
       },
       logout: async () => {

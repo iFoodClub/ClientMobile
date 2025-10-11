@@ -91,3 +91,11 @@ export interface ICepResponse {
   ddd: string;
   siafi: string;
 }
+
+export interface ICreateDishDTO {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  restaurantId: number;
+}
