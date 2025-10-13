@@ -3,18 +3,23 @@ import { Alert } from "react-native";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { IUpdateRestaurantDTO } from "../interfaces/dtos";
 import { IUserDetailsResponse, UserType } from "../interfaces/interfaces";
 import AuthRepository from "../repository/authRepository";
 
 type IAuthStore = {
   isLoggedIn: boolean;
   shouldCreateAccount: boolean;
-  login: (email: string, password: string) => void;
+  token: string;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   createAccount: () => void;
   reset: () => void;
-  user: IUserDetailsResponse | null;
+  updateSelectedRestaurant: (id: number) => void;
+  updateUserRestaurant: (id: number, data: IUpdateRestaurantDTO) => void;
 
+  user: IUserDetailsResponse | null;
   isRestaurant: boolean;
   isCompany: boolean;
   isEmployee: boolean;
@@ -23,6 +28,8 @@ type IAuthStore = {
 export const useAuthStore = create<IAuthStore>()(
   persist(
     (set) => ({
+      loading: false,
+      token: "",
       isRestaurant: false,
       isCompany: false,
       isEmployee: false,
@@ -31,9 +38,10 @@ export const useAuthStore = create<IAuthStore>()(
       user: null,
       login: async (email, password) => {
         try {
+          set({ loading: true });
           const response = await AuthRepository.login(email, password);
-
           set({
+            token: response.data.token,
             isLoggedIn: true,
             shouldCreateAccount: false,
             user: response.data.userDetails,
@@ -44,18 +52,66 @@ export const useAuthStore = create<IAuthStore>()(
             isCompany: response.data.userDetails.userType === UserType.company,
           });
         } catch (error) {
-          console.error("Erro no login:", error);
           Alert.alert("Erro", "Não foi possível fazer o login.");
+        } finally {
+          set({ loading: false });
         }
       },
-      logout: () =>
-        set({
-          isLoggedIn: false,
-          user: null,
-          isCompany: false,
-          isEmployee: false,
-          isRestaurant: false,
-        }),
+      logout: async () => {
+        try {
+          await AuthRepository.logout();
+          set({
+            isLoggedIn: false,
+            user: null,
+            isCompany: false,
+            isEmployee: false,
+            isRestaurant: false,
+          });
+        } catch (error) {
+          console.log("Erro no logout:", error);
+          set({
+            isLoggedIn: false,
+            user: null,
+            isCompany: false,
+            isEmployee: false,
+            isRestaurant: false,
+          });
+        }
+      },
+      updateSelectedRestaurant: (id: number) => {
+        set((state) => {
+          if (!state.user || !state.user.company) {
+            return state;
+          }
+
+          return {
+            user: {
+              ...state.user,
+              company: {
+                ...state.user.company,
+                restaurantId: id,
+              },
+            },
+          };
+        });
+      },
+      updateUserRestaurant: (id: number, data: IUpdateRestaurantDTO) => {
+        set((state) => {
+          if (!state.user || !state.user.restaurant) {
+            return state;
+          }
+
+          return {
+            user: {
+              ...state.user,
+              restaurant: {
+                ...state.user.restaurant,
+                ...data,
+              },
+            },
+          };
+        });
+      },
       createAccount: () =>
         set({ isLoggedIn: false, shouldCreateAccount: true }),
       reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),

@@ -85,7 +85,7 @@ const TabsLayout = () => {
           key={name}
           name={name}
           options={{
-            sceneStyle: { padding: 12 },
+            sceneStyle: { backgroundColor: "#fff" },
             title,
             href,
             tabBarLabelStyle: { fontSize: 12 },

@@ -10,19 +10,26 @@ export interface ISignInForm {
 }
 
 export interface IRestaurant {
+  id: number;
+  userId: number;
   name: string;
+  cnpj: string;
   cep: string;
   rua: string;
   cidade: string;
   estado: string;
   number: string;
   complemento: string;
+  image: string;
 }
 export interface ICompany {
+  id: number;
+  userId: number;
   name: string;
+  cnpj: string;
   cep: string;
   number: string;
-  restaurantId?: number;
+  restaurantId: number;
 }
 
 export interface IBusiness {
@@ -54,12 +61,14 @@ export interface ICepResponse {
 }
 
 export interface IUserDetailsResponse {
+  token: string;
   id: number;
   email: string;
   name: string;
   profileImage: string;
   userType: UserType;
-  restaurant: IRestaurant;
+  restaurant?: IRestaurant;
+  company?: ICompany;
 }
 
 export interface ILoginResponse {
@@ -81,4 +90,12 @@ export interface ICepResponse {
   gia: string;
   ddd: string;
   siafi: string;
+}
+
+export interface ICreateDishDTO {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  restaurantId: number;
 }

@@ -3,6 +3,7 @@ import {
   IRestaurantDetailsResponse,
   IRestaurantResponse,
 } from "../interfaces/apiResponses";
+import { IUpdateRestaurantDTO } from "../interfaces/dtos";
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const api = axios.create({ baseURL });
@@ -18,6 +19,13 @@ const RestaurantRepository = {
       `/Restaurant/${id}`
     );
     return response;
+  },
+
+  async updateRestaurant(
+    id: number,
+    restaurantData: Partial<IUpdateRestaurantDTO>
+  ) {
+    return await api.put(`/Restaurant/${id}`, restaurantData);
   },
 };
 

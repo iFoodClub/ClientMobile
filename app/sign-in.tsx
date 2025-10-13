@@ -8,17 +8,26 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { Link } from "expo-router";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 //icons
 
 const SignInScreen = () => {
-  const { login, user } = useAuthStore();
-  const { control, handleSubmit } = useForm<ISignInForm>({
+  const { login, user, loading } = useAuthStore();
+
+  const { control, handleSubmit, reset } = useForm<ISignInForm>({
     mode: "onBlur",
     defaultValues: { email: "admin@tech.com", password: "restaurante123" },
   });
 
+  const testAccounts = [
+    { label: "Empresa", email: "empresa@tech.com", password: "123456" },
+    {
+      label: "Restaurante",
+      email: "admin@tech.com",
+      password: "restaurante123",
+    },
+  ];
 
   const handleSignIn: SubmitHandler<ISignInForm> = async (data) => {
     login(data.email, data.password);
@@ -53,8 +62,26 @@ const SignInScreen = () => {
       </View>
 
       <View className="mt-auto items-center">
-        <Button text="Entrar" onPress={handleSubmit(handleSignIn)} />
-
+        {__DEV__ && (
+          <View className="flex-row flex-wrap justify-center gap-2 mb-4">
+            {testAccounts.map((account) => (
+              <TouchableOpacity
+                key={account.label}
+                className="bg-gray-200 px-3 py-2 rounded-md"
+                onPress={() =>
+                  reset({ email: account.email, password: account.password })
+                }
+              >
+                <Text className="font-semibold">{account.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+        <Button
+          loading={loading}
+          text="Entrar"
+          onPress={handleSubmit(handleSignIn)}
+        />
 
         <Text className="mt-4 ">
           Não tem uma conta ?{" "}

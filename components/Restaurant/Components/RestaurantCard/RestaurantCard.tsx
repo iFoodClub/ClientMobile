@@ -1,5 +1,6 @@
 import { COLORS } from "@/src/constants/colors";
 import { IRestaurantResponse } from "@/src/interfaces/apiResponses";
+import { formatPrice } from "@/src/utils/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -85,7 +86,7 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
                   style={{ color: COLORS.priceText }}
                   className="text-sm text-gray-600 font-semibold"
                 >
-                  Pratos a partir de {minPrice ? minPrice : "R$ 5,00"}
+                  Pratos a partir de {formatPrice(minPrice)}
                 </Text>
               </View>
             </View>

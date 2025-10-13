@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 type ButtonProps = {
   onPress: () => void;
@@ -7,22 +7,54 @@ type ButtonProps = {
   disabled?: boolean;
   icon?: React.ReactNode;
   className?: string;
+  loading?: boolean;
+  type?: "primary" | "secondary";
 };
 
-const Button = ({ onPress, text, disabled = false, icon, className }: ButtonProps) => {
-  const defaultClassName = `px-4 py-4 ${
-    disabled ? "bg-gray-200" : "bg-primary"
-  } rounded-lg flex items-center w-full`;
-  
+const Button = ({
+  onPress,
+  text,
+  disabled = false,
+  icon,
+  className,
+  type = "primary",
+  loading,
+}: ButtonProps) => {
+  const isDisabled = disabled || loading;
+
+  const finalClassName =
+    type === "primary"
+      ? ` px-4 py-2 bg-primary rounded-lg flex-row items-center justify-center w-full 
+    ${isDisabled ? "opacity-70" : ""} 
+    ${className}`
+      : "border border-primary px-4 py-2 rounded-lg flex-row items-center justify-center w-full text-primary";
+
   return (
-    <TouchableOpacity
-      disabled={disabled}
+    <Pressable
       onPress={onPress}
-      className={className || defaultClassName}
+      disabled={isDisabled}
+      className={finalClassName}
     >
-      {icon && icon}
-      <Text className="text-white font-semibold text-body">{text}</Text>
-    </TouchableOpacity>
+      <View className="relative flex-row items-center">
+        {icon && !loading && icon}
+
+        <Text
+          className={`${
+            type === "primary" ? "text-white" : "text-primary"
+          } font-semibold text-body ${icon && !loading ? "ml-2" : ""}`}
+        >
+          {text}
+        </Text>
+
+        {loading && (
+          <ActivityIndicator
+            size="small"
+            color="white"
+            className="absolute left-full ml-2"
+          />
+        )}
+      </View>
+    </Pressable>
   );
 };
 
