@@ -1,0 +1,35 @@
+import { useCallback, useEffect, useState } from "react"; // 1. Importe o useCallback
+import { IDishesResponse } from "../interfaces/apiResponses";
+import DishRepository from "../repository/dishRepository";
+
+export const useDishes = (restaurantId: number | undefined) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [dishes, setDishes] = useState<IDishesResponse[]>([]);
+
+  // 2. Envolva a função com `useCallback` para otimização
+  const fetchDishes = useCallback(async () => {
+    if (!restaurantId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await DishRepository.fetchDishesByRestaurantId(
+        restaurantId
+      );
+      setDishes(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [restaurantId]); // A função será recriada se `restaurantId` mudar
+
+  useEffect(() => {
+    fetchDishes();
+  }, [fetchDishes]); // 3. O efeito agora roda quando a função é criada/recriada
+
+  // 4. Retorne a função `fetchDishes` junto com os outros estados
+  return { dishes, loading, fetchDishes };
+};
