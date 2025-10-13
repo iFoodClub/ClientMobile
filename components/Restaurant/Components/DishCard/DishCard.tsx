@@ -1,27 +1,33 @@
-import { IDish } from "@/src/interfaces/apiResponses";
+import { IDishesResponse } from "@/src/interfaces/apiResponses";
 import { formatPrice } from "@/src/utils/utils";
 import { router } from "expo-router";
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import {
+  GestureResponderEvent,
+  Image,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 
 type DishCardProps = {
-  dish: IDish;
+  dish: IDishesResponse;
+  onLongPress: (event: GestureResponderEvent) => void;
 };
 
-function handleDetails(dish: IDish) {
+function handleDetails(dish: IDishesResponse) {
   router.push({
     pathname: "/dish-details",
-    params: { ...dish },
   });
 }
 
-const DishCard = ({ dish }: DishCardProps) => {
+const DishCard = ({ dish, onLongPress }: DishCardProps) => {
   return (
-    <Pressable onPress={() => handleDetails(dish)}>
+    <Pressable onPress={() => handleDetails(dish)} onLongPress={onLongPress}>
       <View className="flex flex-col  w-24  h-60 ">
         <Image
           className="w-full h-24 object-cover rounded-xl mb-4"
-          source={{ uri: dish?.image }}
+          source={{ uri: dish.image }}
         />
         <Text className="font-semibold text-textBody text-base mb-2">
           {dish && formatPrice(dish?.price)}

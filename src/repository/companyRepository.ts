@@ -9,7 +9,6 @@ const CompanyRepository = {
     id: number,
     companyData: Partial<ICompany>
   ) {
-    console.log(JSON.stringify({ id, companyData }, null, 2));
     return await api.put(`/Company/${id}`, companyData);
   },
 };

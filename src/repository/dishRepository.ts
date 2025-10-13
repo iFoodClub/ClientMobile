@@ -7,11 +7,17 @@ const api = axios.create({ baseURL });
 
 const DishRepository = {
   async fetchDishesByRestaurantId(restaurantId: number) {
-    return await api.get<IDishesResponse>(`/Dish/${restaurantId}`);
+    return await api.get<IDishesResponse[]>(
+      `/Dish/by-restaurant/${restaurantId}`
+    );
   },
 
   async createDish(dishData: ICreateDishDTO) {
     return await api.post<IDishesResponse>("/Dish", dishData);
+  },
+
+  async deleteDish(dishId: number) {
+    return await api.delete(`/Dish/${dishId}`);
   },
 };
 

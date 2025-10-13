@@ -2,30 +2,85 @@ import PressableButton from "@/components/Button/PressableButton";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
 import DishCardSkeleton from "@/components/Restaurant/Components/DishCard/DishCardSkeleton";
-import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
 import { useAuthStore } from "@/src/store/authStore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
+import { ActionMenu } from "@/components/Restaurant/Components/DishCard/ActionMenu";
+import ModalCustom from "@/components/ui/Modal/ModalCustom";
 import { useToastAll } from "@/src/components/Toast";
+import { useDishes } from "@/src/hooks/useDishes";
+import { IDishesResponse } from "@/src/interfaces/apiResponses";
 import { ICreateDishDTO } from "@/src/interfaces/interfaces";
 import DishRepository from "@/src/repository/dishRepository";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useForm } from "react-hook-form";
-import { FlatList, Modal, Text, View } from "react-native";
+import {
+  FlatList,
+  GestureResponderEvent,
+  Modal,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const DishesScreen = () => {
   const { user } = useAuthStore();
+  const { dishes, loading, fetchDishes } = useDishes(user?.restaurant?.id);
+
   const [modalVisible, setModalVisible] = useState(false);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const { showSuccess, showError } = useToastAll();
-  const { selectedRestaurant, loading } = useSelectedRestaurant({
-    restaurantId: user?.restaurant?.id,
-  });
 
-  console.log(user?.restaurant?.id, selectedRestaurant?.id);
+  const [selectedDish, setSelectedDish] = useState<IDishesResponse | null>(
+    null
+  );
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  useEffect(() => {}, [selectedDish]);
+
+  function handleLongPress(
+    dish: IDishesResponse,
+    event: GestureResponderEvent
+  ) {
+    const { pageX, pageY } = event.nativeEvent;
+    setSelectedDish(dish);
+    setMenuPosition({
+      x: pageX,
+      y: pageY,
+    });
+  }
+
+  async function handleEdit() {
+    if (!selectedDish) return;
+
+    await fetchDishes();
+  }
+
+  async function handleDelete() {
+    setDeleteLoading(true);
+    if (!selectedDish?.restaurantId) return;
+    try {
+      await DishRepository.deleteDish(selectedDish.id);
+      await fetchDishes();
+      showSuccess("Prato removido com sucesso!");
+      setDeleteLoading(false);
+    } catch (error) {
+      console.error(error);
+      showError("Erro ao remover prato.");
+    } finally {
+      setDeleteLoading(false);
+      setRemoveModalVisible(false);
+      setSelectedDish(null);
+    } //TODO Colocar imagem padrão para quando não houver imagem em algum prato
+  }
 
   const {
     control,
@@ -39,13 +94,12 @@ const DishesScreen = () => {
   async function handleCreateDish(data: ICreateDishDTO) {
     try {
       setCreateLoading(true);
-      if (!selectedRestaurant?.id) return;
-      data = { ...data, restaurantId: selectedRestaurant?.id };
-      console.log("Dados sendo enviados", JSON.stringify(data, null, 2));
-      const response = await DishRepository.createDish(data);
-      console.log(JSON.stringify(response.data, null, 2));
+      if (!user?.restaurant?.id) return;
+      data = { ...data, restaurantId: user?.restaurant?.id };
+      await DishRepository.createDish(data);
       showSuccess("Prato criado com sucesso!");
       setModalVisible(false);
+      await fetchDishes();
       reset();
     } catch (error) {
       console.error(error);
@@ -72,12 +126,21 @@ const DishesScreen = () => {
   }
 
   return (
-    <View className="flex-1 bg-white relative">
+    <SafeAreaView className="flex-1 bg-white relative h-full ">
+      <PageHeader
+        title="Pratos"
+        subtitle="Gerencie os pratos do seu restaurante"
+      />
       <FlatList
-        data={selectedRestaurant?.dishes || []}
-        renderItem={({ item }) => <DishCard dish={item} />}
+        data={dishes || []}
+        renderItem={({ item }) => (
+          <DishCard
+            dish={item}
+            onLongPress={(event) => handleLongPress(item, event)}
+          />
+        )}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={3}
+        numColumns={4}
         columnWrapperStyle={{
           gap: 16,
         }}
@@ -86,18 +149,39 @@ const DishesScreen = () => {
           paddingHorizontal: 16,
           paddingVertical: 24,
         }}
-        ListHeaderComponent={() => (
-          <PageHeader
-            title="Pratos"
-            subtitle="Gerencie os pratos do seu restaurante"
-          />
-        )}
         ListEmptyComponent={() => (
           <View className="flex-1 items-center justify-center mt-20">
             <Text>Nenhum prato cadastrado ainda.</Text>
           </View>
         )}
       />
+
+      {selectedDish && (
+        <Pressable
+          className="absolute inset-0 z-5"
+          onPress={() => setSelectedDish(null)}
+        />
+      )}
+
+      {selectedDish && menuPosition && (
+        <ActionMenu
+          position={menuPosition}
+          onEdit={handleEdit}
+          onDelete={() => setRemoveModalVisible(true)}
+        />
+      )}
+
+      <ModalCustom
+        title="Remover Prato"
+        visible={removeModalVisible}
+        onConfirm={handleDelete}
+        onClose={() => setRemoveModalVisible(false)}
+        confirmText="Remover"
+      >
+        <Text className="mb-8 text-base">
+          Tem certeza que deseja remover o prato {selectedDish?.name}{" "}
+        </Text>
+      </ModalCustom>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View className="flex-1 items-center justify-center bg-black/70">
           <View className="bg-white p-4 rounded-lg w-11/12">
@@ -116,18 +200,30 @@ const DishesScreen = () => {
               name="name"
               label="Nome"
               maxLength={80}
+              rules={{
+                required: { value: true, message: "O nome é obrigatório" },
+              }}
             />
             <CustomInput
               control={control}
               name="description"
               label="Descrição"
               maxLength={255}
+              rules={{
+                required: {
+                  value: true,
+                  message: "A descrição é obrigatória",
+                },
+              }}
             />
             <CustomInput
               control={control}
               name="price"
               label="Preço"
               keyboardType="numeric"
+              rules={{
+                required: { value: true, message: "O preço é obrigatório" },
+              }}
             />
             <View className="flex flex-col gap-y-2">
               <Button
@@ -145,14 +241,14 @@ const DishesScreen = () => {
         </View>
       </Modal>
       <PressableButton
-        className="absolute bottom-8 right-8"
+        className="absolute bottom-4 right-8"
         onPress={() => {
           setModalVisible(true);
           reset();
         }}
         icon={<AntDesign name="plus" size={24} color="white" />}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
