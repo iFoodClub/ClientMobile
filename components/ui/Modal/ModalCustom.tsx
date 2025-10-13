@@ -11,7 +11,7 @@ import {
 type ModalCustomProps = {
   visible: boolean;
   onClose: () => void;
-  title: string;
+  title: string | React.ReactNode;
   children: React.ReactNode;
   onConfirm?: () => void;
   confirmText?: string;

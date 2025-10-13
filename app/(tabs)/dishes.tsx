@@ -3,10 +3,9 @@ import PageHeader from "@/components/PageHeader/PageHeader";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
 import DishCardSkeleton from "@/components/Restaurant/Components/DishCard/DishCardSkeleton";
 import { useAuthStore } from "@/src/store/authStore";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import Button from "@/components/Button/Button";
-import CustomInput from "@/components/CustomInput/CustomInput";
+import DishForm from "@/components/Forms/DishForm/DishForm";
 import { ActionMenu } from "@/components/Restaurant/Components/DishCard/ActionMenu";
 import ModalCustom from "@/components/ui/Modal/ModalCustom";
 import { useToastAll } from "@/src/components/Toast";
@@ -19,7 +18,6 @@ import { useForm } from "react-hook-form";
 import {
   FlatList,
   GestureResponderEvent,
-  Modal,
   Pressable,
   Text,
   View,
@@ -29,22 +27,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const DishesScreen = () => {
   const { user } = useAuthStore();
   const { dishes, loading, fetchDishes } = useDishes(user?.restaurant?.id);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const { showSuccess, showError } = useToastAll();
-
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedDish, setSelectedDish] = useState<IDishesResponse | null>(
     null
   );
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [menuPosition, setMenuPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
-
-  useEffect(() => {}, [selectedDish]);
 
   function handleLongPress(
     dish: IDishesResponse,
@@ -58,10 +52,25 @@ const DishesScreen = () => {
     });
   }
 
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<ICreateDishDTO>({
+    mode: "onBlur",
+  });
+
   async function handleEdit() {
     if (!selectedDish) return;
+    reset({
+      name: selectedDish.name,
+      description: selectedDish.description,
+      price: selectedDish.price,
+      image: selectedDish.image,
+    });
 
-    await fetchDishes();
+    setModalVisible(true);
   }
 
   async function handleDelete() {
@@ -82,15 +91,6 @@ const DishesScreen = () => {
     } //TODO Colocar imagem padrão para quando não houver imagem em algum prato
   }
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isDirty },
-  } = useForm<ICreateDishDTO>({
-    mode: "onBlur",
-  });
-
   async function handleCreateDish(data: ICreateDishDTO) {
     try {
       setCreateLoading(true);
@@ -106,6 +106,14 @@ const DishesScreen = () => {
       showError("Erro ao criar prato.");
     } finally {
       setCreateLoading(false);
+    }
+  }
+
+  async function handleSubmitDishForm(data: ICreateDishDTO) {
+    if (selectedDish) {
+      await handleEdit();
+    } else {
+      await handleCreateDish(data);
     }
   }
 
@@ -182,69 +190,41 @@ const DishesScreen = () => {
           Tem certeza que deseja remover o prato {selectedDish?.name}{" "}
         </Text>
       </ModalCustom>
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <View className="flex-1 items-center justify-center bg-black/70">
-          <View className="bg-white p-4 rounded-lg w-11/12">
-            <Text className="text-lg font-semibold mb-4">Novo Prato</Text>
+      <ModalCustom
+        confirmText={selectedDish ? "Editar" : "Criar"}
+        onConfirm={handleSubmit(handleSubmitDishForm)}
+        onClose={() => {
+          setModalVisible(false);
+          setSelectedDish(null);
+          reset();
+        }}
+        visible={modalVisible}
+        title={
+          selectedDish ? (
+            <>
+              <Text>Editar prato</Text>{" "}
+              <Text className="font-semibold text-primary">
+                {selectedDish.name}
+              </Text>
+            </>
+          ) : (
+            <Text>Novo prato</Text>
+          )
+        }
+      >
+        <DishForm control={control} />
+      </ModalCustom>
 
-            <CustomInput
-              control={control}
-              name="image"
-              label="Imagem"
-              rules={{
-                required: { value: true, message: "A imagem é obrigatória" },
-              }}
-            />
-            <CustomInput
-              control={control}
-              name="name"
-              label="Nome"
-              maxLength={80}
-              rules={{
-                required: { value: true, message: "O nome é obrigatório" },
-              }}
-            />
-            <CustomInput
-              control={control}
-              name="description"
-              label="Descrição"
-              maxLength={255}
-              rules={{
-                required: {
-                  value: true,
-                  message: "A descrição é obrigatória",
-                },
-              }}
-            />
-            <CustomInput
-              control={control}
-              name="price"
-              label="Preço"
-              keyboardType="numeric"
-              rules={{
-                required: { value: true, message: "O preço é obrigatório" },
-              }}
-            />
-            <View className="flex flex-col gap-y-2">
-              <Button
-                type="secondary"
-                onPress={() => setModalVisible(false)}
-                text="Cancelar"
-              />
-              <Button
-                loading={createLoading}
-                text="Criar"
-                onPress={handleSubmit(handleCreateDish)}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
       <PressableButton
         className="absolute bottom-4 right-8"
         onPress={() => {
           setModalVisible(true);
-          reset();
+          reset({
+            name: undefined,
+            description: undefined,
+            price: undefined,
+            image: undefined,
+          });
         }}
         icon={<AntDesign name="plus" size={24} color="white" />}
       />
