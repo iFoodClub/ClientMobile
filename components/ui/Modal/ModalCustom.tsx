@@ -54,7 +54,7 @@ const ModalCustom = ({
             <Pressable
               onPress={onClose}
               disabled={loading}
-              className="px-4 py-2 rounded-md border border-primary text-primary"
+              className="px-4 py-4 flex-1 text-center rounded-md justify-center border border-primary text-primary"
             >
               <Text className="font-semibold text-primary">{cancelText}</Text>
             </Pressable>
@@ -63,7 +63,7 @@ const ModalCustom = ({
               <Pressable
                 onPress={onConfirm}
                 disabled={loading}
-                className={`px-4 py-2 rounded-md bg-primary flex-row items-center ${
+                className={`px-4 flex-1 py-4 rounded-md bg-primary flex-row items-center justify-center ${
                   loading ? "opacity-50" : ""
                 }`}
               >
@@ -74,7 +74,9 @@ const ModalCustom = ({
                     className="mr-2"
                   />
                 )}
-                <Text className="font-semibold text-white">{confirmText}</Text>
+                <Text className="font-semibold text-white text-center">
+                  {confirmText}
+                </Text>
               </Pressable>
             )}
           </View>

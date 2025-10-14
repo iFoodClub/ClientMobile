@@ -18,22 +18,22 @@ const DishCardSkeleton = () => {
         <Skeleton
           colors={skeletonColors}
           radius="square"
-          height={120}
-          width={120}
+          height={80}
+          width={80}
           transition={transition}
         />
         <Skeleton
           colors={skeletonColors}
           radius="square"
           height={20}
-          width={100}
+          width={90}
           transition={transition}
         />
         <Skeleton
           colors={skeletonColors}
           radius="square"
           height={20}
-          width={100}
+          width={90}
           transition={transition}
         />
       </View>
