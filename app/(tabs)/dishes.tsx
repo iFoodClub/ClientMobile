@@ -220,7 +220,7 @@ const DishesScreen = () => {
       </ModalCustom>
 
       <PressableButton
-        className="absolute bottom-4 right-8"
+        className="absolute bottom-8 right-8"
         onPress={() => {
           setModalVisible(true);
           reset({

@@ -6,10 +6,10 @@ const api = axios.create({ baseURL: baseUrl });
 
 const EmployeeRepository = {
   async getEmployees(companyId: number) {
-    try {
-      const response = await api.get<IEmployeeResponse[]>(
-        `/company/${companyId}/employees`
-      );
-    } catch (error) {}
+    return await api.get<IEmployeeResponse[]>(
+      `/company/${companyId}/employees`
+    );
   },
 };
+
+export default EmployeeRepository;
