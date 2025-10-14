@@ -68,3 +68,14 @@ export interface IRestaurantDetailsResponse {
   restaurantRatings: IRestaurantRating[];
   averageRating: number;
 }
+
+export interface IEmployeeResponse {
+  id: number;
+  userId: number;
+  companyId: number;
+  name: string;
+  cpf: string;
+  birthDate: string;
+  vacation: boolean;
+  profileImage: string;
+}

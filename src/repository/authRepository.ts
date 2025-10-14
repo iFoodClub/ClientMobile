@@ -8,7 +8,6 @@ import { useAuthStore } from "../store/authStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const api = axios.create({ baseURL });
-console.log(JSON.stringify({ baseURL }, null, 2));
 
 const AuthRepository = {
   async isAvaliableEmail(email: string) {
