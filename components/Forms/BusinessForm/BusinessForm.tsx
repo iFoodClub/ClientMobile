@@ -54,7 +54,7 @@ const BusinessForm = ({
   ];
 
   return (
-    <View>
+    <View className="px-4">
       <View className="flex flex-row justify-between items-baseline">
         <Text className="text-2xl mb-10">
           {restaurantStepsInfo[step - 2].title}

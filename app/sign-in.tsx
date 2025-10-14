@@ -21,7 +21,7 @@ const SignInScreen = () => {
   });
 
   const testAccounts = [
-    { label: "Empresa", email: "empresa@tech.com", password: "123456" },
+    { label: "Empresa", email: "company@tech.com", password: "empresa123" },
     {
       label: "Restaurante",
       email: "admin@tech.com",
@@ -34,13 +34,13 @@ const SignInScreen = () => {
   };
 
   return (
-    <SafeAreaView className="px-6 py-4 bg-white flex-1">
+    <SafeAreaView className=" py-4 bg-white flex-1">
       <PageHeader
         title="Bem vindo de volta!"
         subtitle="Digite suas credenciais para entrar na sua conta"
       />
 
-      <View className="gap-4">
+      <View className="gap-4 px-4">
         <CustomInput
           control={control}
           name="email"
@@ -61,7 +61,7 @@ const SignInScreen = () => {
         />
       </View>
 
-      <View className="mt-auto items-center">
+      <View className="mt-auto items-center px-4">
         {__DEV__ && (
           <View className="flex-row flex-wrap justify-center gap-2 mb-4">
             {testAccounts.map((account) => (

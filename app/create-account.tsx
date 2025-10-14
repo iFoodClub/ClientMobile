@@ -58,14 +58,14 @@ const CreateAccount = () => {
 
   return (
     <SafeAreaView className="bg-white">
-      <View className="h-full px-6 ">
+      <View className="h-full  ">
         <PageHeader
           title="Criar Conta"
           subtitle=" Iremos guiar você para criar a sua conta"
         />
 
         {step === 1 && (
-          <View>
+          <View className="px-4">
             <Text className="text-2xl mb-10">
               Você quer se cadastrar como um(a):{" "}
             </Text>
@@ -135,7 +135,7 @@ const CreateAccount = () => {
           </View>
         )}
 
-        <View className="mt-auto items-center ">
+        <View className="mt-auto items-center px-4 ">
           {step != 4 && <Button text="Seguir" onPress={handleNextStep} />}
           {step === 4 && (
             <Button text="Criar conta" onPress={handleSubmit(onSubmit)} />
@@ -143,7 +143,7 @@ const CreateAccount = () => {
           <Text className="mt-4">
             Já tem uma conta?{" "}
             <Link className="text-primary font-semibold" href="/sign-in">
-              Login
+              Entrar
             </Link>{" "}
           </Text>
         </View>

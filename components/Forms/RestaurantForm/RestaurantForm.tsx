@@ -6,7 +6,7 @@ import RestaurantRepository from "@/src/repository/restaurantRepository";
 import { useAuthStore } from "@/src/store/authStore";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const RestaurantForm = () => {
   const { user, updateUserRestaurant } = useAuthStore();
@@ -59,7 +59,7 @@ const RestaurantForm = () => {
   }
 
   return (
-    <View className="px-4">
+    <SafeAreaView className="px-4">
       <CustomInput control={control} name="name" label="Nome" />
       <CustomInput
         control={control}
@@ -91,7 +91,7 @@ const RestaurantForm = () => {
         loading={loading}
         disabled={isDirty ? false : true}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

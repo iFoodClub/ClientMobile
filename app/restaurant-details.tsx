@@ -57,18 +57,18 @@ const RestaurantDetails = () => {
     selectedRestaurant?.dishes[0]
   );
 
-  // 2. A View principal agora usa flex-1 para ocupar a tela toda
+  function handleLongPress(id: number): void {}
+
   return (
     <View className="flex-1 bg-gray-50">
-      {/* OS BOTÕES FICAM FORA DA SCROLLVIEW PARA PERMANECEREM FIXOS */}
       <PressableButton
-        className="absolute top-10 left-4 z-10"
+        className="absolute top-14 left-4 z-10"
         icon={<AntDesign name="arrow-left" size={14} color="white" />}
         onPress={handleBkackPress}
       />
       {user?.userType === UserType.company && (
         <PressableButton
-          className="absolute top-10 right-4 z-10"
+          className="absolute top-14 right-4 z-10"
           icon={
             user?.company?.restaurantId === selectedRestaurant?.id ? (
               <Ionicons name="restaurant" size={20} color="white" />
@@ -158,7 +158,11 @@ const RestaurantDetails = () => {
                 <DishCardSkeleton key={index} />
               ))}
             {selectedRestaurant?.dishes?.map((dish) => (
-              <DishCard key={dish.id} dish={dish} />
+              <DishCard
+                key={dish.id}
+                dish={dish}
+                onLongPress={() => handleLongPress(dish.id)}
+              />
             ))}
           </View>
         </View>

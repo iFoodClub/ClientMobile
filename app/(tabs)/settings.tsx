@@ -20,7 +20,9 @@ const SettingsScreen = () => {
 
   const configItens = [
     {
-      icon: <Entypo name="text-document" size={24} color={COLORS.textBody} />,
+      icon: (
+        <Entypo name="text-document" size={24} color={COLORS.textDescription} />
+      ),
       label: `Informações ${
         user?.userType === UserType.company
           ? "da empresa"
@@ -31,7 +33,9 @@ const SettingsScreen = () => {
       onPress: handleUpdateInfo,
     },
     {
-      icon: <MaterialIcons name="logout" size={24} color={COLORS.textBody} />,
+      icon: (
+        <MaterialIcons name="logout" size={24} color={COLORS.textDescription} />
+      ),
       label: "Sair",
       onPress: logout,
     },
@@ -42,13 +46,15 @@ const SettingsScreen = () => {
       <PageHeader title="Configurações" subtitle="Configure a sua conta" />
 
       <View className="border border-gray-200 w-11/12 mx-auto p-4  rounded-2xl flex flex-row justify-between  ">
-        <View className="flex flex-col justify-center items-center  w-3/5 ">
+        <View className="flex flex-col justify-center items-center  w-3/5  ">
           <Image
             className="w-28 h-28 rounded-full border-4 border-white shadow-md"
             source={{ uri: user?.profileImage }}
           />
-          <View className="flex flex-col items-center ">
-            <Text className=" font-bold text-xl">{user?.restaurant?.name}</Text>
+          <View className="flex flex-col items-center w-full    ">
+            <Text className=" font-bold text-xl w-full text-center ">
+              {user?.restaurant?.name}
+            </Text>
             <Text className="text-gray-400 font-medium">
               {user?.restaurant?.cidade}, {user?.restaurant?.estado}
             </Text>

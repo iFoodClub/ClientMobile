@@ -124,7 +124,7 @@ const DishesScreen = () => {
           title="Pratos"
           subtitle="Gerencie os pratos do seu restaurante"
         />
-        <View className="flex-row flex-wrap justify-around gap-4 mt-4">
+        <View className="flex-row flex-wrap  gap-4 mt-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <DishCardSkeleton key={index} />
           ))}
@@ -183,7 +183,11 @@ const DishesScreen = () => {
         title="Remover Prato"
         visible={removeModalVisible}
         onConfirm={handleDelete}
-        onClose={() => setRemoveModalVisible(false)}
+        onClose={() => {
+          setRemoveModalVisible(false);
+          setModalVisible(false);
+          setSelectedDish(null);
+        }}
         confirmText="Remover"
       >
         <Text className="mb-8 text-base">

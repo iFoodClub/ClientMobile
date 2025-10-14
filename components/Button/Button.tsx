@@ -24,7 +24,7 @@ const Button = ({
 
   const finalClassName =
     type === "primary"
-      ? ` px-4 py-2 bg-primary rounded-lg flex-row items-center justify-center w-full 
+      ? ` px-4 py-2 h-14 bg-primary rounded-lg flex-row items-center justify-center w-full 
     ${isDisabled ? "opacity-70" : ""} 
     ${className}`
       : "border border-primary px-4 py-2 rounded-lg flex-row items-center justify-center w-full text-primary";
