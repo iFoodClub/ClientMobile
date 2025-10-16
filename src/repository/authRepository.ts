@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IEmployeeDTO } from "../interfaces/dtos";
 import {
   IBusiness,
   ICepResponse,
@@ -39,6 +40,12 @@ const AuthRepository = {
   },
 
   createBusiness(data: IBusiness) {
+    return api.post("/user", data);
+  },
+
+  createEmployee(data: IEmployeeDTO) {
+    console.log("criando colaborador");
+    console.log(JSON.stringify(data, null, 2));
     return api.post("/user", data);
   },
 
