@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IEmployeeResponse } from "../interfaces/apiResponses";
+import { IEmployeeDTO } from "../interfaces/dtos";
 import EmployeeRepository from "../repository/employeeRepository";
 
 export const useEmployees = (companyId: number | undefined) => {
@@ -31,10 +32,23 @@ export const useEmployees = (companyId: number | undefined) => {
     }
   }
 
+  async function createEmployee(data: IEmployeeDTO) {
+    try {
+      setLoading(true);
+      await EmployeeRepository.createEmployee(data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     employees,
     deleteEmployee,
     loading,
     fetchEmployees,
+    createEmployee,
   };
 };

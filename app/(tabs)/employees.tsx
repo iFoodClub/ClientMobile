@@ -9,7 +9,6 @@ import { useEmployees } from "@/src/hooks/useEmployees";
 import { IEmployeeResponse } from "@/src/interfaces/apiResponses";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
 import { formMode, UserType } from "@/src/interfaces/interfaces";
-import EmployeeRepository from "@/src/repository/employeeRepository";
 import { useAuthStore } from "@/src/store/authStore";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
@@ -22,9 +21,8 @@ const EmployeesScreen = () => {
   const { user } = useAuthStore();
   const { showSuccess, showError } = useToastAll();
   const [mode, setMode] = useState<formMode>(formMode.create);
-  const { employees, fetchEmployees, deleteEmployee, loading } = useEmployees(
-    user?.company?.id
-  );
+  const { employees, fetchEmployees, deleteEmployee, loading, createEmployee } =
+    useEmployees(user?.company?.id);
 
   const [createEmployeeLoading, setCreateEmployeeLoading] =
     useState<boolean>(false);
@@ -53,18 +51,17 @@ const EmployeesScreen = () => {
       company: { id: user.company.id },
     };
 
+    console.log(JSON.stringify(data, null, 2));
+
     try {
       setCreateEmployeeLoading(true);
-
-      await EmployeeRepository.createEmployee(data);
-
+      await createEmployee(data);
       showSuccess(
         `Colaborador ${
           mode === formMode.create ? "criado" : "atualizado"
         } com sucesso!`
       );
       setEmployeeModalVisible(false);
-      await fetchEmployees();
     } catch (error) {
       showError(
         `Erro ao ${
@@ -154,7 +151,6 @@ const EmployeesScreen = () => {
               cpf: "",
               profileImage: "",
               employee: { birthDate: "" },
-              // Certifique-se de incluir todos os campos do seu IEmployeeDTO
             });
             setEmployeeModalVisible(true);
           }}
@@ -171,7 +167,7 @@ const EmployeesScreen = () => {
           onConfirm={handleSubmit(handleSubmitForm)}
           confirmText={mode === formMode.create ? "Criar" : "Salvar"}
         >
-          <EmployeeForm control={control} />
+          <EmployeeForm mode={mode} control={control} />
         </ModalCustom>
       </SafeAreaView>
     </Pressable>

@@ -1,14 +1,18 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
+import { formMode } from "@/src/interfaces/interfaces";
 import React from "react";
 import { Control } from "react-hook-form";
 import { ScrollView } from "react-native";
 
 type EmployeeFormProps = {
   control: Control<IEmployeeDTO>;
+  mode: formMode;
 };
 
-const EmployeeForm = ({ control }: EmployeeFormProps) => {
+const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
+  console.log({ mode });
+
   return (
     <ScrollView className=" px-4 ">
       <CustomInput
@@ -37,30 +41,34 @@ const EmployeeForm = ({ control }: EmployeeFormProps) => {
           required: { value: true, message: "O e-mail é obrigatório" },
         }}
       />
-      <CustomInput
-        control={control}
-        name="password"
-        label="Senha"
-        rules={{
-          minLength: {
-            value: 6,
-            message: "A senha precisa ter 6 caracteres",
-          },
-          required: { value: true, message: "A senha é obrigatória" },
-        }}
-      />
-      <CustomInput
-        control={control}
-        name="password2"
-        label="Confirme a senha"
-        rules={{
-          minLength: {
-            value: 6,
-            message: "A senha precisa ter 6 caracteres",
-          },
-          required: { value: true, message: "A senha é obrigatória" },
-        }}
-      />
+      {mode === formMode.create && (
+        <CustomInput
+          control={control}
+          name="password"
+          label="Senha"
+          rules={{
+            minLength: {
+              value: 6,
+              message: "A senha precisa ter 6 caracteres",
+            },
+            required: { value: true, message: "A senha é obrigatória" },
+          }}
+        />
+      )}
+      {mode === formMode.create && (
+        <CustomInput
+          control={control}
+          name="password2"
+          label="Confirme a senha"
+          rules={{
+            minLength: {
+              value: 6,
+              message: "A senha precisa ter 6 caracteres",
+            },
+            required: { value: true, message: "A senha é obrigatória" },
+          }}
+        />
+      )}
       <CustomInput
         control={control}
         name="profileImage"
