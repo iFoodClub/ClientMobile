@@ -16,6 +16,10 @@ const EmployeeRepository = {
     console.log("criando funcionario");
     return await api.post<IEmployeeDTO>("/user", employeeData);
   },
+
+  async deleteEmployee(employeeId: number) {
+    return await api.delete(`/employee/${employeeId}`);
+  },
 };
 
 export default EmployeeRepository;

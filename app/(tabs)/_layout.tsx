@@ -1,8 +1,8 @@
 import { COLORS } from "@/src/constants/colors";
 import { useAuthStore } from "@/src/store/authStore";
+import { Octicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Octicons from "@expo/vector-icons/Octicons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { Tabs } from "expo-router";
@@ -50,6 +50,19 @@ const TabsLayout = () => {
         />
       ),
     },
+
+    {
+      name: "employees",
+      title: "Funcionários",
+      href: isCompany ? "/employees" : null,
+      icon: ({ focused, color }: TabBarIconProps) => (
+        <SimpleLineIcons
+          name="people"
+          size={24}
+          color={focused ? COLORS.primary : color}
+        />
+      ),
+    },
     {
       name: "settings",
       title: "Perfil",
@@ -63,18 +76,6 @@ const TabsLayout = () => {
       options: {
         tabBarLabelStyle: { fontSize: 12 },
       },
-    },
-    {
-      name: "employees",
-      title: "Funcionários",
-      href: isCompany ? "/employees" : null,
-      icon: ({ focused, color }: TabBarIconProps) => (
-        <SimpleLineIcons
-          name="people"
-          size={24}
-          color={focused ? COLORS.primary : color}
-        />
-      ),
     },
   ];
 

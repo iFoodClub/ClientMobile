@@ -45,7 +45,6 @@ const HomeScreen = () => {
         ItemSeparatorComponent={() => <View className="h-4" />}
         ListEmptyComponent={() => (
           <View className="items-center mt-20">
-            {/* TODO - Usar imagens para listas vazias  */}
             <Text>Nenhum restaurante encontrado.</Text>
           </View>
         )}

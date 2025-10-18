@@ -11,7 +11,6 @@ export const useEmployees = (companyId: number | undefined) => {
       setLoading(true);
       if (!companyId) return;
       const response = await EmployeeRepository.getEmployees(companyId);
-      console.log(JSON.stringify(response.data, null, 2));
       setEmployees(response.data);
     } catch (error) {
       console.error(error);
@@ -20,8 +19,21 @@ export const useEmployees = (companyId: number | undefined) => {
     }
   }
 
+  async function deleteEmployee(employeeId: number) {
+    try {
+      setLoading(true);
+      await EmployeeRepository.deleteEmployee(employeeId);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     employees,
+    deleteEmployee,
     loading,
     fetchEmployees,
   };

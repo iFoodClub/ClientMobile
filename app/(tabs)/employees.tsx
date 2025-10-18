@@ -1,9 +1,12 @@
 import PressableButton from "@/components/Button/PressableButton";
+import EmployeeCard from "@/components/EmployeeCard/EmployeeCard";
+import EmployeeCardSkeleton from "@/components/EmployeeCard/EmployeeCardSkeleton";
 import EmployeeForm from "@/components/Forms/EmployeeForm/EmployeeForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
-import CModal from "@/components/ui/Modal/CModal";
+import ModalCustom from "@/components/ui/Modal/ModalCustom";
 import { useToastAll } from "@/src/components/Toast";
 import { useEmployees } from "@/src/hooks/useEmployees";
+import { IEmployeeResponse } from "@/src/interfaces/apiResponses";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
 import { formMode, UserType } from "@/src/interfaces/interfaces";
 import EmployeeRepository from "@/src/repository/employeeRepository";
@@ -11,17 +14,23 @@ import { useAuthStore } from "@/src/store/authStore";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const employees = () => {
+const EmployeesScreen = () => {
   const [employeeModalVisible, setEmployeeModalVisible] = useState(false);
   const { user } = useAuthStore();
   const { showSuccess, showError } = useToastAll();
-  const { employees, fetchEmployees } = useEmployees(user?.company?.id);
+  const [mode, setMode] = useState<formMode>(formMode.create);
+  const { employees, fetchEmployees, deleteEmployee, loading } = useEmployees(
+    user?.company?.id
+  );
+
   const [createEmployeeLoading, setCreateEmployeeLoading] =
     useState<boolean>(false);
-  const [mode, setMode] = useState<formMode>(formMode.create);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     fetchEmployees();
@@ -41,73 +50,132 @@ const employees = () => {
     data = {
       ...data,
       userType: UserType.employee,
-      company: { id: user?.company?.id },
+      company: { id: user.company.id },
     };
 
     try {
       setCreateEmployeeLoading(true);
-      const response = await EmployeeRepository.createEmployee(data);
-      console.log(JSON.stringify(response.data, null, 2));
-      showSuccess("Colaborador criado com sucesso!");
+
+      await EmployeeRepository.createEmployee(data);
+
+      showSuccess(
+        `Colaborador ${
+          mode === formMode.create ? "criado" : "atualizado"
+        } com sucesso!`
+      );
       setEmployeeModalVisible(false);
       await fetchEmployees();
     } catch (error) {
-      showError("Erro ao criar colaborador.");
+      showError(
+        `Erro ao ${
+          mode === formMode.create ? "criar" : "atualizar"
+        } colaborador.`
+      );
     } finally {
       setCreateEmployeeLoading(false);
     }
   }
 
+  function handleEdit(employee: IEmployeeResponse) {
+    console.log(JSON.stringify(employee, null, 2));
+    setMode(formMode.update);
+    reset({
+      name: "employee.name",
+      email: "eudevosermudado@gmail.com",
+      password: "",
+      password2: "",
+      cpf: employee.cpf,
+      profileImage: employee.profileImage,
+      employee: { birthDate: employee.birthDate },
+      // Certifique-se de incluir todos os campos do seu IEmployeeDTO
+    });
+
+    setEmployeeModalVisible(true);
+    setSelectedEmployeeId(null);
+  }
+
+  async function handleDelete(employeeId: number) {
+    console.log({ employeeId });
+    try {
+      await deleteEmployee(employeeId);
+      showSuccess("Funcionário deletado com sucesso!");
+      await fetchEmployees();
+    } catch (error) {
+      showError("Erro ao deletar funcionário.");
+    } finally {
+      setSelectedEmployeeId(null);
+    }
+  }
+
   return (
-    <SafeAreaView className="bg-white flex-1">
-      <PageHeader title="Funcionários" subtitle="Gerencie seus colaboradores" />
-
-      <FlatList
-        data={employees}
-        renderItem={({ item: employee }) => (
-          <>
-            <Text>{employee.name}</Text>
-          </>
+    <Pressable onPress={() => setSelectedEmployeeId(null)} className="flex-1">
+      <SafeAreaView className="bg-white flex-1">
+        <PageHeader
+          title="Funcionários"
+          subtitle="Gerencie seus colaboradores"
+        />
+        {loading && (
+          <View className="mt-4 space-y-4 gap-y-4">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <EmployeeCardSkeleton key={index} />
+            ))}
+          </View>
         )}
-        numColumns={1}
-        ItemSeparatorComponent={() => <View className="h-4"></View>}
-        contentContainerStyle={{ paddingVertical: 24 }}
-      />
+        {!loading && (
+          <FlatList
+            className="px-4"
+            data={employees}
+            renderItem={({ item }) => (
+              <EmployeeCard
+                employee={item}
+                isSelected={selectedEmployeeId === item.id}
+                onLongPress={() => setSelectedEmployeeId(item.id)}
+                onEdit={handleEdit}
+                onDelete={() => handleDelete(item.id)}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={1}
+            ItemSeparatorComponent={() => <View className="h-4"></View>}
+            contentContainerStyle={{ paddingVertical: 24 }}
+            onScrollBeginDrag={() => setSelectedEmployeeId(null)}
+          />
+        )}
 
-      <PressableButton
-        className="absolute bottom-8 right-8"
-        onPress={() => {
-          setMode(formMode.create);
-          setEmployeeModalVisible(true);
-        }}
-        icon={<AntDesign name="plus" size={16} color="white" />}
-      />
+        <PressableButton
+          className="absolute bottom-8 right-8"
+          onPress={() => {
+            setMode(formMode.create);
+            reset({
+              name: "",
+              email: "",
+              password: "",
+              password2: "",
+              cpf: "",
+              profileImage: "",
+              employee: { birthDate: "" },
+              // Certifique-se de incluir todos os campos do seu IEmployeeDTO
+            });
+            setEmployeeModalVisible(true);
+          }}
+          icon={<AntDesign name="plus" size={16} color="white" />}
+        />
 
-      {/* <ModalCustom
-        visible={employeeModalVisible}
-        loading={createEmployeeLoading}
-        onClose={() => setEmployeeModalVisible(false)}
-        title={
-          mode === formMode.create ? "Novo colaborador" : "Editar colaborador"
-        }
-        onConfirm={handleSubmit(handleSubmitForm)}
-        confirmText={mode === formMode.create ? "Criar" : "Salvar"}
-      ></ModalCustom> */}
-
-      <CModal
-        loading={createEmployeeLoading}
-        onClose={() => setEmployeeModalVisible(false)}
-        onConfirm={handleSubmit(handleSubmitForm)}
-        modalVisible={employeeModalVisible}
-        setModalVisible={setEmployeeModalVisible}
-        title={
-          mode === formMode.create ? "Novo colaborador" : "Editar colaborador"
-        }
-      >
-        <EmployeeForm control={control} />
-      </CModal>
-    </SafeAreaView>
+        <ModalCustom
+          visible={employeeModalVisible}
+          loading={createEmployeeLoading}
+          onClose={() => setEmployeeModalVisible(false)}
+          title={
+            mode === formMode.create ? "Novo colaborador" : "Editar colaborador"
+          }
+          onConfirm={handleSubmit(handleSubmitForm)}
+          confirmText={mode === formMode.create ? "Criar" : "Salvar"}
+        >
+          <EmployeeForm control={control} />
+        </ModalCustom>
+      </SafeAreaView>
+    </Pressable>
   );
 };
 
-export default employees;
+export default EmployeesScreen;
