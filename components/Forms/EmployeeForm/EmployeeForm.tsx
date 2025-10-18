@@ -13,7 +13,7 @@ const EmployeeForm = ({ control }: EmployeeFormProps) => {
     <ScrollView className=" px-4 ">
       <CustomInput
         control={control}
-        name="employee.name"
+        name="name"
         label="Nome"
         rules={{ required: { value: true, message: "O nome é obrigatório" } }}
       />
