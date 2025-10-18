@@ -54,9 +54,11 @@ const ModalCustom = ({
             <Pressable
               onPress={onClose}
               disabled={loading}
-              className="px-4 py-4 flex-1 text-center rounded-md justify-center border border-primary text-primary"
+              className="px-4 py-4 flex-1 text-center rounded-md justify-center border border-primary text-primary "
             >
-              <Text className="font-semibold text-primary">{cancelText}</Text>
+              <Text className="font-semibold text-primary text-center">
+                {cancelText}
+              </Text>
             </Pressable>
 
             {onConfirm && (

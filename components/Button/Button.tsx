@@ -22,18 +22,17 @@ const Button = ({
 }: ButtonProps) => {
   const isDisabled = disabled || loading;
 
-  const finalClassName =
-    type === "primary"
-      ? ` px-4 py-2 h-14 bg-primary rounded-lg flex-row items-center justify-center w-full 
-    ${isDisabled ? "opacity-70" : ""} 
-    ${className}`
-      : "border border-primary px-4 py-2 rounded-lg flex-row items-center justify-center w-full text-primary";
+  const finalClassName = ` px-4 py-2 h-14 bg-primary rounded-lg flex-row items-center justify-center w-full
+  ${isDisabled ? "opacity-70" : ""}
+  ${className}`;
 
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      className={finalClassName}
+      className={`${finalClassName} ${
+        type === "primary" ? "bg-primary" : "bg-white border border-primary"
+      }  ${className}`}
     >
       <View className="relative flex-row items-center">
         {icon && !loading && icon}

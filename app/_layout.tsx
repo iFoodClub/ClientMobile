@@ -27,12 +27,15 @@ export default function RootLayout() {
         </Stack.Protected>
 
         <Stack.Protected guard={!isLoggedIn}>
-          <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="sign-in"
+            options={{ headerShown: false, animation: "slide_from_left" }}
+          />
         </Stack.Protected>
         <Stack.Protected guard={!isLoggedIn}>
           <Stack.Screen
             name="create-account"
-            options={{ headerShown: false }}
+            options={{ headerShown: false, animation: "slide_from_right" }}
           />
         </Stack.Protected>
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />

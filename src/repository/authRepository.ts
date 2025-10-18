@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IEmployeeDTO } from "../interfaces/dtos";
 import {
   IBusiness,
   ICepResponse,
@@ -8,7 +9,6 @@ import { useAuthStore } from "../store/authStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const api = axios.create({ baseURL });
-console.log(JSON.stringify({ baseURL }, null, 2));
 
 const AuthRepository = {
   async isAvaliableEmail(email: string) {
@@ -40,6 +40,12 @@ const AuthRepository = {
   },
 
   createBusiness(data: IBusiness) {
+    return api.post("/user", data);
+  },
+
+  createEmployee(data: IEmployeeDTO) {
+    console.log("criando colaborador");
+    console.log(JSON.stringify(data, null, 2));
     return api.post("/user", data);
   },
 

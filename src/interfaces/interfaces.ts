@@ -4,6 +4,11 @@ export enum UserType {
   employee = "employee",
 }
 
+export enum formMode {
+  create = "create",
+  update = "update",
+}
+
 export interface ISignInForm {
   email: string;
   password: string;

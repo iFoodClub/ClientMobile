@@ -1,3 +1,5 @@
+import { UserType } from "./interfaces";
+
 export interface IUpdateCompanyDTO {
   name?: string;
   cnpj?: string;
@@ -14,4 +16,20 @@ export interface IUpdateRestaurantDTO {
   cep: string;
   number: string;
   profileImage: string;
+}
+
+export interface IEmployeeDTO {
+  email: string;
+  password: string;
+  password2: string;
+  userType: UserType.employee;
+  profileImage: string;
+  cpf: string;
+  employee: {
+    name: string;
+    birthDate: string;
+  };
+  company: {
+    id: number;
+  };
 }

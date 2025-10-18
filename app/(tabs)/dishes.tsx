@@ -7,6 +7,7 @@ import React, { useState } from "react";
 
 import DishForm from "@/components/Forms/DishForm/DishForm";
 import { ActionMenu } from "@/components/Restaurant/Components/DishCard/ActionMenu";
+import CModal from "@/components/ui/Modal/CModal";
 import ModalCustom from "@/components/ui/Modal/ModalCustom";
 import { useToastAll } from "@/src/components/Toast";
 import { useDishes } from "@/src/hooks/useDishes";
@@ -71,6 +72,12 @@ const DishesScreen = () => {
     });
 
     setModalVisible(true);
+  }
+
+  function handleCancel() {
+    setModalVisible(false);
+    setSelectedDish(null);
+    reset();
   }
 
   async function handleDelete() {
@@ -194,7 +201,7 @@ const DishesScreen = () => {
           Tem certeza que deseja remover o prato {selectedDish?.name}{" "}
         </Text>
       </ModalCustom>
-      <ModalCustom
+      {/* <ModalCustom
         confirmText={selectedDish ? "Editar" : "Criar"}
         onConfirm={handleSubmit(handleSubmitDishForm)}
         onClose={() => {
@@ -217,10 +224,10 @@ const DishesScreen = () => {
         }
       >
         <DishForm control={control} />
-      </ModalCustom>
+      </ModalCustom> */}
 
       <PressableButton
-        className="absolute bottom-4 right-8"
+        className="absolute bottom-8 right-8"
         onPress={() => {
           setModalVisible(true);
           reset({
@@ -232,6 +239,17 @@ const DishesScreen = () => {
         }}
         icon={<AntDesign name="plus" size={24} color="white" />}
       />
+      <CModal
+        confirmText={selectedDish ? "Atualizar" : "Criar"}
+        onClose={handleCancel}
+        onConfirm={handleSubmit(handleSubmitDishForm)}
+        loading={createLoading}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        title={selectedDish ? "Editar prato" : "Novo prato"}
+      >
+        <DishForm control={control} />
+      </CModal>
     </SafeAreaView>
   );
 };
