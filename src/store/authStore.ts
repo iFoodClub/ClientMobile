@@ -66,6 +66,7 @@ export const useAuthStore = create<IAuthStore>()(
             isCompany: false,
             isEmployee: false,
             isRestaurant: false,
+            loading: false,
           });
         } catch (error) {
           console.log("Erro no logout:", error);

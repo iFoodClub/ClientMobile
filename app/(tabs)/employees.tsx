@@ -84,7 +84,6 @@ const EmployeesScreen = () => {
       cpf: employee.cpf,
       profileImage: employee.profileImage,
       employee: { birthDate: employee.birthDate },
-      // Certifique-se de incluir todos os campos do seu IEmployeeDTO
     });
 
     setEmployeeModalVisible(true);

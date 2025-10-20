@@ -27,3 +27,8 @@ export function formatPrice(price: number | string | null | undefined): string {
 
   return `R$ ${priceWithComma}`;
 }
+
+export function formatPriceToNumber(price: number): number {
+  const fixedPrice = price.toString().replace(",", ".");
+  return Number(fixedPrice);
+}

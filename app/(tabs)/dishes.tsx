@@ -14,6 +14,7 @@ import { useDishes } from "@/src/hooks/useDishes";
 import { IDishesResponse } from "@/src/interfaces/apiResponses";
 import { ICreateDishDTO } from "@/src/interfaces/interfaces";
 import DishRepository from "@/src/repository/dishRepository";
+import { formatPriceToNumber } from "@/src/utils/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useForm } from "react-hook-form";
 import {
@@ -95,14 +96,19 @@ const DishesScreen = () => {
       setDeleteLoading(false);
       setRemoveModalVisible(false);
       setSelectedDish(null);
-    } //TODO Colocar imagem padrão para quando não houver imagem em algum prato
+      fetchDishes();
+    }
   }
 
   async function handleCreateDish(data: ICreateDishDTO) {
     try {
       setCreateLoading(true);
       if (!user?.restaurant?.id) return;
-      data = { ...data, restaurantId: user?.restaurant?.id };
+      data = {
+        ...data,
+        price: formatPriceToNumber(data.price),
+        restaurantId: user?.restaurant?.id,
+      };
       await DishRepository.createDish(data);
       showSuccess("Prato criado com sucesso!");
       setModalVisible(false);
@@ -201,30 +207,6 @@ const DishesScreen = () => {
           Tem certeza que deseja remover o prato {selectedDish?.name}{" "}
         </Text>
       </ModalCustom>
-      {/* <ModalCustom
-        confirmText={selectedDish ? "Editar" : "Criar"}
-        onConfirm={handleSubmit(handleSubmitDishForm)}
-        onClose={() => {
-          setModalVisible(false);
-          setSelectedDish(null);
-          reset();
-        }}
-        visible={modalVisible}
-        title={
-          selectedDish ? (
-            <>
-              <Text>Editar prato</Text>{" "}
-              <Text className="font-semibold text-primary">
-                {selectedDish.name}
-              </Text>
-            </>
-          ) : (
-            <Text>Novo prato</Text>
-          )
-        }
-      >
-        <DishForm control={control} />
-      </ModalCustom> */}
 
       <PressableButton
         className="absolute bottom-8 right-8"
