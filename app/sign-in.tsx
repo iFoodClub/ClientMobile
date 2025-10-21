@@ -50,23 +50,43 @@ const SignInScreen = () => {
   }, []);
 
   const handleOfflineAccess = async (email: string) => {
+    console.log('🔍 DEBUG LOGIN OFFLINE - Email:', email);
+    
     // Busca sessões por email e por ID já salvos
     let canLogin = false;
     let perfilLocal = null;
+    
+    // Tenta pelo userId primeiro
     if (user?.id) {
+      console.log('🔍 Tentando login offline pelo userId:', user.id);
       canLogin = LocalAuthRepository.isLoginWithin24h(String(user.id));
+      console.log('🔍 Resultado userId:', canLogin);
       perfilLocal = LocalProfileRepository.getProfile(String(user.id));
+      console.log('🔍 Perfil local encontrado pelo userId:', !!perfilLocal);
     }
+    
+    // Se não conseguiu pelo userId, tenta pelo email
     if (!canLogin) {
+      console.log('🔍 Tentando login offline pelo email:', email);
       canLogin = LocalAuthRepository.isLoginWithin24h(email);
-      if (!perfilLocal) perfilLocal = LocalProfileRepository.getProfile(email);
+      console.log('🔍 Resultado email:', canLogin);
+      if (!perfilLocal) {
+        perfilLocal = LocalProfileRepository.getProfile(email);
+        console.log('🔍 Perfil local encontrado pelo email:', !!perfilLocal);
+      }
     }
+    
+    console.log('🔍 Resultado final - canLogin:', canLogin, 'perfilLocal:', !!perfilLocal, 'isLoggedIn:', isLoggedIn);
+    
     if ((canLogin || isLoggedIn) && perfilLocal) {
+      console.log('✅ Login offline permitido!');
       // Preencher zustand!
       useAuthStore.getState().loginOffline(perfilLocal);
       router.replace("/");
       return true;
     }
+    
+    console.log('❌ Login offline negado');
     showError("Login offline indisponível para este usuário. Faça login online pelo menos uma vez.");
     return false;
   };
