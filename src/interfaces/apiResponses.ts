@@ -69,7 +69,7 @@ export interface IRestaurantDetailsResponse {
   averageRating: number;
 }
 
-export interface IEmployeeResponse {
+export interface IEmployeeSimple {
   id: number;
   userId: number;
   companyId: number;
