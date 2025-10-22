@@ -73,6 +73,7 @@ export interface IEmployeeResponse {
   id: number;
   userId: number;
   companyId: number;
+  email: string;
   name: string;
   cpf: string;
   birthDate: string;

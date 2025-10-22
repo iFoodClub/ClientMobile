@@ -11,8 +11,6 @@ type EmployeeFormProps = {
 };
 
 const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
-  console.log({ mode });
-
   return (
     <ScrollView className=" px-4 ">
       <CustomInput
@@ -20,21 +18,29 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
         name="name"
         label="Nome"
         rules={{ required: { value: true, message: "O nome é obrigatório" } }}
+        placeholder="Digite o nome"
       />
       <CustomInput
         control={control}
         name="employee.birthDate"
         label="Data de nascimento"
-        keyboardType="numeric"
+        placeholder="Ex: 1999-01-01"
+        maxLength={10}
         rules={{
           required: {
             value: true,
-            message: "A data de nascimento é obrigatória",
+            message: "A data de nascimento é obrigatória.",
+          },
+
+          pattern: {
+            value: /^\d{4}-\d{2}-\d{2}$/,
+            message: "Formato inválido. Use AAAA-MM-DD (ex: 1997-06-30).",
           },
         }}
       />
       <CustomInput
         control={control}
+        placeholder="Digite o email"
         name="email"
         label="E-mail"
         rules={{
@@ -43,6 +49,7 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
       />
       {mode === formMode.create && (
         <CustomInput
+          placeholder="Digite a senha"
           control={control}
           name="password"
           label="Senha"
@@ -57,6 +64,7 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
       )}
       {mode === formMode.create && (
         <CustomInput
+          placeholder="Confirme a senha"
           control={control}
           name="password2"
           label="Confirme a senha"
@@ -70,12 +78,14 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
         />
       )}
       <CustomInput
+        placeholder="Insira a imagem"
         control={control}
         name="profileImage"
         label="Imagem do perfil"
         rules={{ required: { value: true, message: "O nome é obrigatório" } }}
       />
       <CustomInput
+        placeholder="Digite o CPF"
         control={control}
         name="cpf"
         label="CPF"

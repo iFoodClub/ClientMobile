@@ -61,6 +61,7 @@ const EmployeesScreen = () => {
           mode === formMode.create ? "criado" : "atualizado"
         } com sucesso!`
       );
+      fetchEmployees();
       setEmployeeModalVisible(false);
     } catch (error) {
       showError(
@@ -75,10 +76,11 @@ const EmployeesScreen = () => {
 
   function handleEdit(employee: IEmployeeResponse) {
     console.log(JSON.stringify(employee, null, 2));
+
     setMode(formMode.update);
     reset({
-      name: "employee.name",
-      email: "eudevosermudado@gmail.com",
+      name: employee.name,
+      email: employee.email,
       password: "",
       password2: "",
       cpf: employee.cpf,
@@ -87,11 +89,10 @@ const EmployeesScreen = () => {
     });
 
     setEmployeeModalVisible(true);
-    setSelectedEmployeeId(null);
+    setSelectedEmployeeId(employee.id);
   }
 
   async function handleDelete(employeeId: number) {
-    console.log({ employeeId });
     try {
       await deleteEmployee(employeeId);
       showSuccess("Funcionário deletado com sucesso!");
@@ -159,7 +160,10 @@ const EmployeesScreen = () => {
         <ModalCustom
           visible={employeeModalVisible}
           loading={createEmployeeLoading}
-          onClose={() => setEmployeeModalVisible(false)}
+          onClose={() => {
+            setEmployeeModalVisible(false);
+            setSelectedEmployeeId(null);
+          }}
           title={
             mode === formMode.create ? "Novo colaborador" : "Editar colaborador"
           }

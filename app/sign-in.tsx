@@ -6,20 +6,23 @@ import { useAuthStore } from "@/src/store/authStore";
 import { FontAwesome } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Link } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 //icons
 
 const SignInScreen = () => {
-  const { login, user, loading } = useAuthStore();
+  const { login, user, loading, reset: resetStore } = useAuthStore();
 
   const { control, handleSubmit, reset } = useForm<ISignInForm>({
     mode: "onBlur",
     defaultValues: { email: "admin@tech.com", password: "restaurante123" },
   });
 
+  useEffect(() => {
+    resetStore();
+  }, []);
   const testAccounts = [
     { label: "Empresa", email: "company@tech.com", password: "empresa123" },
     {
