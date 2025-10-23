@@ -1,11 +1,11 @@
+import PageHeader from "@/components/PageHeader/PageHeader";
 import React from "react";
-import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const orders = () => {
   return (
     <SafeAreaView>
-      <Text>orders</Text>
+      <PageHeader title="Pedidos" subtitle="Gerencie os pedidos recebidos " />
     </SafeAreaView>
   );
 };
