@@ -8,4 +8,5 @@ export const COLORS = {
 
   textBody: "#545454",
   textDescription: "#8d8d8d",
+  skeletonColors: ["#E5E7EB", "#FFFFFF", "#E5E7EB"],
 };

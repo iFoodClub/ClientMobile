@@ -19,6 +19,7 @@ export interface IUpdateRestaurantDTO {
 }
 
 export interface IEmployeeDTO {
+  name: string;
   email: string;
   password: string;
   password2: string;
@@ -26,7 +27,6 @@ export interface IEmployeeDTO {
   profileImage: string;
   cpf: string;
   employee: {
-    name: string;
     birthDate: string;
   };
   company: {

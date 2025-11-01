@@ -62,5 +62,3 @@ const CModal = ({
 };
 
 export default CModal;
-
-// O StyleSheet.create(...) foi removido pois não é mais necessário.

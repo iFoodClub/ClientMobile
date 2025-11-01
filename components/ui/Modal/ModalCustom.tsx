@@ -31,6 +31,7 @@ const ModalCustom = ({
 }: ModalCustomProps) => {
   return (
     <RNModal
+      className="flex flex-1"
       animationType="fade"
       transparent={true}
       visible={visible}

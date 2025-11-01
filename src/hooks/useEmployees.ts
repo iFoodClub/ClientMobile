@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { IEmployeeResponse } from "../interfaces/apiResponses";
+import { IEmployeeSimple } from "../interfaces/apiResponses";
+import { IEmployeeDTO } from "../interfaces/dtos";
 import EmployeeRepository from "../repository/employeeRepository";
 
 export const useEmployees = (companyId: number | undefined) => {
-  const [employees, setEmployees] = useState<IEmployeeResponse[]>([]);
+  const [employees, setEmployees] = useState<IEmployeeSimple[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   async function fetchEmployees() {
@@ -11,7 +12,6 @@ export const useEmployees = (companyId: number | undefined) => {
       setLoading(true);
       if (!companyId) return;
       const response = await EmployeeRepository.getEmployees(companyId);
-      console.log(JSON.stringify(response.data, null, 2));
       setEmployees(response.data);
     } catch (error) {
       console.error(error);
@@ -20,9 +20,51 @@ export const useEmployees = (companyId: number | undefined) => {
     }
   }
 
+  async function deleteEmployee(employeeId: number) {
+    try {
+      setLoading(true);
+      await EmployeeRepository.deleteEmployee(employeeId);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function createEmployee(data: IEmployeeDTO) {
+    try {
+      setLoading(true);
+      await EmployeeRepository.createEmployee(data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateEmployee(
+    employeeId: number,
+    data: Partial<IEmployeeSimple>
+  ) {
+    try {
+      setLoading(true);
+      await EmployeeRepository.updateEmployee(employeeId, data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     employees,
+    updateEmployee,
+    deleteEmployee,
     loading,
     fetchEmployees,
+    createEmployee,
   };
 };

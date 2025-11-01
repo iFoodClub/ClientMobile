@@ -3,9 +3,9 @@ import { Alert } from "react-native";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { IUpdateRestaurantDTO } from "../interfaces/dtos";
-import { IUserDetailsResponse, UserType } from "../interfaces/interfaces";
-import AuthRepository from "../repository/authRepository";
+import { IUpdateRestaurantDTO } from "../interfaces/dtos"; // Certifique-se que o caminho está correto
+import { IUserDetailsResponse, UserType } from "../interfaces/interfaces"; // Certifique-se que o caminho está correto
+import AuthRepository from "../repository/authRepository"; // Certifique-se que o caminho está correto
 
 type IAuthStore = {
   isLoggedIn: boolean;
@@ -37,6 +37,7 @@ export const useAuthStore = create<IAuthStore>()(
       isLoggedIn: false,
       shouldCreateAccount: false,
       user: null,
+
       login: async (email, password) => {
         try {
           set({ loading: true });
@@ -54,37 +55,35 @@ export const useAuthStore = create<IAuthStore>()(
           });
         } catch (error) {
           Alert.alert("Erro", "Não foi possível fazer o login.");
+          throw error;
         } finally {
           set({ loading: false });
         }
       },
+
       logout: async () => {
         try {
           await AuthRepository.logout();
-          set({
-            isLoggedIn: false,
-            user: null,
-            isCompany: false,
-            isEmployee: false,
-            isRestaurant: false,
-          });
         } catch (error) {
-          console.log("Erro no logout:", error);
+          console.log("Erro no logout API:", error);
+        } finally {
           set({
+            token: "",
             isLoggedIn: false,
             user: null,
             isCompany: false,
             isEmployee: false,
             isRestaurant: false,
+            loading: false,
           });
         }
       },
+
       updateSelectedRestaurant: (id: number) => {
         set((state) => {
           if (!state.user || !state.user.company) {
             return state;
           }
-
           return {
             user: {
               ...state.user,
@@ -96,12 +95,12 @@ export const useAuthStore = create<IAuthStore>()(
           };
         });
       },
-      updateUserRestaurant: (id: number, data: IUpdateRestaurantDTO) => {
+
+      updateUserRestaurant: (data: IUpdateRestaurantDTO) => {
         set((state) => {
           if (!state.user || !state.user.restaurant) {
             return state;
           }
-
           return {
             user: {
               ...state.user,
@@ -113,6 +112,7 @@ export const useAuthStore = create<IAuthStore>()(
           };
         });
       },
+
       createAccount: () =>
         set({ isLoggedIn: false, shouldCreateAccount: true }),
       reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
@@ -144,7 +144,10 @@ export const useAuthStore = create<IAuthStore>()(
     {
       name: "auth-store",
       storage: createJSONStorage(() => ({
-        getItem: getItemAsync,
+        getItem: async (name) => {
+          const str = await getItemAsync(name);
+          return str;
+        },
         setItem: setItemAsync,
         removeItem: deleteItemAsync,
       })),

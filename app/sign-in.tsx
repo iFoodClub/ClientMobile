@@ -26,6 +26,9 @@ const SignInScreen = () => {
     defaultValues: { email: "admin@tech.com", password: "restaurante123" },
   });
 
+  useEffect(() => {
+    resetStore();
+  }, []);
   const testAccounts = [
     { label: "Empresa", email: "company@tech.com", password: "empresa123" },
     {
