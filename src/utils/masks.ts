@@ -37,6 +37,15 @@ export function dateMask(value: string): string {
 }
 
 /**
+ * Aplica a máscara de CEP: 12345-678
+ */
+export function cepMask(value: string): string {
+  return clean(value)
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .slice(0, 9); // Limita o tamanho total
+}
+
+/**
  * Converte um valor numérico para formato de moeda brasileira: R$xx,xx
  */
 export function numberToCurrency(value: number | string | undefined): string {

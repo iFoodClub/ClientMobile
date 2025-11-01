@@ -7,9 +7,11 @@ import { IUpdateRestaurantDTO } from "@/src/interfaces/dtos";
 import { LocalProfileRepository } from "@/src/repository/localProfileRepository";
 import RestaurantRepository from "@/src/repository/restaurantRepository";
 import { useAuthStore } from "@/src/store/authStore";
+import { cepMask, cnpjMask } from "@/src/utils/masks";
 import NetInfo from "@react-native-community/netinfo";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const RestaurantForm = () => {
@@ -121,6 +123,7 @@ const RestaurantForm = () => {
         return;
       }
       
+      console.log("JSON enviado para UPDATE RESTAURANT (restaurantId:", user?.restaurant?.id, "):", JSON.stringify(data, null, 2));
       const response = await RestaurantRepository.updateRestaurant(
         user?.restaurant?.id,
         data
@@ -150,19 +153,93 @@ const RestaurantForm = () => {
   return (
     <SafeAreaView className="px-4">
       <CustomInput control={control} name="name" label="Nome" />
-      <CustomInput
+      <Controller
         control={control}
         name="cnpj"
-        label="CNPJ"
-        maxLength={14}
-        keyboardType="numeric"
+        render={({
+          field: { onChange, onBlur, value },
+          fieldState: { error },
+        }) => (
+          <>
+            <View className="w-full">
+              <Text className="text-sm font-semibold text-gray-600 mb-1">
+                CNPJ
+              </Text>
+              <View
+                className={`justify-center border flex flex-row items-center rounded-lg text-base p-1 pl-4 ${
+                  error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
+                }`}
+              >
+                <TextInput
+                  keyboardType="numeric"
+                  className={`text-base flex-1 ${
+                    error
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white"
+                  }`}
+                  onBlur={onBlur}
+                  onChangeText={(text) => {
+                    const maskedValue = cnpjMask(text);
+                    onChange(maskedValue);
+                  }}
+                  value={value || ""}
+                  placeholder="00.000.000/0000-00"
+                  placeholderTextColor={"#9CA3AF"}
+                  maxLength={18}
+                />
+              </View>
+              <View className="h-[20px] flex items-end">
+                {error && (
+                  <Text className="text-red-500 text-sm">{error.message}</Text>
+                )}
+              </View>
+            </View>
+          </>
+        )}
       />
-      <CustomInput
+      <Controller
         control={control}
         name="cep"
-        label="CEP"
-        maxLength={9}
-        keyboardType="numeric"
+        render={({
+          field: { onChange, onBlur, value },
+          fieldState: { error },
+        }) => (
+          <>
+            <View className="w-full">
+              <Text className="text-sm font-semibold text-gray-600 mb-1">
+                CEP
+              </Text>
+              <View
+                className={`justify-center border flex flex-row items-center rounded-lg text-base p-1 pl-4 ${
+                  error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
+                }`}
+              >
+                <TextInput
+                  keyboardType="numeric"
+                  className={`text-base flex-1 ${
+                    error
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white"
+                  }`}
+                  onBlur={onBlur}
+                  onChangeText={(text) => {
+                    const maskedValue = cepMask(text);
+                    onChange(maskedValue);
+                  }}
+                  value={value || ""}
+                  placeholder="12345-678"
+                  placeholderTextColor={"#9CA3AF"}
+                  maxLength={9}
+                />
+              </View>
+              <View className="h-[20px] flex items-end">
+                {error && (
+                  <Text className="text-red-500 text-sm">{error.message}</Text>
+                )}
+              </View>
+            </View>
+          </>
+        )}
       />
       <CustomInput
         control={control}
