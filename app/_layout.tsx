@@ -1,13 +1,16 @@
 import { ToastProvider } from "@/src/components/Toast";
+import { useSyncManager } from "@/src/hooks/useSyncManager";
 import { useAuthStore } from "@/src/store/authStore";
 import { Stack } from "expo-router";
 import "./global.css";
 
-export default function RootLayout() {
+function AppContent() {
   const { isLoggedIn } = useAuthStore();
+  
+  // Hook global para sincronização automática
+  useSyncManager();
 
   return (
-    <ToastProvider>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -40,6 +43,13 @@ export default function RootLayout() {
         </Stack.Protected>
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ToastProvider>
+      <AppContent />
     </ToastProvider>
   );
 }

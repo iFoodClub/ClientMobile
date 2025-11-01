@@ -17,7 +17,8 @@ type IAuthStore = {
   createAccount: () => void;
   reset: () => void;
   updateSelectedRestaurant: (id: number) => void;
-  updateUserRestaurant: (data: IUpdateRestaurantDTO) => void;
+  updateUserRestaurant: (id: number, data: IUpdateRestaurantDTO) => void;
+  loginOffline: (perfilLocal: any) => void;
 
   user: IUserDetailsResponse | null;
   isRestaurant: boolean;
@@ -114,9 +115,31 @@ export const useAuthStore = create<IAuthStore>()(
 
       createAccount: () =>
         set({ isLoggedIn: false, shouldCreateAccount: true }),
-
-      reset: () =>
-        set({ isLoggedIn: false, shouldCreateAccount: false, loading: false }),
+      reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
+      /** LOGIN OFFLINE: Preenche o estado direto a partir dos dados locais persistidos */
+      loginOffline: (perfilLocal: any) =>
+        set(() => {
+          if (!perfilLocal || !perfilLocal.userId) {
+            return { isLoggedIn: false, user: null };
+          }
+          // preenche estado mínimo necessário para uso
+          return {
+            isLoggedIn: true,
+            user: {
+              id: perfilLocal.userId,
+              email: perfilLocal.email,
+              restaurant: {
+                id: Number(perfilLocal.userId),
+                ...perfilLocal.data,
+                name: perfilLocal.name,
+                image: perfilLocal.photo
+              },
+            },
+            isRestaurant: true, // suposição simples
+            isEmployee: false,
+            isCompany: false,
+          };
+        }),
     }),
     {
       name: "auth-store",
