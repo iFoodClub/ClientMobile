@@ -40,12 +40,20 @@ export class RepositoryBase {
         }
 
         if (__DEV__) {
-          console.error("❌ Erro na requisição Axios:", {
-            url: error.config?.url,
-            method: error.config?.method,
-            status: error.response?.status,
-            data: error.response?.data,
-          });
+          console.log(
+            JSON.stringify(
+              {
+                title: "❌ Erro na requisição Axios:",
+                url: error.config?.url,
+                method: error.config?.method,
+                message: error.message,
+                status: error.response?.status,
+                token: error.config?.headers?.Authorization,
+              },
+              null,
+              2
+            )
+          );
         }
 
         return Promise.reject(error);
