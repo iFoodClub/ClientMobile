@@ -35,6 +35,11 @@ const SignInScreen = () => {
       email: "admin@tech.com",
       password: "restaurante123",
     },
+    {
+      label: "Funcionario",
+      email: "fernanda@gmail.com",
+      password: "123456",
+    },
   ];
 
   const [isOffline, setIsOffline] = useState(false);

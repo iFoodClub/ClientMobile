@@ -12,7 +12,7 @@ export class RepositoryBase {
       timeout: 10000,
     });
 
-    //Coloca o token na requisição
+    // Interceptor para incluir o token na requisição
     this.api.interceptors.request.use(
       async (config) => {
         const { token } = useAuthStore.getState();
@@ -27,18 +27,24 @@ export class RepositoryBase {
       }
     );
 
-    //Verifica se o token expirou e faz o logout
+    // Interceptor para tratar respostas e erros
     this.api.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         const { logout } = useAuthStore.getState();
+        const requestUrl = error.config?.url || "";
 
-        if (error.response?.status === 401) {
+        // ⚠️ Evita loop: não tenta deslogar se o erro vier da própria rota de logout
+        if (
+          error.response?.status === 401 &&
+          !requestUrl.includes("/user/logout")
+        ) {
           if (__DEV__)
             console.warn("⚠️ Token expirado ou inválido. Efetuando logout...");
           logout();
         }
 
+        // Log detalhado de erro no modo de desenvolvimento
         if (__DEV__) {
           console.log(
             JSON.stringify(
@@ -46,7 +52,10 @@ export class RepositoryBase {
                 title: "❌ Erro na requisição Axios:",
                 url: error.config?.url,
                 method: error.config?.method,
-                message: error.message,
+                message:
+                  error?.response?.data?.message ||
+                  error?.message ||
+                  "Erro desconhecido",
                 status: error.response?.status,
                 token: error.config?.headers?.Authorization,
               },

@@ -1,4 +1,4 @@
-import { IDishesResponse } from "@/src/interfaces/apiResponses";
+import { IDish } from "@/src/interfaces/apiResponses";
 import { formatPrice } from "@/src/utils/utils";
 import { router } from "expo-router";
 import React from "react";
@@ -11,11 +11,11 @@ import {
 } from "react-native";
 
 type DishCardProps = {
-  dish: IDishesResponse;
+  dish: IDish;
   onLongPress: (event: GestureResponderEvent) => void;
 };
 
-function handleDetails(dish: IDishesResponse) {
+function handleDetails(dish: IDish) {
   router.push({
     pathname: "/dish-details",
   });
