@@ -1,0 +1,28 @@
+meta {
+  name: create company
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/api/companies
+  body: json
+  auth: inherit
+}
+
+headers {
+  Tk: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJicnVubyIsImlhdCI6MTc2MTc4Mjc2MywiZXhwIjoxNzYxNzg2MzYzfQ.IWakKsmy-w1wL9bEp3uqL_MBDqNe9EWuCSA_WuNPNWg
+}
+
+body:json {
+  {
+    "name": "bruno",
+    "userName": "bruno",
+    "password": 123456
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+}
