@@ -1,29 +1,30 @@
-import axios from "axios";
+// src/repositories/EmployeeRepository.ts
+
 import { IEmployeeSimple } from "../interfaces/apiResponses";
 import { IEmployeeDTO } from "../interfaces/dtos";
+import { RepositoryBase } from "./baseRepository";
 
-const baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
-const api = axios.create({ baseURL: baseUrl });
-
-const EmployeeRepository = {
+class EmployeeRepository extends RepositoryBase {
   async getEmployees(companyId: number) {
-    return await api.get<IEmployeeSimple[]>(`/company/${companyId}/employees`);
-  },
+    return await this.api.get<IEmployeeSimple[]>(
+      `/company/${companyId}/employees`
+    );
+  }
 
   async createEmployee(employeeData: IEmployeeDTO) {
-    return await api.post<IEmployeeDTO>("/user", employeeData);
-  },
+    return await this.api.post<IEmployeeDTO>("/user", employeeData);
+  }
 
   async deleteEmployee(employeeId: number) {
-    return await api.delete(`/employee/${employeeId}`);
-  },
+    return await this.api.delete(`/employee/${employeeId}`);
+  }
 
   async updateEmployee(
     employeeId: number,
     employeeData: Partial<IEmployeeSimple>
   ) {
-    return await api.put(`/employee/${employeeId}`, employeeData);
-  },
-};
+    return await this.api.put(`/employee/${employeeId}`, employeeData);
+  }
+}
 
-export default EmployeeRepository;
+export default new EmployeeRepository();
