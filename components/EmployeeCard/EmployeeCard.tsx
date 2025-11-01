@@ -1,11 +1,11 @@
 import PressableButton from "@/components/Button/PressableButton";
-import { IEmployeeResponse } from "@/src/interfaces/apiResponses";
+import { IEmployeeSimple } from "@/src/interfaces/apiResponses";
 import { AntDesign } from "@expo/vector-icons";
 import { Image, Pressable, Text, View } from "react-native";
 
 type EmployeeCardProps = {
-  employee: IEmployeeResponse;
-  onEdit: (employee: IEmployeeResponse) => void;
+  employee: IEmployeeSimple;
+  onEdit: (employee: IEmployeeSimple) => void;
   onDelete: () => void;
   onLongPress: () => void;
   isSelected: boolean;

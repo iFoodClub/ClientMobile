@@ -6,7 +6,7 @@ import PageHeader from "@/components/PageHeader/PageHeader";
 import ModalCustom from "@/components/ui/Modal/ModalCustom";
 import { useToastAll } from "@/src/components/Toast";
 import { useEmployees } from "@/src/hooks/useEmployees";
-import { IEmployeeResponse } from "@/src/interfaces/apiResponses";
+import { IEmployeeSimple } from "@/src/interfaces/apiResponses";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
 import { formMode, UserType } from "@/src/interfaces/interfaces";
 import { useAuthStore } from "@/src/store/authStore";
@@ -21,8 +21,14 @@ const EmployeesScreen = () => {
   const { user } = useAuthStore();
   const { showSuccess, showError } = useToastAll();
   const [mode, setMode] = useState<formMode>(formMode.create);
-  const { employees, fetchEmployees, deleteEmployee, loading, createEmployee } =
-    useEmployees(user?.company?.id);
+  const {
+    employees,
+    updateEmployee,
+    fetchEmployees,
+    deleteEmployee,
+    loading,
+    createEmployee,
+  } = useEmployees(user?.company?.id);
 
   const [createEmployeeLoading, setCreateEmployeeLoading] =
     useState<boolean>(false);
@@ -55,7 +61,22 @@ const EmployeesScreen = () => {
 
     try {
       setCreateEmployeeLoading(true);
-      await createEmployee(data);
+
+      if (mode === formMode.create) {
+        await createEmployee(data);
+      } else {
+        if (!selectedEmployeeId) return;
+        const updateEmployeeData: Partial<IEmployeeSimple> = {
+          name: data.name,
+          profileImage: data.profileImage,
+          birthDate: data.employee.birthDate,
+          cpf: data.cpf,
+          companyId: user.company.id,
+          userId: user.id,
+          vacation: false,
+        };
+        await updateEmployee(selectedEmployeeId, updateEmployeeData);
+      }
       showSuccess(
         `Colaborador ${
           mode === formMode.create ? "criado" : "atualizado"
@@ -74,7 +95,7 @@ const EmployeesScreen = () => {
     }
   }
 
-  function handleEdit(employee: IEmployeeResponse) {
+  function handleEdit(employee: IEmployeeSimple) {
     console.log(JSON.stringify(employee, null, 2));
 
     setMode(formMode.update);
