@@ -109,11 +109,13 @@ const DishesScreen = () => {
         price: formatPriceToNumber(data.price),
         restaurantId: user?.restaurant?.id,
       };
+      console.log("📤 JSON enviado para CREATE:", JSON.stringify(data, null, 2));
       await DishRepository.createDish(data);
       showSuccess("Prato criado com sucesso!");
       setModalVisible(false);
       await fetchDishes();
       reset();
+      setSelectedDish(null);
     } catch (error) {
       console.error(error);
       showError("Erro ao criar prato.");
@@ -122,9 +124,33 @@ const DishesScreen = () => {
     }
   }
 
+  async function handleUpdateDish(data: ICreateDishDTO) {
+    try {
+      if (!selectedDish?.id || !user?.restaurant?.id) return;
+      setCreateLoading(true);
+      data = {
+        ...data,
+        price: formatPriceToNumber(data.price),
+        restaurantId: user?.restaurant?.id,
+      };
+      console.log("📤 JSON enviado para UPDATE (dishId:", selectedDish.id, "):", JSON.stringify(data, null, 2));
+      await DishRepository.updateDish(selectedDish.id, data);
+      showSuccess("Prato atualizado com sucesso!");
+      setModalVisible(false);
+      await fetchDishes();
+      reset();
+      setSelectedDish(null);
+    } catch (error) {
+      console.error(error);
+      showError("Erro ao atualizar prato.");
+    } finally {
+      setCreateLoading(false);
+    }
+  }
+
   async function handleSubmitDishForm(data: ICreateDishDTO) {
     if (selectedDish) {
-      await handleEdit();
+      await handleUpdateDish(data);
     } else {
       await handleCreateDish(data);
     }
