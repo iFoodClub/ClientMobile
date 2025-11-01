@@ -3,9 +3,9 @@ import { Alert } from "react-native";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { IUpdateRestaurantDTO } from "../interfaces/dtos"; // Certifique-se que o caminho está correto
-import { IUserDetailsResponse, UserType } from "../interfaces/interfaces"; // Certifique-se que o caminho está correto
-import AuthRepository from "../repository/authRepository"; // Certifique-se que o caminho está correto
+import { IUpdateRestaurantDTO } from "../interfaces/dtos";
+import { IUserDetailsResponse, UserType } from "../interfaces/interfaces";
+import AuthRepository from "../repository/authRepository";
 
 type IAuthStore = {
   isLoggedIn: boolean;
@@ -132,7 +132,7 @@ export const useAuthStore = create<IAuthStore>()(
                 id: Number(perfilLocal.userId),
                 ...perfilLocal.data,
                 name: perfilLocal.name,
-                image: perfilLocal.photo
+                image: perfilLocal.photo,
               },
             },
             isRestaurant: true, // suposição simples

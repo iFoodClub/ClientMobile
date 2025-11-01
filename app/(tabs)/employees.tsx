@@ -57,8 +57,6 @@ const EmployeesScreen = () => {
       company: { id: user.company.id },
     };
 
-    console.log(JSON.stringify(data, null, 2));
-
     try {
       setCreateEmployeeLoading(true);
 

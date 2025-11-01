@@ -1,32 +1,22 @@
-import axios from "axios";
-import {
-  IRestaurantDetailsResponse,
-  IRestaurantResponse,
-} from "../interfaces/apiResponses";
+import { IRestaurantResponse } from "../interfaces/apiResponses";
 import { IUpdateRestaurantDTO } from "../interfaces/dtos";
+import { RepositoryBase } from "./baseRepository";
 
-const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
-const api = axios.create({ baseURL });
-
-const RestaurantRepository = {
+class RestaurantRepository extends RepositoryBase {
   async fetchRestaurants() {
-    const response = await api.get<IRestaurantResponse[]>("/Restaurant");
-    return response;
-  },
+    return await this.api.get<IRestaurantResponse[]>("/restaurant");
+  }
 
   async fetchSelectedRestaurant(id: number) {
-    const response = await api.get<IRestaurantDetailsResponse>(
-      `/Restaurant/${id}`
-    );
-    return response;
-  },
+    return await this.api.get<IRestaurantResponse>(`/restaurant/${id}`);
+  }
 
   async updateRestaurant(
     id: number,
     restaurantData: Partial<IUpdateRestaurantDTO>
   ) {
-    return await api.put(`/Restaurant/${id}`, restaurantData);
-  },
-};
+    return await this.api.put(`/restaurant/${id}`, restaurantData);
+  }
+}
 
-export default RestaurantRepository;
+export default new RestaurantRepository();

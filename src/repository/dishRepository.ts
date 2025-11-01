@@ -1,24 +1,21 @@
-import axios from "axios";
 import { IDishesResponse } from "../interfaces/apiResponses";
 import { ICreateDishDTO } from "../interfaces/interfaces";
+import { RepositoryBase } from "./baseRepository";
 
-const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
-const api = axios.create({ baseURL });
-
-const DishRepository = {
+class DishRepository extends RepositoryBase {
   async fetchDishesByRestaurantId(restaurantId: number) {
-    return await api.get<IDishesResponse[]>(
-      `/Dish/by-restaurant/${restaurantId}`
+    return await this.api.get<IDishesResponse[]>(
+      `/dish/by-restaurant/${restaurantId}`
     );
-  },
+  }
 
   async createDish(dishData: ICreateDishDTO) {
-    return await api.post<IDishesResponse>("/Dish", dishData);
-  },
+    return await this.api.post<IDishesResponse>("/dish", dishData);
+  }
 
   async deleteDish(dishId: number) {
-    return await api.delete(`/Dish/${dishId}`);
-  },
-};
+    return await this.api.delete(`/dish/${dishId}`);
+  }
+}
 
-export default DishRepository;
+export default new DishRepository();

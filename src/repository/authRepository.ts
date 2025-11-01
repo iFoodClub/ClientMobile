@@ -5,15 +5,12 @@ import {
   ICepResponse,
   ILoginResponse,
 } from "../interfaces/interfaces";
-import { useAuthStore } from "../store/authStore";
+import { RepositoryBase } from "./baseRepository";
 
-const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL;
-const api = axios.create({ baseURL });
-
-const AuthRepository = {
+class AuthRepository extends RepositoryBase {
   async isAvaliableEmail(email: string) {
     try {
-      const response = await api.get<{ exists: boolean }>(
+      const response = await this.api.get<{ exists: boolean }>(
         `/user/check-email/${email}`
       );
       return response.data.exists;
@@ -21,39 +18,41 @@ const AuthRepository = {
       console.error("API de verificação de email falhou:", error);
       throw new Error("Não foi possível verificar o email. Tente novamente.");
     }
-  },
+  }
 
   async getAddress(cep: string) {
     try {
+      // essa rota é externa, então usa axios direto
       const response = await axios.get<ICepResponse>(
         `https://viacep.com.br/ws/${cep}/json/`
       );
       return response.data;
     } catch (error) {
-      console.error("Não foi possível buscar o endereço.", error);
+      console.error("Não foi possível buscar o endereço:", error);
       throw new Error("Não foi possível buscar o endereço. Tente novamente.");
     }
-  },
+  }
 
-  login(email: string, password: string) {
-    return api.post<ILoginResponse>("/user/login", { email, password });
-  },
+  async login(email: string, password: string) {
+    return await this.api.post<ILoginResponse>("/user/login", {
+      email,
+      password,
+    });
+  }
 
-  createBusiness(data: IBusiness) {
-    return api.post("/user", data);
-  },
+  async createBusiness(data: IBusiness) {
+    return await this.api.post("/user", data);
+  }
 
-  createEmployee(data: IEmployeeDTO) {
+  async createEmployee(data: IEmployeeDTO) {
     console.log("criando colaborador");
     console.log(JSON.stringify(data, null, 2));
-    return api.post("/user", data);
-  },
+    return await this.api.post("/user", data);
+  }
 
-  logout() {
-    const { user } = useAuthStore();
+  async logout() {
+    return await this.api.post("/user/logout");
+  }
+}
 
-    return api.post("/user/logout");
-  },
-};
-
-export default AuthRepository;
+export default new AuthRepository();
