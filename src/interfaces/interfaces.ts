@@ -1,3 +1,5 @@
+import { IEmployeePopulate } from "./apiResponses";
+
 export enum UserType {
   restaurant = "restaurant",
   company = "company",
@@ -74,6 +76,7 @@ export interface IUserDetailsResponse {
   userType: UserType;
   restaurant?: IRestaurant;
   company?: ICompany;
+  employee?: IEmployeePopulate;
 }
 
 export interface ILoginResponse {
@@ -104,3 +107,23 @@ export interface ICreateDishDTO {
   image: string;
   restaurantId: number;
 }
+
+export enum DayOfWeek {
+  Sunday = "Sunday",
+  Monday = "Monday",
+  Tuesday = "Tuesday",
+  Wednesday = "Wednesday",
+  Thursday = "Thursday",
+  Friday = "Friday",
+  Saturday = "Saturday",
+}
+
+export const dayNamesPT: Record<DayOfWeek, string> = {
+  [DayOfWeek.Monday]: "Segunda-feira",
+  [DayOfWeek.Tuesday]: "Terça-feira",
+  [DayOfWeek.Wednesday]: "Quarta-feira",
+  [DayOfWeek.Thursday]: "Quinta-feira",
+  [DayOfWeek.Friday]: "Sexta-feira",
+  [DayOfWeek.Sunday]: "Domingo",
+  [DayOfWeek.Saturday]: "Sábado",
+};

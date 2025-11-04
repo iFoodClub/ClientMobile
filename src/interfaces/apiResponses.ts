@@ -80,3 +80,17 @@ export interface IEmployeeSimple {
   vacation: boolean;
   profileImage: string;
 }
+
+export interface IEmployeePopulate {
+  id: number;
+  userId: number;
+  companyId: number;
+  company: {
+    id: number;
+    selectedRestaurantId: number;
+  };
+  name: string;
+  cpf: string;
+  birthDate: string;
+  vacation: boolean;
+}

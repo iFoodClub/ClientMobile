@@ -33,3 +33,12 @@ export interface IEmployeeDTO {
     id: number;
   };
 }
+
+export interface IWeeklyOrderDTO {
+  employeeId: number;
+  dayOfWeek: string;
+  order: {
+    dishId: number;
+    quantity: number;
+  };
+}
