@@ -41,15 +41,14 @@ interface IAOOrder {
   image: string;
 }
 
-
 interface IEmployee {
-    id:number;
+  id: number;
+  name: string;
+  profileImage: string;
+  order: {
+    id: number;
     name: string;
-    profileImage: string;
-    order : {
-        id: number;
-        name: string;
-        price: string;
-        image: string;
-    }
+    price: string;
+    image: string;
+  };
 }

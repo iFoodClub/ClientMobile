@@ -39,13 +39,6 @@ export interface ICompany {
   restaurantId: number;
 }
 
-export enum OrderStatus {
-  created = "created",
-  inProgress = "inProgress",
-  delivered = "delivered",
-  canceled = "canceled",
-}
-
 export interface IBusiness {
   name: string;
   userType: UserType;
