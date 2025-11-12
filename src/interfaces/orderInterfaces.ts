@@ -40,3 +40,16 @@ interface IAOOrder {
   price: string;
   image: string;
 }
+
+
+interface IEmployee {
+    id:number;
+    name: string;
+    profileImage: string;
+    order : {
+        id: number;
+        name: string;
+        price: string;
+        image: string;
+    }
+}
