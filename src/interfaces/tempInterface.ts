@@ -1,5 +1,9 @@
+import { OrderStatus } from "./interfaces";
+
 export interface IEmployeeWithWeeklyOrders {
   id: number;
+  orderedAt: string;
+  orderStatus: OrderStatus;
   dayOfWeek: string;
   restaurant: IORestaurant;
   weeklyOrders: IWeeklyOrder[];

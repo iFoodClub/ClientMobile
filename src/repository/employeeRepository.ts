@@ -27,10 +27,7 @@ class EmployeeRepository extends RepositoryBase {
   }
 
   async selectWeeklyOrderDay(data: IWeeklyOrderDTO) {
-    return await this.api.post(
-      `/employee-weekly-orders/employee/{employeeId}`,
-      data
-    );
+    return await this.api.post(`/employee-weekly-orders/`, data);
   }
 
   async getWeeklyOrdersCurrentDay(companyId: number) {
