@@ -66,11 +66,9 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
     } catch (error) {
       console.log("Erro no logout API:", error);
     } finally {
-      // Remove o token global do Axios (caso esteja definido)
       const axios = (await import("axios")).default;
       delete axios.defaults.headers.common["Authorization"];
 
-      // Limpa o estado
       set({
         token: "",
         isLoggedIn: false,
