@@ -1,7 +1,5 @@
-import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { Alert } from "react-native";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 
 import { IUpdateRestaurantDTO } from "../interfaces/dtos";
 import { IUserDetailsResponse, UserType } from "../interfaces/interfaces";
@@ -13,11 +11,11 @@ type IAuthStore = {
   token: string;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   createAccount: () => void;
   reset: () => void;
   updateSelectedRestaurant: (id: number) => void;
-  updateUserRestaurant: (id: number, data: IUpdateRestaurantDTO) => void;
+  updateUserRestaurant: (data: IUpdateRestaurantDTO) => void;
   loginOffline: (perfilLocal: any) => void;
 
   user: IUserDetailsResponse | null;
@@ -26,144 +24,116 @@ type IAuthStore = {
   isEmployee: boolean;
 };
 
-export const useAuthStore = create<IAuthStore>()(
-  persist(
-    (set) => ({
-      loading: false,
-      token: "",
-      isRestaurant: false,
-      isCompany: false,
-      isEmployee: false,
-      isLoggedIn: false,
-      shouldCreateAccount: false,
-      user: null,
+export const useAuthStore = create<IAuthStore>((set, get) => ({
+  loading: false,
+  token: "",
+  isRestaurant: false,
+  isCompany: false,
+  isEmployee: false,
+  isLoggedIn: false,
+  shouldCreateAccount: false,
+  user: null,
 
-      login: async (email, password) => {
-        try {
-          set({ loading: true });
-          const response = await AuthRepository.login(email, password);
+  login: async (email, password) => {
+    try {
+      set({ loading: true });
 
-          if (response.status !== 200) {
-            throw new Error(`Erro no login: ${response.status}`);
-          }
+      const response = await AuthRepository.login(email, password);
+      const userDetails = response.data.userDetails;
 
-          set({
-            token: response.data.token,
-            isLoggedIn: true,
-            shouldCreateAccount: false,
-            user: response.data.userDetails,
-            isRestaurant:
-              response.data.userDetails.userType === UserType.restaurant,
-            isEmployee:
-              response.data.userDetails.userType === UserType.employee,
-            isCompany: response.data.userDetails.userType === UserType.company,
-          });
-        } catch (error) {
-          Alert.alert("Erro", "Não foi possível fazer o login.");
-          throw error;
-        } finally {
-          set({ loading: false });
-        }
-      },
+      console.log(JSON.stringify(response, null, 2));
 
-      logout: async () => {
-        try {
-          await AuthRepository.logout();
-        } catch (error) {
-          console.log("Erro no logout API:", error);
-        } finally {
-          try {
-            await deleteItemAsync("auth-store");
-            useAuthStore.persist.clearStorage();
-          } catch (err) {
-            console.log("Erro ao limpar o SecureStore:", err);
-          }
-
-          set({
-            token: "",
-            isLoggedIn: false,
-            user: null,
-            isCompany: false,
-            isEmployee: false,
-            isRestaurant: false,
-            loading: false,
-            shouldCreateAccount: false,
-          });
-        }
-      },
-
-      updateSelectedRestaurant: (id: number) => {
-        set((state) => {
-          if (!state.user || !state.user.company) {
-            return state;
-          }
-          return {
-            user: {
-              ...state.user,
-              company: {
-                ...state.user.company,
-                restaurantId: id,
-              },
-            },
-          };
-        });
-      },
-
-      updateUserRestaurant: (data: IUpdateRestaurantDTO) => {
-        set((state) => {
-          if (!state.user || !state.user.restaurant) {
-            return state;
-          }
-          return {
-            user: {
-              ...state.user,
-              restaurant: {
-                ...state.user.restaurant,
-                ...data,
-              },
-            },
-          };
-        });
-      },
-
-      createAccount: () =>
-        set({ isLoggedIn: false, shouldCreateAccount: true }),
-      reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
-      /** LOGIN OFFLINE: Preenche o estado direto a partir dos dados locais persistidos */
-      loginOffline: (perfilLocal: any) =>
-        set(() => {
-          if (!perfilLocal || !perfilLocal.userId) {
-            return { isLoggedIn: false, user: null };
-          }
-          // preenche estado mínimo necessário para uso
-          return {
-            isLoggedIn: true,
-            user: {
-              id: perfilLocal.userId,
-              email: perfilLocal.email,
-              restaurant: {
-                id: Number(perfilLocal.userId),
-                ...perfilLocal.data,
-                name: perfilLocal.name,
-                image: perfilLocal.photo,
-              },
-            },
-            isRestaurant: true, // suposição simples
-            isEmployee: false,
-            isCompany: false,
-          };
-        }),
-    }),
-    {
-      name: "auth-store",
-      storage: createJSONStorage(() => ({
-        getItem: async (name) => {
-          const str = await getItemAsync(name);
-          return str;
-        },
-        setItem: setItemAsync,
-        removeItem: deleteItemAsync,
-      })),
+      set({
+        token: response.data.token,
+        isLoggedIn: true,
+        shouldCreateAccount: false,
+        user: userDetails,
+        isRestaurant: userDetails.userType === UserType.restaurant,
+        isEmployee: userDetails.userType === UserType.employee,
+        isCompany: userDetails.userType === UserType.company,
+      });
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível fazer o login.");
+      throw error;
+    } finally {
+      set({ loading: false });
     }
-  )
-);
+  },
+
+  logout: async () => {
+    try {
+      await AuthRepository.logout();
+    } catch (error) {
+      console.log("Erro no logout API:", error);
+    } finally {
+      // Remove o token global do Axios (caso esteja definido)
+      const axios = (await import("axios")).default;
+      delete axios.defaults.headers.common["Authorization"];
+
+      // Limpa o estado
+      set({
+        token: "",
+        isLoggedIn: false,
+        user: null,
+        isCompany: false,
+        isEmployee: false,
+        isRestaurant: false,
+        loading: false,
+        shouldCreateAccount: false,
+      });
+
+      console.log("✅ Logout completo: estado limpo e token removido");
+    }
+  },
+
+  updateSelectedRestaurant: (id: number) => {
+    set((state) => {
+      if (!state.user?.company) return state;
+      return {
+        user: {
+          ...state.user,
+          company: { ...state.user.company, restaurantId: id },
+        },
+      };
+    });
+  },
+
+  updateUserRestaurant: (data: IUpdateRestaurantDTO) => {
+    set((state) => {
+      if (!state.user?.restaurant) return state;
+      return {
+        user: {
+          ...state.user,
+          restaurant: { ...state.user.restaurant, ...data },
+        },
+      };
+    });
+  },
+
+  createAccount: () => set({ isLoggedIn: false, shouldCreateAccount: true }),
+
+  reset: () => set({ isLoggedIn: false, shouldCreateAccount: false }),
+
+  loginOffline: (perfilLocal: any) =>
+    set(() => {
+      if (!perfilLocal || !perfilLocal.userId) {
+        return { isLoggedIn: false, user: null };
+      }
+      return {
+        isLoggedIn: true,
+        user: {
+          id: perfilLocal.userId,
+          email: perfilLocal.email,
+          restaurant: {
+            id: Number(perfilLocal.userId),
+            ...perfilLocal.data,
+            name: perfilLocal.name,
+            image: perfilLocal.photo,
+          },
+        },
+        isRestaurant: true,
+        isEmployee: false,
+        isCompany: false,
+      };
+    }),
+}));

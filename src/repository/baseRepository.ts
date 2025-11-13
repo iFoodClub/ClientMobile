@@ -12,18 +12,14 @@ export class RepositoryBase {
       timeout: 10000,
     });
 
-    // Interceptor para incluir o token na requisição
     this.api.interceptors.request.use(
       async (config) => {
-        const isLoginRoute = config.url?.includes("/user/login");
-
-        if (!isLoginRoute) {
-          const { token } = useAuthStore.getState();
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
+        const { token } = useAuthStore.getState();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        } else {
+          delete config.headers.Authorization;
         }
-
         return config;
       },
       (error) => Promise.reject(error)
