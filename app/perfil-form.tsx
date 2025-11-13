@@ -2,7 +2,7 @@ import PressableButton from "@/components/Button/PressableButton";
 import RestaurantForm from "@/components/Forms/RestaurantForm/RestaurantForm";
 
 import PageHeader from "@/components/PageHeader/PageHeader";
-import { useToastAll } from '@/src/components/Toast';
+import { useToastAll } from "@/src/components/Toast";
 import { runMigrations } from "@/src/db";
 import { useAuthStore } from "@/src/store/authStore";
 import { AntDesign } from "@expo/vector-icons";
@@ -14,6 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const PerfilForm = () => {
   const { user, isRestaurant, isCompany, isEmployee } = useAuthStore();
   const { showSuccess, showError } = useToastAll();
+
+  console.log(JSON.stringify(user, null, 2));
 
   // ao montar, garantir tabelas (sincronização agora é global)
   useEffect(() => {

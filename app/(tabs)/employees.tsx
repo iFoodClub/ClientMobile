@@ -94,8 +94,6 @@ const EmployeesScreen = () => {
   }
 
   function handleEdit(employee: IEmployeeSimple) {
-    console.log(JSON.stringify(employee, null, 2));
-
     setMode(formMode.update);
     reset({
       name: employee.name,

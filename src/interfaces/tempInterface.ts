@@ -1,23 +1,20 @@
 export interface IEmployeeWithWeeklyOrders {
   id: number;
+  orderedAt: string;
+  orderStatus: OrderStatus;
   dayOfWeek: string;
   restaurant: IORestaurant;
-  weeklyOrders: IWeeklyOrder[];
+  employees: IEmployee[];
 }
 
-interface IORestaurant {
+interface IEmployee {
   id: number;
   name: string;
   profileImage: string;
+  order: IODish | null;
 }
 
-export interface IWeeklyOrder {
-  id: number;
-  employee: IOEmployee;
-  order: IODish;
-}
-
-interface IOEmployee {
+interface IORestaurant {
   id: number;
   name: string;
   profileImage: string;
@@ -28,4 +25,12 @@ interface IODish {
   name: string;
   price: number;
   image: string;
+}
+
+export enum OrderStatus {
+  created = "created",
+  ordered = "ordered",
+  inProgress = "inProgress",
+  delivered = "delivered",
+  canceled = "canceled",
 }
