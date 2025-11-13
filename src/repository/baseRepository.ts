@@ -15,26 +15,26 @@ export class RepositoryBase {
     // Interceptor para incluir o token na requisição
     this.api.interceptors.request.use(
       async (config) => {
-        const { token } = useAuthStore.getState();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        const isLoginRoute = config.url?.includes("/user/login");
+
+        if (!isLoginRoute) {
+          const { token } = useAuthStore.getState();
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
+
         return config;
       },
-      (error) => {
-        if (__DEV__) console.error("❌ Erro no interceptor de request:", error);
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
-    // Interceptor para tratar respostas e erros
     this.api.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         const { logout } = useAuthStore.getState();
         const requestUrl = error.config?.url || "";
 
-        // ⚠️ Evita loop: não tenta deslogar se o erro vier da própria rota de logout
         if (
           error.response?.status === 401 &&
           !requestUrl.includes("/user/logout")
@@ -44,7 +44,6 @@ export class RepositoryBase {
           logout();
         }
 
-        // Log detalhado de erro no modo de desenvolvimento
         if (__DEV__) {
           console.log(
             JSON.stringify(

@@ -15,9 +15,6 @@ const orders = () => {
     fetchEmployees();
   }, []);
 
-  console.log(JSON.stringify(user, null, 2));
-  console.log(JSON.stringify(employees, null, 2));
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <PageHeader title="Pedidos" subtitle="Gerencie os pedidos recebidos " />

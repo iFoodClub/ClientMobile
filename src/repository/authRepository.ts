@@ -45,8 +45,6 @@ class AuthRepository extends RepositoryBase {
   }
 
   async createEmployee(data: IEmployeeDTO) {
-    console.log("criando colaborador");
-    console.log(JSON.stringify(data, null, 2));
     return await this.api.post("/user", data);
   }
 

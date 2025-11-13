@@ -42,6 +42,11 @@ export const useAuthStore = create<IAuthStore>()(
         try {
           set({ loading: true });
           const response = await AuthRepository.login(email, password);
+
+          if (response.status !== 200) {
+            throw new Error(`Erro no login: ${response.status}`);
+          }
+
           set({
             token: response.data.token,
             isLoggedIn: true,
@@ -67,6 +72,13 @@ export const useAuthStore = create<IAuthStore>()(
         } catch (error) {
           console.log("Erro no logout API:", error);
         } finally {
+          try {
+            await deleteItemAsync("auth-store");
+            useAuthStore.persist.clearStorage();
+          } catch (err) {
+            console.log("Erro ao limpar o SecureStore:", err);
+          }
+
           set({
             token: "",
             isLoggedIn: false,
@@ -75,6 +87,7 @@ export const useAuthStore = create<IAuthStore>()(
             isEmployee: false,
             isRestaurant: false,
             loading: false,
+            shouldCreateAccount: false,
           });
         }
       },
