@@ -15,11 +15,14 @@ export class RepositoryBase {
     this.api.interceptors.request.use(
       async (config) => {
         const { token } = useAuthStore.getState();
-        if (token) {
+        const publicRoutes = ["/user/login", "/user/register"];
+
+        if (token && !publicRoutes.some((r) => config.url?.includes(r))) {
           config.headers.Authorization = `Bearer ${token}`;
         } else {
           delete config.headers.Authorization;
         }
+
         return config;
       },
       (error) => Promise.reject(error)
@@ -27,16 +30,25 @@ export class RepositoryBase {
 
     this.api.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => {
+      async (error: AxiosError<any>) => {
         const { logout } = useAuthStore.getState();
         const requestUrl = error.config?.url || "";
+        const message = error.response?.data?.message?.toLowerCase?.() || "";
+
+        const tokenError =
+          message.includes("token") ||
+          message.includes("jwt") ||
+          message.includes("unauthorized") ||
+          message.includes("invalid") ||
+          message.includes("expired");
 
         if (
           error.response?.status === 401 &&
-          !requestUrl.includes("/user/logout")
+          !requestUrl.includes("/user/logout") &&
+          tokenError
         ) {
           if (__DEV__)
-            console.warn("⚠️ Token expirado ou inválido. Efetuando logout...");
+            console.warn("⚠️ Token inválido ou expirado. Efetuando logout...");
           logout();
         }
 
