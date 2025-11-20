@@ -53,7 +53,7 @@ const SettingsScreen = () => {
           />
           <View className="flex flex-col items-center w-full    ">
             <Text className=" font-bold text-xl w-full text-center ">
-              {user?.restaurant?.name}
+              {user?.name}
             </Text>
             <Text className="text-gray-400 font-medium">
               {user?.restaurant?.cidade}, {user?.restaurant?.estado}
@@ -64,9 +64,9 @@ const SettingsScreen = () => {
           <Text className="font-semibold">Email</Text>
           <Text>{user?.email}</Text>
           <Text className="font-semibold">CEP</Text>
-          <Text>{user?.restaurant?.cep}</Text>
+          <Text>{user?.restaurant?.cep || user?.company?.cep}</Text>
           <Text className="font-semibold">CNPJ</Text>
-          <Text>{user?.restaurant?.cnpj}</Text>
+          <Text>{user?.restaurant?.cnpj || user?.company?.cnpj}</Text>
         </View>
       </View>
 
