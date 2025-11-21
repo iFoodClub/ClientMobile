@@ -98,3 +98,26 @@ export function currencyMask(value: string): string {
   
   return `R$${numValue.toFixed(2).replace(".", ",")}`;
 }
+
+/**
+ * Converte data de DD/MM/AAAA para AAAA-MM-DD
+ */
+export function dateToISO(dateString: string): string {
+  if (!dateString) {
+    return "";
+  }
+  
+  // Remove tudo exceto dígitos
+  const digits = dateString.replace(/\D/g, "");
+  
+  if (digits.length !== 8) {
+    return dateString; // Retorna como está se não tiver 8 dígitos
+  }
+  
+  // Formato: DDMMAAAA -> AAAA-MM-DD
+  const day = digits.substring(0, 2);
+  const month = digits.substring(2, 4);
+  const year = digits.substring(4, 8);
+  
+  return `${year}-${month}-${day}`;
+}

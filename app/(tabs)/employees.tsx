@@ -10,6 +10,7 @@ import { IEmployeeSimple } from "@/src/interfaces/apiResponses";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
 import { formMode, UserType } from "@/src/interfaces/interfaces";
 import { useAuthStore } from "@/src/store/authStore";
+import { cpfMask, dateToISO } from "@/src/utils/masks";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -51,6 +52,18 @@ const EmployeesScreen = () => {
 
   async function handleSubmitForm(data: IEmployeeDTO) {
     if (!user?.company?.id) return;
+    
+    // Converter data de DD/MM/AAAA para AAAA-MM-DD se necessário
+    if (data.employee?.birthDate) {
+      const isoDate = dateToISO(data.employee.birthDate);
+      data.employee.birthDate = isoDate || data.employee.birthDate;
+    }
+    
+    // Remover máscara do CPF (remover pontos e traços)
+    if (data.cpf) {
+      data.cpf = data.cpf.replace(/\D/g, "");
+    }
+    
     data = {
       ...data,
       userType: UserType.employee,
@@ -97,14 +110,29 @@ const EmployeesScreen = () => {
     console.log(JSON.stringify(employee, null, 2));
 
     setMode(formMode.update);
+    
+    // Converter data de AAAA-MM-DD para DD/MM/AAAA para exibição
+    let displayDate = employee.birthDate || "";
+    if (displayDate && displayDate.includes("-")) {
+      const [year, month, day] = displayDate.split("-");
+      displayDate = `${day}/${month}/${year}`;
+    }
+    
+    // Aplicar máscara de CPF se não tiver
+    let displayCpf = employee.cpf || "";
+    if (displayCpf && !displayCpf.includes(".") && !displayCpf.includes("-")) {
+      // Se o CPF não tem máscara, aplicar
+      displayCpf = cpfMask(displayCpf);
+    }
+    
     reset({
       name: employee.name,
       email: employee.email,
       password: "",
       password2: "",
-      cpf: employee.cpf,
+      cpf: displayCpf,
       profileImage: employee.profileImage,
-      employee: { birthDate: employee.birthDate },
+      employee: { birthDate: displayDate },
     });
 
     setEmployeeModalVisible(true);

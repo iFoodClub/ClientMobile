@@ -3,6 +3,24 @@ import { IEmployeeSimple } from "@/src/interfaces/apiResponses";
 import { AntDesign } from "@expo/vector-icons";
 import { Image, Pressable, Text, View } from "react-native";
 
+// Função para converter data de AAAA-MM-DD para DD/MM/AAAA
+const formatDate = (dateString: string): string => {
+  if (!dateString) return "";
+  
+  // Se já está no formato DD/MM/AAAA, retorna como está
+  if (dateString.includes("/")) {
+    return dateString;
+  }
+  
+  // Se está no formato AAAA-MM-DD, converte para DD/MM/AAAA
+  if (dateString.includes("-")) {
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+  }
+  
+  return dateString;
+};
+
 type EmployeeCardProps = {
   employee: IEmployeeSimple;
   onEdit: (employee: IEmployeeSimple) => void;
@@ -35,7 +53,7 @@ const EmployeeCard = ({
 
       <View className="flex-1">
         <Text className="font-semibold text-lg">{employee.name}</Text>
-        <Text className="text-gray-500">{employee.birthDate}</Text>
+        <Text className="text-gray-500">{formatDate(employee.birthDate)}</Text>
       </View>
 
       {isSelected ? (

@@ -2,7 +2,6 @@ import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
 import { useToastAll } from "@/src/components/Toast";
 import { runMigrations } from "@/src/db";
-import { clearDatabase } from "@/src/db/sqlite";
 import { IUpdateRestaurantDTO } from "@/src/interfaces/dtos";
 import { LocalProfileRepository } from "@/src/repository/localProfileRepository";
 import RestaurantRepository from "@/src/repository/restaurantRepository";
@@ -259,7 +258,7 @@ const RestaurantForm = () => {
       />
       
       {/* Botão temporário para debug - remover depois */}
-      {__DEV__ && (
+      {/*__DEV__ && (
         <Button
           className="flex flex-row mt-2 bg-red-500"
           text="Limpar Banco (Debug)"
@@ -269,7 +268,7 @@ const RestaurantForm = () => {
             showInfo("Banco limpo e migrações executadas");
           }}
         />
-      )}
+      )}*/}
     </SafeAreaView>
   );
 };

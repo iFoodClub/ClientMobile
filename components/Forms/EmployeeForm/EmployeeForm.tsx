@@ -1,9 +1,11 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
 import { formMode } from "@/src/interfaces/interfaces";
-import React from "react";
-import { Control } from "react-hook-form";
-import { ScrollView } from "react-native";
+import { cpfMask, dateMask } from "@/src/utils/masks";
+import { AntDesign } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Control, Controller } from "react-hook-form";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
 type EmployeeFormProps = {
   control: Control<IEmployeeDTO>;
@@ -11,6 +13,9 @@ type EmployeeFormProps = {
 };
 
 const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+
   return (
     <ScrollView className=" px-4 ">
       <CustomInput
@@ -20,24 +25,59 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
         rules={{ required: { value: true, message: "O nome é obrigatório" } }}
         placeholder="Digite o nome"
       />
-      <CustomInput
+      
+      {/* Data de nascimento com máscara DD/MM/AAAA */}
+      <Controller
         control={control}
         name="employee.birthDate"
-        label="Data de nascimento"
-        placeholder="Ex: 1999-01-01"
-        maxLength={10}
         rules={{
           required: {
             value: true,
             message: "A data de nascimento é obrigatória.",
           },
-
-          pattern: {
-            value: /^\d{4}-\d{2}-\d{2}$/,
-            message: "Formato inválido. Use AAAA-MM-DD (ex: 1997-06-30).",
-          },
         }}
+        render={({
+          field: { onChange, onBlur, value },
+          fieldState: { error },
+        }) => (
+          <>
+            <View className="w-full">
+              <Text className="text-sm font-semibold text-gray-600 mb-1">
+                Data de nascimento
+              </Text>
+              <View
+                className={`justify-center border flex flex-row items-center rounded-lg text-base p-1 pl-4 ${
+                  error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
+                }`}
+              >
+                <TextInput
+                  keyboardType="numeric"
+                  className={`text-base flex-1 ${
+                    error
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white"
+                  }`}
+                  onBlur={onBlur}
+                  onChangeText={(text) => {
+                    const maskedValue = dateMask(text);
+                    onChange(maskedValue);
+                  }}
+                  value={value || ""}
+                  placeholder="DD/MM/AAAA"
+                  placeholderTextColor={"#9CA3AF"}
+                  maxLength={10}
+                />
+              </View>
+              <View className="h-[20px] flex items-end">
+                {error && (
+                  <Text className="text-red-500 text-sm">{error.message}</Text>
+                )}
+              </View>
+            </View>
+          </>
+        )}
       />
+      
       <CustomInput
         control={control}
         placeholder="Digite o email"
@@ -47,12 +87,12 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
           required: { value: true, message: "O e-mail é obrigatório" },
         }}
       />
+      
+      {/* Senha com toggle de visibilidade */}
       {mode === formMode.create && (
-        <CustomInput
-          placeholder="Digite a senha"
+        <Controller
           control={control}
           name="password"
-          label="Senha"
           rules={{
             minLength: {
               value: 6,
@@ -60,14 +100,64 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
             },
             required: { value: true, message: "A senha é obrigatória" },
           }}
+          render={({
+            field: { onChange, onBlur, value },
+            fieldState: { error },
+          }) => (
+            <>
+              <View className="w-full">
+                <Text className="text-sm font-semibold text-gray-600 mb-1">
+                  Senha
+                </Text>
+                <View
+                  className={`justify-center border flex flex-row items-center rounded-lg text-base p-1 pl-4 ${
+                    error
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white"
+                  }`}
+                >
+                  <TextInput
+                    className={`text-base flex-1 ${
+                      error
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-white"
+                    }`}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value || ""}
+                    placeholder="Digite a senha"
+                    placeholderTextColor={"#9CA3AF"}
+                    secureTextEntry={!showPassword}
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword(!showPassword)}
+                    className="px-3"
+                  >
+                    <AntDesign
+                      name={showPassword ? "eye" : "eyeinvisible"}
+                      size={20}
+                      color="#6B7280"
+                    />
+                  </Pressable>
+                </View>
+                <View className="h-[20px] flex items-end">
+                  {error && (
+                    <Text className="text-red-500 text-sm">
+                      {error.message}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </>
+          )}
         />
       )}
+      
+      {/* Confirmação de senha com toggle de visibilidade */}
       {mode === formMode.create && (
-        <CustomInput
-          placeholder="Confirme a senha"
+        <Controller
           control={control}
           name="password2"
-          label="Confirme a senha"
           rules={{
             minLength: {
               value: 6,
@@ -75,8 +165,59 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
             },
             required: { value: true, message: "A senha é obrigatória" },
           }}
+          render={({
+            field: { onChange, onBlur, value },
+            fieldState: { error },
+          }) => (
+            <>
+              <View className="w-full">
+                <Text className="text-sm font-semibold text-gray-600 mb-1">
+                  Confirme a senha
+                </Text>
+                <View
+                  className={`justify-center border flex flex-row items-center rounded-lg text-base p-1 pl-4 ${
+                    error
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white"
+                  }`}
+                >
+                  <TextInput
+                    className={`text-base flex-1 ${
+                      error
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-white"
+                    }`}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value || ""}
+                    placeholder="Confirme a senha"
+                    placeholderTextColor={"#9CA3AF"}
+                    secureTextEntry={!showPassword2}
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword2(!showPassword2)}
+                    className="px-3"
+                  >
+                    <AntDesign
+                      name={showPassword2 ? "eye" : "eyeinvisible"}
+                      size={20}
+                      color="#6B7280"
+                    />
+                  </Pressable>
+                </View>
+                <View className="h-[20px] flex items-end">
+                  {error && (
+                    <Text className="text-red-500 text-sm">
+                      {error.message}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </>
+          )}
         />
       )}
+      
       <CustomInput
         placeholder="Insira a imagem"
         control={control}
@@ -84,14 +225,52 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
         label="Imagem do perfil"
         rules={{ required: { value: true, message: "O nome é obrigatório" } }}
       />
-      <CustomInput
-        placeholder="Digite o CPF"
+      
+      {/* CPF com máscara */}
+      <Controller
         control={control}
         name="cpf"
-        label="CPF"
-        maxLength={11}
-        keyboardType="numeric"
-        rules={{ required: { value: true, message: "O nome é obrigatório" } }}
+        rules={{ required: { value: true, message: "O CPF é obrigatório" } }}
+        render={({
+          field: { onChange, onBlur, value },
+          fieldState: { error },
+        }) => (
+          <>
+            <View className="w-full">
+              <Text className="text-sm font-semibold text-gray-600 mb-1">
+                CPF
+              </Text>
+              <View
+                className={`justify-center border flex flex-row items-center rounded-lg text-base p-1 pl-4 ${
+                  error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
+                }`}
+              >
+                <TextInput
+                  keyboardType="numeric"
+                  className={`text-base flex-1 ${
+                    error
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white"
+                  }`}
+                  onBlur={onBlur}
+                  onChangeText={(text) => {
+                    const maskedValue = cpfMask(text);
+                    onChange(maskedValue);
+                  }}
+                  value={value || ""}
+                  placeholder="000.000.000-00"
+                  placeholderTextColor={"#9CA3AF"}
+                  maxLength={14}
+                />
+              </View>
+              <View className="h-[20px] flex items-end">
+                {error && (
+                  <Text className="text-red-500 text-sm">{error.message}</Text>
+                )}
+              </View>
+            </View>
+          </>
+        )}
       />
     </ScrollView>
   );
