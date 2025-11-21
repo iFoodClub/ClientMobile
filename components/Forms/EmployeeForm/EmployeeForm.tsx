@@ -1,11 +1,14 @@
 import CustomInput from "@/components/CustomInput/CustomInput";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
 import { formMode } from "@/src/interfaces/interfaces";
+
+import React from "react";
 import { cpfMask, dateMask } from "@/src/utils/masks";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, ScrollView, Text, TextInput, View, Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback} from "react-native";
+import { Control } from "react-hook-form";
 
 type EmployeeFormProps = {
   control: Control<IEmployeeDTO>;

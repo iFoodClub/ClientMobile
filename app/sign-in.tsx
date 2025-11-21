@@ -15,7 +15,6 @@ import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-//icons
 
 const SignInScreen = () => {
   const { login, user, loading, isLoggedIn } = useAuthStore();
@@ -35,12 +34,21 @@ const SignInScreen = () => {
       email: "admin@tech.com",
       password: "restaurante123",
     },
+    {
+      label: "Funcionario 1",
+      email: "maria@gmail.com",
+      password: "123456",
+    },
+    {
+      label: "Funcionario 2",
+      email: "pedro@gmail.com",
+      password: "123456",
+    },
   ];
 
   const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
-    // garante que as tabelas existam
     runMigrations();
   }, []);
 
@@ -52,50 +60,27 @@ const SignInScreen = () => {
   }, []);
 
   const handleOfflineAccess = async (email: string) => {
-    console.log("🔍 DEBUG LOGIN OFFLINE - Email:", email);
-
-    // Busca sessões por email e por ID já salvos
     let canLogin = false;
     let perfilLocal = null;
 
-    // Tenta pelo userId primeiro
     if (user?.id) {
-      console.log("🔍 Tentando login offline pelo userId:", user.id);
       canLogin = LocalAuthRepository.isLoginWithin24h(String(user.id));
-      console.log("🔍 Resultado userId:", canLogin);
       perfilLocal = LocalProfileRepository.getProfile(String(user.id));
-      console.log("🔍 Perfil local encontrado pelo userId:", !!perfilLocal);
     }
 
-    // Se não conseguiu pelo userId, tenta pelo email
     if (!canLogin) {
-      console.log("🔍 Tentando login offline pelo email:", email);
       canLogin = LocalAuthRepository.isLoginWithin24h(email);
-      console.log("🔍 Resultado email:", canLogin);
       if (!perfilLocal) {
         perfilLocal = LocalProfileRepository.getProfile(email);
-        console.log("🔍 Perfil local encontrado pelo email:", !!perfilLocal);
       }
     }
 
-    console.log(
-      "🔍 Resultado final - canLogin:",
-      canLogin,
-      "perfilLocal:",
-      !!perfilLocal,
-      "isLoggedIn:",
-      isLoggedIn
-    );
-
     if ((canLogin || isLoggedIn) && perfilLocal) {
-      console.log("✅ Login offline permitido!");
-      // Preencher zustand!
       useAuthStore.getState().loginOffline(perfilLocal);
       router.replace("/");
       return true;
     }
 
-    console.log("❌ Login offline negado");
     showError(
       "Login offline indisponível para este usuário. Faça login online pelo menos uma vez."
     );
@@ -104,28 +89,22 @@ const SignInScreen = () => {
 
   const handleSignIn: SubmitHandler<ISignInForm> = async (data) => {
     const state = await NetInfo.fetch();
-    console.log("handleSignIn - Estado da conexão:", state.isConnected);
 
     if (!state.isConnected) {
       const allowed = await handleOfflineAccess(data.email);
       if (!allowed) {
-        console.log("handleSignIn - Login offline negado, exige conexão");
-        // Aqui você pode mostrar uma mensagem para o usuário
         return;
       }
       return;
     }
 
-    console.log("handleSignIn - Fazendo login online...");
     try {
       await login(data.email, data.password);
 
-      // Aguarda user ser atualizado na store
       setTimeout(() => {
         const currentUser = useAuthStore.getState().user;
         if (currentUser?.id && currentUser?.email) {
           const nowTs = Math.floor(Date.now() / 1000);
-          // Salva última sessão para ambos identificadores
           LocalAuthRepository.upsertLastLoginOffline(
             String(currentUser.id),
             currentUser.email,
@@ -134,7 +113,6 @@ const SignInScreen = () => {
         }
       }, 1000);
     } catch (error) {
-      console.error("handleSignIn - Erro no login:", error);
       showError("Erro no login online!");
     }
   };

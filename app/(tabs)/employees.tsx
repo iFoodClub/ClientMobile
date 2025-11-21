@@ -107,8 +107,6 @@ const EmployeesScreen = () => {
   }
 
   function handleEdit(employee: IEmployeeSimple) {
-    console.log(JSON.stringify(employee, null, 2));
-
     setMode(formMode.update);
     
     // Converter data de AAAA-MM-DD para DD/MM/AAAA para exibição

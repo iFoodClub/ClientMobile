@@ -1,7 +1,7 @@
 // src/repositories/EmployeeRepository.ts
 
 import { IEmployeeSimple } from "../interfaces/apiResponses";
-import { IEmployeeDTO } from "../interfaces/dtos";
+import { IEmployeeDTO, IWeeklyOrderDTO } from "../interfaces/dtos";
 import { RepositoryBase } from "./baseRepository";
 
 class EmployeeRepository extends RepositoryBase {
@@ -24,6 +24,14 @@ class EmployeeRepository extends RepositoryBase {
     employeeData: Partial<IEmployeeSimple>
   ) {
     return await this.api.put(`/employee/${employeeId}`, employeeData);
+  }
+
+  async selectWeeklyOrderDay(data: IWeeklyOrderDTO) {
+    return await this.api.post(`/employee-weekly-orders/`, data);
+  }
+
+  async getWeeklyOrdersCurrentDay(companyId: number) {
+    return await this.api.get(`/company/${companyId}/weekly-orders`);
   }
 }
 

@@ -1,27 +1,35 @@
 import PressableButton from "@/components/Button/PressableButton";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
 import DishCardSkeleton from "@/components/Restaurant/Components/DishCard/DishCardSkeleton";
+import CModal from "@/components/ui/Modal/CModal";
 import { useToastAll } from "@/src/components/Toast";
 import { COLORS } from "@/src/constants/colors";
 import { useSelectedRestaurant } from "@/src/hooks/useSelectedRestaurant";
-import { UserType } from "@/src/interfaces/interfaces";
+import { IDish } from "@/src/interfaces/apiResponses";
+import { dayNamesPT, DayOfWeek, UserType } from "@/src/interfaces/interfaces";
 import CompanyRepository from "@/src/repository/companyRepository";
+import employeeRepository from "@/src/repository/employeeRepository";
 import { useAuthStore } from "@/src/store/authStore";
 import { formatPrice } from "@/src/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
-// 1. Importe a ScrollView
-import { Image, ScrollView, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
 const RestaurantDetails = () => {
-  const { showSuccess } = useToastAll();
+  const [open, setOpen] = useState(false);
+  const { showSuccess, showError } = useToastAll();
   const { id } = useLocalSearchParams();
+  const [selectedDish, setSelectedDish] = useState<IDish | null>(null);
   const { selectedRestaurant, loading } = useSelectedRestaurant({
     restaurantId: Number(id),
   });
-  const { token, user, updateSelectedRestaurant } = useAuthStore();
+  const { token, user, updateSelectedRestaurant, isEmployee } = useAuthStore();
+
+  function handleCancel() {
+    setOpen(false);
+  }
 
   function handleBkackPress() {
     router.push({
@@ -30,7 +38,6 @@ const RestaurantDetails = () => {
   }
 
   async function handleChooseRestaurant() {
-    // ... sua lógica continua a mesma
     try {
       if (!selectedRestaurant || !user || !user.company) return;
       const response = await CompanyRepository.updateCompanySelectedRestaurant(
@@ -57,7 +64,35 @@ const RestaurantDetails = () => {
     selectedRestaurant?.dishes[0]
   );
 
-  function handleLongPress(id: number): void {}
+  function handleLongPress(dish: IDish): void {
+    {
+      if (isEmployee) {
+        setOpen(true);
+        setSelectedDish(dish);
+      }
+    }
+  }
+
+  async function handleEmployeeWeeklyOrder(day: DayOfWeek) {
+    if (!selectedDish || !day || !user?.employee?.id) return;
+
+    const employeeWeeklyOrder = {
+      employeeId: user.employee.id,
+      dayOfWeek: day,
+      order: {
+        dishId: selectedDish.id,
+        quantity: 1,
+      },
+    };
+
+    try {
+      await employeeRepository.selectWeeklyOrderDay(employeeWeeklyOrder);
+      showSuccess(`Prato definido para ${dayNamesPT[day]}`);
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -161,12 +196,38 @@ const RestaurantDetails = () => {
               <DishCard
                 key={dish.id}
                 dish={dish}
-                onLongPress={() => handleLongPress(dish.id)}
+                onLongPress={() => handleLongPress(dish)}
               />
             ))}
           </View>
         </View>
       </ScrollView>
+
+      <CModal
+        subtitle="Essa escolha será utilizada para definir seu pedido semanal (Que irá ser feito automaticamente )"
+        confirmText={"Escolher"}
+        onClose={handleCancel}
+        loading={false}
+        modalVisible={open}
+        setModalVisible={setOpen}
+        title={"Para qual dia deseja definir o  prato"}
+      >
+        <View>
+          <View className="flex flex-row flex-wrap gap-4 mx-auto w-10/12 justify-between ">
+            {Object.values(DayOfWeek).map((day) => (
+              <Pressable
+                className="py-2 border px-4 rounded-lg w-2/5 bg-primary border-primary flex items-center justify-center "
+                key={day}
+                onPress={() => {
+                  handleEmployeeWeeklyOrder(day);
+                }}
+              >
+                <Text className="text-white text-base">{dayNamesPT[day]}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </CModal>
     </View>
   );
 };

@@ -2,13 +2,40 @@ import PageHeader from "@/components/PageHeader/PageHeader";
 import RestaurantCard from "@/components/Restaurant/Components/RestaurantCard/RestaurantCard";
 import RestaurantCardSkeleton from "@/components/Restaurant/Components/RestaurantCard/RestaurantCardSkeleton";
 import { useFetchRestaurants } from "@/src/hooks/useRestaurants";
-import React from "react";
+import { IRestaurantResponse } from "@/src/interfaces/apiResponses";
+import { useAuthStore } from "@/src/store/authStore";
+import React, { useEffect } from "react";
 // Importe os componentes necessários
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   const { restaurants, loading, error } = useFetchRestaurants();
+  const { user, isEmployee } = useAuthStore();
+
+  const [selectedRestaurant, setSelectedRestaurant] = React.useState<
+    IRestaurantResponse[] | null
+  >(null);
+
+  const temporaryUser = {
+    ...user,
+    employee: {
+      ...user?.employee,
+      company: {
+        ...user?.employee?.company,
+        id: user?.employee?.companyId,
+        selectedRestaurantId: 2,
+      },
+    },
+  };
+
+  useEffect(() => {
+    if (!isEmployee) return;
+    const selectedRestaurant = restaurants.filter(
+      (r) => r.id === temporaryUser.employee.company.selectedRestaurantId
+    );
+    setSelectedRestaurant(selectedRestaurant);
+  }, [restaurants, user]);
 
   // É mais limpo renderizar os skeletons separadamente enquanto os dados carregam
   if (loading) {
@@ -35,7 +62,7 @@ const HomeScreen = () => {
       />
 
       <FlatList
-        data={restaurants}
+        data={isEmployee ? selectedRestaurant : restaurants}
         renderItem={({ item }) => (
           <View className="px-4">
             <RestaurantCard restaurant={item} />

@@ -12,30 +12,43 @@ export class RepositoryBase {
       timeout: 10000,
     });
 
-    //Coloca o token na requisição
     this.api.interceptors.request.use(
       async (config) => {
         const { token } = useAuthStore.getState();
-        if (token) {
+        const publicRoutes = ["/user/login", "/user/register"];
+
+        if (token && !publicRoutes.some((r) => config.url?.includes(r))) {
           config.headers.Authorization = `Bearer ${token}`;
+        } else {
+          delete config.headers.Authorization;
         }
+
         return config;
       },
-      (error) => {
-        if (__DEV__) console.error("❌ Erro no interceptor de request:", error);
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
-    //Verifica se o token expirou e faz o logout
     this.api.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => {
+      async (error: AxiosError<any>) => {
         const { logout } = useAuthStore.getState();
+        const requestUrl = error.config?.url || "";
+        const message = error.response?.data?.message?.toLowerCase?.() || "";
 
-        if (error.response?.status === 401) {
+        const tokenError =
+          message.includes("token") ||
+          message.includes("jwt") ||
+          message.includes("unauthorized") ||
+          message.includes("invalid") ||
+          message.includes("expired");
+
+        if (
+          error.response?.status === 401 &&
+          !requestUrl.includes("/user/logout") &&
+          tokenError
+        ) {
           if (__DEV__)
-            console.warn("⚠️ Token expirado ou inválido. Efetuando logout...");
+            console.warn("⚠️ Token inválido ou expirado. Efetuando logout...");
           logout();
         }
 
@@ -46,7 +59,10 @@ export class RepositoryBase {
                 title: "❌ Erro na requisição Axios:",
                 url: error.config?.url,
                 method: error.config?.method,
-                message: error.message,
+                message:
+                  error?.response?.data?.message ||
+                  error?.message ||
+                  "Erro desconhecido",
                 status: error.response?.status,
                 token: error.config?.headers?.Authorization,
               },

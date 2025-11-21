@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IEmployeeSimple } from "../interfaces/apiResponses";
 import { IEmployeeDTO } from "../interfaces/dtos";
+import { DayOfWeek } from "../interfaces/interfaces";
 import EmployeeRepository from "../repository/employeeRepository";
 
 export const useEmployees = (companyId: number | undefined) => {
@@ -58,6 +59,11 @@ export const useEmployees = (companyId: number | undefined) => {
       setLoading(false);
     }
   }
+
+  async function getEmployeesOrdersByDay(
+    employees: IEmployeeSimple[],
+    day: DayOfWeek
+  ) {}
 
   return {
     employees,

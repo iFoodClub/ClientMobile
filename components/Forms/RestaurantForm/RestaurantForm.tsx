@@ -31,7 +31,7 @@ const RestaurantForm = () => {
     async function hydrate() {
       // Garantir que as migrações sejam executadas
       await runMigrations();
-      
+
       const state = await NetInfo.fetch();
       if (state.isConnected) {
         reset({
@@ -54,7 +54,8 @@ const RestaurantForm = () => {
             cnpj: data.cnpj ?? user?.restaurant?.cnpj,
             cep: data.cep ?? user?.restaurant?.cep,
             number: data.number ?? user?.restaurant?.number,
-            profileImage: data.profileImage ?? local.photo ?? user?.restaurant?.image,
+            profileImage:
+              data.profileImage ?? local.photo ?? user?.restaurant?.image,
           });
           return;
         }
@@ -78,26 +79,25 @@ const RestaurantForm = () => {
         return;
       }
       setLoading(true);
-      
+
       // Garantir que as migrações sejam executadas antes de salvar
       await runMigrations();
-      
+
       // Validação mais robusta do user.id
       if (!user?.id || user.id === null || user.id === undefined) {
         showError("Usuário não encontrado. Faça login novamente.");
         return;
       }
-      
+
       const userId = String(user.id);
-      console.log('RestaurantForm.onSubmit - userId:', userId, 'tipo:', typeof userId);
-      
+
       const net = await NetInfo.fetch();
-      
+
       if (!net.isConnected) {
         // Debug: verificar estado da tabela antes
-        console.log('RestaurantForm - Estado da tabela ANTES da inserção:');
+
         LocalProfileRepository.debugTable();
-        
+
         // salva localmente como sujo para sincronizar depois
         LocalProfileRepository.upsertProfile({
           userId,
@@ -107,13 +107,14 @@ const RestaurantForm = () => {
           data,
           dirty: 1,
         });
-        
+
         // Debug: verificar estado da tabela depois
-        console.log('RestaurantForm - Estado da tabela DEPOIS da inserção:');
         LocalProfileRepository.debugTable();
-        
+
         updateUserRestaurant(user?.restaurant?.id as number, data);
-        showSuccess("Alterações salvas offline. Será sincronizado quando online.");
+        showSuccess(
+          "Alterações salvas offline. Será sincronizado quando online."
+        );
         return;
       }
 
@@ -123,6 +124,7 @@ const RestaurantForm = () => {
       }
       
       console.log("JSON enviado para UPDATE RESTAURANT (restaurantId:", user?.restaurant?.id, "):", JSON.stringify(data, null, 2));
+
       const response = await RestaurantRepository.updateRestaurant(
         user?.restaurant?.id,
         data
@@ -256,7 +258,7 @@ const RestaurantForm = () => {
         loading={loading}
         disabled={isDirty ? false : true}
       />
-      
+
       {/* Botão temporário para debug - remover depois */}
       {/*__DEV__ && (
         <Button

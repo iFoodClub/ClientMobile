@@ -39,15 +39,15 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const getColor = (type: string) => {
     switch (type) {
       case "success":
-        return "rgba(16, 185, 129, 0.9)"; // Verde com transparência
+        return "#10B981";
       case "error":
-        return "rgba(239, 68, 68, 0.9)"; // Vermelho com transparência
+        return "#EF4444";
       case "warning":
-        return "rgba(245, 158, 11, 0.9)"; // Amarelo com transparência
+        return "#F59E0B";
       case "info":
-        return "rgba(59, 130, 246, 0.9)"; // Azul com transparência
+        return "#3B82F6";
       default:
-        return "rgba(59, 130, 246, 0.9)";
+        return "#3B82F6";
     }
   };
 
@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     alignSelf: "center",
-    maxWidth: 300, // Largura máxima menor
-    minWidth: 200, // Largura mínima
+    maxWidth: 300,
+    minWidth: 200,
   },
   text: {
     color: "white",
