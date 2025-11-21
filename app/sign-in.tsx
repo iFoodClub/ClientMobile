@@ -36,12 +36,12 @@ const SignInScreen = () => {
     },
     {
       label: "Funcionario 1",
-      email: "maria@gmail.com",
+      email: "maria2@gmail.com",
       password: "123456",
     },
     {
       label: "Funcionario 2",
-      email: "pedro@gmail.com",
+      email: "pedro2@gmail.com",
       password: "123456",
     },
   ];

@@ -94,3 +94,34 @@ export interface IEmployeePopulate {
   birthDate: string;
   vacation: boolean;
 }
+
+export interface IRestaurantOrdersResponse {
+  id: number;
+  code: string;
+  totalPrice: string;
+  status: string;
+  restaurantId: number;
+  company: {
+    id: number;
+    name: string;
+    image: string;
+  };
+  employeeOrders: IEmployeeOrder[];
+}
+
+interface IEmployeeOrder {
+  id: number;
+  status: string;
+  employee: {
+    id: number;
+    name: string;
+    image: string;
+  };
+  dish: {
+    id: number;
+    name: string;
+    image: string;
+    price: string;
+    restaurantId: number;
+  };
+}

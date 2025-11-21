@@ -24,12 +24,11 @@ export const useDishes = (restaurantId: number | undefined) => {
     } finally {
       setLoading(false);
     }
-  }, [restaurantId]); // A função será recriada se `restaurantId` mudar
+  }, [restaurantId]);
 
   useEffect(() => {
     fetchDishes();
-  }, [fetchDishes]); // 3. O efeito agora roda quando a função é criada/recriada
+  }, [fetchDishes]);
 
-  // 4. Retorne a função `fetchDishes` junto com os outros estados
   return { dishes, loading, fetchDishes };
 };
