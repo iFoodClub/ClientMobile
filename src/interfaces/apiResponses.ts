@@ -108,7 +108,7 @@ export interface IRestaurantOrdersResponse {
     name: string;
     image: string;
   };
-  employeeOrders: IEmployeeOrder[];
+  employeeOrders: IEmployeeOrderRestaurant[];
 }
 
 export interface IEmployeeWeeklyOrdersResponse {
@@ -145,6 +145,18 @@ export interface IEmployeeOrder {
     image: string;
     price: string;
   }[];
+}
+
+export interface IEmployeeOrderRestaurant {
+  id: number;
+  name: string;
+  profileImage: string;
+  order: {
+    id: number;
+    name: string;
+    image: string;
+    price: string;
+  };
 }
 
 export interface ICreateCompanyOrderResponse {

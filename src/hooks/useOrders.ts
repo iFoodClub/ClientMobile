@@ -13,7 +13,7 @@ export const useOrders = () => {
   const { showSuccess, showError } = useToastAll();
 
   const [restaurantOrders, setRestaurantOrders] =
-    useState<IRestaurantOrdersResponse>();
+    useState<IRestaurantOrdersResponse[]>();
   const [employeesWeeklyOrders, setEmployeesWeeklyOrders] =
     useState<IEmployeeWeeklyOrdersResponse | null>(null);
 
@@ -23,7 +23,11 @@ export const useOrders = () => {
       const response = await restaurantRepository.getRestaurantOrders(
         restaurantId
       );
-      setRestaurantOrders(response.data);
+
+      const validOrders =
+        response.data.filter((order) => order.employeeOrders.length > 0) || [];
+
+      setRestaurantOrders(validOrders);
       return response.data;
     } catch (error) {
       console.error(error);

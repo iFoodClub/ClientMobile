@@ -9,6 +9,8 @@ class OrderRepository extends RepositoryBase {
       `/company/${companyId}/create-orders-from-weekly`
     );
   }
+
+  async getRestaurantOrders(restaurantId: number) {}
 }
 
 export default new OrderRepository();

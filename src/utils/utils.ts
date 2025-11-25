@@ -1,3 +1,5 @@
+import { OrderStatus } from "../interfaces/apiResponses";
+
 export function passwordsMatch(password: string, confirmPassword: string) {
   return password === confirmPassword;
 }
@@ -31,4 +33,19 @@ export function formatPrice(price: number | string | null | undefined): string {
 export function formatPriceToNumber(price: number): number {
   const fixedPrice = price.toString().replace(",", ".");
   return Number(fixedPrice);
+}
+
+export function getOrderBadgeByStatus(status: OrderStatus) {
+  switch (status) {
+    case OrderStatus.PENDING:
+      return "bg-green-100";
+    case OrderStatus.CONFIRMED:
+      return "bg-yellow-100";
+    case OrderStatus.PREPARING:
+      return "bg-blue-100";
+    case OrderStatus.DELIVERED:
+      return "bg-green-100";
+    case OrderStatus.CANCELED:
+      return "bg-red-100";
+  }
 }
