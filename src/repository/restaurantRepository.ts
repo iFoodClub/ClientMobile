@@ -1,4 +1,7 @@
-import { IRestaurantResponse } from "../interfaces/apiResponses";
+import {
+  IRestaurantOrdersResponse,
+  IRestaurantResponse,
+} from "../interfaces/apiResponses";
 import { IUpdateRestaurantDTO } from "../interfaces/dtos";
 import { RepositoryBase } from "./baseRepository";
 
@@ -16,6 +19,12 @@ class RestaurantRepository extends RepositoryBase {
     restaurantData: Partial<IUpdateRestaurantDTO>
   ) {
     return await this.api.put(`/restaurant/${id}`, restaurantData);
+  }
+
+  async getRestaurantOrders(restaurantId: number) {
+    return await this.api.get<IRestaurantOrdersResponse>(
+      `/restaurant/${restaurantId}/orders`
+    );
   }
 }
 

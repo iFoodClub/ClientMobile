@@ -63,7 +63,7 @@ const DishesScreen = () => {
     mode: "onBlur",
   });
 
-  async function handleEdit() {
+  async function handleEditClick() {
     if (!selectedDish) return;
     reset({
       name: selectedDish.name,
@@ -122,9 +122,30 @@ const DishesScreen = () => {
     }
   }
 
+  async function handleEdit(data: ICreateDishDTO) {
+    try {
+      setCreateLoading(true);
+      if (!selectedDish?.id) return;
+      data = {
+        ...data,
+        price: formatPriceToNumber(data.price),
+      };
+      await DishRepository.updateDish(data, selectedDish.id);
+      showSuccess("Prato atualizado com sucesso!");
+      setModalVisible(false);
+      await fetchDishes();
+      reset();
+    } catch (error) {
+      console.error(error);
+      showError("Erro ao atualizar prato.");
+    } finally {
+      setCreateLoading(false);
+    }
+  }
+
   async function handleSubmitDishForm(data: ICreateDishDTO) {
     if (selectedDish) {
-      await handleEdit();
+      await handleEdit(data);
     } else {
       await handleCreateDish(data);
     }
@@ -187,7 +208,7 @@ const DishesScreen = () => {
       {selectedDish && menuPosition && (
         <ActionMenu
           position={menuPosition}
-          onEdit={handleEdit}
+          onEdit={handleEditClick}
           onDelete={() => setRemoveModalVisible(true)}
         />
       )}

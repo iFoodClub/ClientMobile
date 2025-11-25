@@ -35,6 +35,8 @@ const EmployeesScreen = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(
     null
   );
+  const [selectedEmployee, setSelectedEmployee] =
+    useState<IEmployeeSimple | null>(null);
 
   useEffect(() => {
     fetchEmployees();
@@ -70,7 +72,7 @@ const EmployeesScreen = () => {
           birthDate: data.employee.birthDate,
           cpf: data.cpf,
           companyId: user.company.id,
-          userId: user.id,
+          userId: selectedEmployee?.userId,
           vacation: false,
         };
         await updateEmployee(selectedEmployeeId, updateEmployeeData);
@@ -107,6 +109,7 @@ const EmployeesScreen = () => {
 
     setEmployeeModalVisible(true);
     setSelectedEmployeeId(employee.id);
+    setSelectedEmployee(employee);
   }
 
   async function handleDelete(employeeId: number) {

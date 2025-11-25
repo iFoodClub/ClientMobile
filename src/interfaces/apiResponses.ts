@@ -1,3 +1,5 @@
+import { DayOfWeek } from "./interfaces";
+
 export interface IRating {
   name: string;
   profileImage: string;
@@ -93,4 +95,60 @@ export interface IEmployeePopulate {
   cpf: string;
   birthDate: string;
   vacation: boolean;
+}
+
+export interface IRestaurantOrdersResponse {
+  id: number;
+  code: string;
+  totalPrice: string;
+  status: string;
+  restaurantId: number;
+  company: {
+    id: number;
+    name: string;
+    image: string;
+  };
+  employeeOrders: IEmployeeOrder[];
+}
+
+export interface IEmployeeWeeklyOrdersResponse {
+  company: {
+    id: number;
+    name: string;
+  };
+  dayOfWeek: DayOfWeek;
+  orderDate: string;
+  orderStatus: OrderStatus;
+  restaurant: {
+    id: number;
+    name: string;
+    profileImage: string;
+  };
+  employees: IEmployeeOrder[];
+}
+
+export enum OrderStatus {
+  PENDING = "pending",
+  CONFIRMED = "confirmed",
+  PREPARING = "preparing",
+  DELIVERED = "delivered",
+  CANCELED = "canceled",
+}
+
+export interface IEmployeeOrder {
+  id: number;
+  name: string;
+  profileImage: string;
+  order: {
+    id: number;
+    name: string;
+    image: string;
+    price: string;
+  }[];
+}
+
+export interface ICreateCompanyOrderResponse {
+  message: string;
+  ordersCreated: number;
+  currentDay: string;
 }
