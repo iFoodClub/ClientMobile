@@ -6,7 +6,6 @@ export const useDishes = (restaurantId: number | undefined) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dishes, setDishes] = useState<IDishesResponse[]>([]);
 
-  // 2. Envolva a função com `useCallback` para otimização
   const fetchDishes = useCallback(async () => {
     if (!restaurantId) {
       setLoading(false);

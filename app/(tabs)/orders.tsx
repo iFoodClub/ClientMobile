@@ -1,3 +1,4 @@
+import { CompanyOrder } from "@/components/Orders/CompanyOrder/CompanyOrder";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import RestaurantOrders from "@/components/Restaurant/Components/Orders/RestaurantOrders";
 import { useAuthStore } from "@/src/store/authStore";
@@ -10,14 +11,14 @@ const orders = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <PageHeader title="Pedidos" subtitle="Gerencie os pedidos recebidos " />
+      <PageHeader title="Pedidos" subtitle="Gerencie os seus pedidos" />
 
       {/* <PressableButton
         className="absolute bottom-4 right-4"
         onPress={() => {}}
         icon={<AntDesign name="plus" size={16} color="white" />}
       /> */}
-      {isCompany && <></>}
+      {isCompany && <CompanyOrder />}
       {isEmployee && <></>}
       {isRestaurant && <RestaurantOrders />}
     </SafeAreaView>

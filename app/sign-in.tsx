@@ -31,7 +31,7 @@ const SignInScreen = () => {
     { label: "Empresa", email: "company@tech.com", password: "empresa123" },
     {
       label: "Restaurante",
-      email: "admin@tech.com",
+      email: "italian@restaurant.com",
       password: "restaurante123",
     },
     {

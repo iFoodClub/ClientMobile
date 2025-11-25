@@ -1,4 +1,7 @@
-import { IEmployeeSimple } from "../interfaces/apiResponses";
+import {
+  IEmployeeSimple,
+  IEmployeeWeeklyOrdersResponse,
+} from "../interfaces/apiResponses";
 import { ICompany } from "../interfaces/interfaces";
 import { RepositoryBase } from "./baseRepository";
 
@@ -13,6 +16,12 @@ class CompanyRepository extends RepositoryBase {
   async getEmployeeByCompanyId(companyId: number) {
     return await this.api.get<IEmployeeSimple[]>(
       `/company/${companyId}/employees`
+    );
+  }
+
+  async getEmployeesWeeklyOrdersCurrentDay(companyId: number) {
+    return await this.api.get<IEmployeeWeeklyOrdersResponse>(
+      `/company/${companyId}/weekly-orders`
     );
   }
 }
