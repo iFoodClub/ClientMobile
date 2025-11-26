@@ -35,28 +35,6 @@ export function formatPriceToNumber(price: number): number {
   return Number(fixedPrice);
 }
 
-// export function getOrderBadgeByStatus(status: OrderStatus) {
-//   switch (status) {
-//     case OrderStatus.PENDING:
-//       return "bg-green-500/20 border-green-500 text-green-700";
-
-//     case OrderStatus.CONFIRMED:
-//       return "bg-yellow-500/20 border-yellow-500 text-yellow-700";
-
-//     case OrderStatus.PREPARING:
-//       return "bg-blue-500/20 border-blue-500 text-blue-700";
-
-//     case OrderStatus.DELIVERED:
-//       return "bg-green-500/20 border-green-500 text-green-700";
-
-//     case OrderStatus.CANCELED:
-//       return "bg-red-500/20 border-red-500 text-red-700";
-
-//     default:
-//       return "bg-gray-500/20 border-gray-500 text-gray-700";
-//   }
-// }
-
 export function getOrderBadgeByStatus(status: OrderStatus) {
   switch (status) {
     case OrderStatus.PENDING:
@@ -101,4 +79,18 @@ export function getOrderBadgeByStatus(status: OrderStatus) {
         text: "text-gray-700",
       };
   }
+}
+
+export function translateWeekDay(day: string): string {
+  const days: Record<string, string> = {
+    Monday: "Segunda-feira",
+    Tuesday: "Terça-feira",
+    Wednesday: "Quarta-feira",
+    Thursday: "Quinta-feira",
+    Friday: "Sexta-feira",
+    Saturday: "Sábado",
+    Sunday: "Domingo",
+  };
+
+  return days[day] || day;
 }

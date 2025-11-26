@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useToastAll } from "../components/Toast";
 import {
+  IEmployeeChoicesResponse,
   IEmployeeWeeklyOrdersResponse,
   IRestaurantOrdersResponse,
 } from "../interfaces/apiResponses";
@@ -17,6 +18,10 @@ export const useOrders = () => {
   >([]);
   const [employeesWeeklyOrders, setEmployeesWeeklyOrders] =
     useState<IEmployeeWeeklyOrdersResponse | null>(null);
+
+  const [employeeChoices, setEmployeeChoices] = useState<
+    IEmployeeChoicesResponse[]
+  >([]);
 
   async function getRestaurantOrders(restaurantId: number) {
     try {
@@ -95,10 +100,27 @@ export const useOrders = () => {
     }
   }
 
+  async function getEmployeeWeeklyOrders(employeeId: number) {
+    try {
+      setIsLoading(true);
+      const response = await orderRepository.getEmployeeWeeklyChosenOrders(
+        employeeId
+      );
+      setEmployeeChoices(response.data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return {
+    employeeChoices,
     isLoading,
     restaurantOrders,
     employeesWeeklyOrders,
+    getEmployeeWeeklyOrders,
     getRestaurantOrders,
     getEmployeesWeeklyOrdersCurrentDay,
     createCompanyOrder,

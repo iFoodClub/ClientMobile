@@ -170,3 +170,23 @@ export interface ICreateCompanyOrderResponse {
   ordersCreated: number;
   currentDay: string;
 }
+
+export interface IEmployeeChoicesResponse {
+  id: number;
+  employeeId: number;
+  dayOfWeek: string;
+  order: {
+    id: number;
+    dishId: number;
+    quantity: number;
+  };
+  orderItemId: number;
+  dish: {
+    id: number;
+    restaurantId: number;
+    name: string;
+    description: string;
+    price: number; // veio como string no JSON
+    image: string;
+  };
+}

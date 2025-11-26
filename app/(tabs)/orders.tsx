@@ -1,3 +1,4 @@
+import EmployeeOrders from "@/components/Employees/EmployeeOrders/EmployeeOrders";
 import { CompanyOrder } from "@/components/Orders/CompanyOrder/CompanyOrder";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import RestaurantOrders from "@/components/Restaurant/Components/Orders/RestaurantOrders";
@@ -19,7 +20,7 @@ const orders = () => {
         icon={<AntDesign name="plus" size={16} color="white" />}
       /> */}
       {isCompany && <CompanyOrder />}
-      {isEmployee && <></>}
+      {isEmployee && <EmployeeOrders />}
       {isRestaurant && <RestaurantOrders />}
     </SafeAreaView>
   );

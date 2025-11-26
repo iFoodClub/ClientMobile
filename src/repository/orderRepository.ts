@@ -1,4 +1,7 @@
-import { ICreateCompanyOrderResponse } from "../interfaces/apiResponses";
+import {
+  ICreateCompanyOrderResponse,
+  IEmployeeChoicesResponse,
+} from "../interfaces/apiResponses";
 import { RepositoryBase } from "./baseRepository";
 
 class OrderRepository extends RepositoryBase {
@@ -21,7 +24,11 @@ class OrderRepository extends RepositoryBase {
     );
   }
 
-  async getRestaurantOrders(restaurantId: number) {}
+  async getEmployeeWeeklyChosenOrders(employeeId: number) {
+    return await this.api.get<IEmployeeChoicesResponse[]>(
+      `/employee-weekly-orders/employee/${employeeId}`
+    );
+  }
 }
 
 export default new OrderRepository();
