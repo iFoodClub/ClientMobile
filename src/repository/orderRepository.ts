@@ -10,6 +10,17 @@ class OrderRepository extends RepositoryBase {
     );
   }
 
+  async updateCompanyOrder(
+    restaurantId: number,
+    orderId: number,
+    status: string
+  ) {
+    return await this.api.put(
+      `/restaurant/${restaurantId}/orders/${orderId}/status`,
+      { status }
+    );
+  }
+
   async getRestaurantOrders(restaurantId: number) {}
 }
 

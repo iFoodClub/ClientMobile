@@ -12,8 +12,9 @@ export const useOrders = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useToastAll();
 
-  const [restaurantOrders, setRestaurantOrders] =
-    useState<IRestaurantOrdersResponse[]>();
+  const [restaurantOrders, setRestaurantOrders] = useState<
+    IRestaurantOrdersResponse[]
+  >([]);
   const [employeesWeeklyOrders, setEmployeesWeeklyOrders] =
     useState<IEmployeeWeeklyOrdersResponse | null>(null);
 
@@ -70,6 +71,30 @@ export const useOrders = () => {
     }
   }
 
+  async function updateCompanyOrder(
+    restaurantId: number,
+    orderId: number,
+    status: string
+  ) {
+    try {
+      setIsLoading(true);
+      const response = await orderRepository.updateCompanyOrder(
+        restaurantId,
+        orderId,
+        status
+      );
+      await getRestaurantOrders(restaurantId);
+      if (response) {
+        showSuccess("Pedido atualizado com sucesso!");
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return {
     isLoading,
     restaurantOrders,
@@ -77,5 +102,6 @@ export const useOrders = () => {
     getRestaurantOrders,
     getEmployeesWeeklyOrdersCurrentDay,
     createCompanyOrder,
+    updateCompanyOrder,
   };
 };

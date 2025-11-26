@@ -101,7 +101,7 @@ export interface IRestaurantOrdersResponse {
   id: number;
   code: string;
   totalPrice: string;
-  status: string;
+  status: OrderStatus;
   restaurantId: number;
   company: {
     id: number;
@@ -128,11 +128,12 @@ export interface IEmployeeWeeklyOrdersResponse {
 }
 
 export enum OrderStatus {
-  PENDING = "pending",
-  CONFIRMED = "confirmed",
-  PREPARING = "preparing",
-  DELIVERED = "delivered",
-  CANCELED = "canceled",
+  SENT = "Enviado",
+  PENDING = "Pendente",
+  CONFIRMED = "Confirmado",
+  PREPARING = "Preparando",
+  DELIVERED = "Entregue",
+  CANCELED = "Cancelado",
 }
 
 export interface IEmployeeOrder {
@@ -151,7 +152,12 @@ export interface IEmployeeOrderRestaurant {
   id: number;
   name: string;
   profileImage: string;
-  order: {
+  employee: {
+    id: number;
+    name: string;
+    image: string;
+  };
+  dish: {
     id: number;
     name: string;
     image: string;

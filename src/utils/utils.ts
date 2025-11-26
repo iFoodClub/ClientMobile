@@ -35,17 +35,70 @@ export function formatPriceToNumber(price: number): number {
   return Number(fixedPrice);
 }
 
+// export function getOrderBadgeByStatus(status: OrderStatus) {
+//   switch (status) {
+//     case OrderStatus.PENDING:
+//       return "bg-green-500/20 border-green-500 text-green-700";
+
+//     case OrderStatus.CONFIRMED:
+//       return "bg-yellow-500/20 border-yellow-500 text-yellow-700";
+
+//     case OrderStatus.PREPARING:
+//       return "bg-blue-500/20 border-blue-500 text-blue-700";
+
+//     case OrderStatus.DELIVERED:
+//       return "bg-green-500/20 border-green-500 text-green-700";
+
+//     case OrderStatus.CANCELED:
+//       return "bg-red-500/20 border-red-500 text-red-700";
+
+//     default:
+//       return "bg-gray-500/20 border-gray-500 text-gray-700";
+//   }
+// }
+
 export function getOrderBadgeByStatus(status: OrderStatus) {
   switch (status) {
     case OrderStatus.PENDING:
-      return "bg-green-100";
-    case OrderStatus.CONFIRMED:
-      return "bg-yellow-100";
+      return {
+        bg: "bg-green-500/20",
+        border: "border-green-500",
+        text: "text-green-700",
+      };
+
+    case OrderStatus.SENT:
+      return {
+        bg: "bg-yellow-500/20",
+        border: "border-yellow-500",
+        text: "text-yellow-700",
+      };
+
     case OrderStatus.PREPARING:
-      return "bg-blue-100";
+      return {
+        bg: "bg-blue-500/20",
+        border: "border-blue-500",
+        text: "text-blue-700",
+      };
+
     case OrderStatus.DELIVERED:
-      return "bg-green-100";
+      return {
+        bg: "bg-green-500/20",
+        border: "border-green-500",
+        text: "text-green-700",
+      };
+
     case OrderStatus.CANCELED:
-      return "bg-red-100";
+      return {
+        bg: "bg-red-500/20",
+        border: "border-red-500",
+        text: "text-red-700",
+      };
+
+    default:
+      return {
+        bg: "bg-gray-500/20",
+        border: "border-gray-500",
+        text: "text-gray-700",
+      };
   }
 }
