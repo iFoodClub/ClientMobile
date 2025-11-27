@@ -48,20 +48,24 @@ const CModal = ({
               )}
             </View>
             {children}
-            <View className="flex flex-col gap-y-2 mt-6 ">
-              {onConfirm && (
+            <View className="flex flex-row justify-end gap-x-3 mt-10">
+              <View className="w-[40%]">
                 <Button
-                  text={confirmText}
-                  onPress={onConfirm}
-                  loading={loading}
+                  text={cancelText}
+                  onPress={onClose}
+                  disabled={loading}
+                  type="secondary"
                 />
+              </View>
+              {onConfirm && (
+                <View className="w-[40%]">
+                  <Button
+                    text={confirmText}
+                    onPress={onConfirm}
+                    loading={loading}
+                  />
+                </View>
               )}
-              <Button
-                text={cancelText}
-                onPress={onClose}
-                disabled={loading}
-                type="secondary"
-              />
             </View>
           </View>
         </Pressable>

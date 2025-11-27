@@ -101,14 +101,14 @@ export interface IRestaurantOrdersResponse {
   id: number;
   code: string;
   totalPrice: string;
-  status: string;
+  status: OrderStatus;
   restaurantId: number;
   company: {
     id: number;
     name: string;
     image: string;
   };
-  employeeOrders: IEmployeeOrder[];
+  employeeOrders: IEmployeeOrderRestaurant[];
 }
 
 export interface IEmployeeWeeklyOrdersResponse {
@@ -128,11 +128,12 @@ export interface IEmployeeWeeklyOrdersResponse {
 }
 
 export enum OrderStatus {
-  PENDING = "pending",
-  CONFIRMED = "confirmed",
-  PREPARING = "preparing",
-  DELIVERED = "delivered",
-  CANCELED = "canceled",
+  SENT = "Enviado",
+  PENDING = "Pendente",
+  CONFIRMED = "Confirmado",
+  PREPARING = "Preparando",
+  DELIVERED = "Entregue",
+  CANCELED = "Cancelado",
 }
 
 export interface IEmployeeOrder {
@@ -147,8 +148,45 @@ export interface IEmployeeOrder {
   }[];
 }
 
+export interface IEmployeeOrderRestaurant {
+  id: number;
+  name: string;
+  profileImage: string;
+  employee: {
+    id: number;
+    name: string;
+    image: string;
+  };
+  dish: {
+    id: number;
+    name: string;
+    image: string;
+    price: string;
+  };
+}
+
 export interface ICreateCompanyOrderResponse {
   message: string;
   ordersCreated: number;
   currentDay: string;
+}
+
+export interface IEmployeeChoicesResponse {
+  id: number;
+  employeeId: number;
+  dayOfWeek: string;
+  order: {
+    id: number;
+    dishId: number;
+    quantity: number;
+  };
+  orderItemId: number;
+  dish: {
+    id: number;
+    restaurantId: number;
+    name: string;
+    description: string;
+    price: number; // veio como string no JSON
+    image: string;
+  };
 }

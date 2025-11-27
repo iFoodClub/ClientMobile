@@ -22,7 +22,9 @@ class RestaurantRepository extends RepositoryBase {
   }
 
   async getRestaurantOrders(restaurantId: number) {
-    return await this.api.get<IRestaurantOrdersResponse>(
+    console.log(restaurantId);
+
+    return await this.api.get<IRestaurantOrdersResponse[]>(
       `/restaurant/${restaurantId}/orders`
     );
   }

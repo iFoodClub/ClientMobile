@@ -15,9 +15,6 @@ const PerfilForm = () => {
   const { user, isRestaurant, isCompany, isEmployee } = useAuthStore();
   const { showSuccess, showError } = useToastAll();
 
-  console.log(JSON.stringify(user, null, 2));
-
-  // ao montar, garantir tabelas (sincronização agora é global)
   useEffect(() => {
     runMigrations();
   }, []);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useToastAll } from "../components/Toast";
 import {
+  IEmployeeChoicesResponse,
   IEmployeeWeeklyOrdersResponse,
   IRestaurantOrdersResponse,
 } from "../interfaces/apiResponses";
@@ -12,10 +13,15 @@ export const useOrders = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useToastAll();
 
-  const [restaurantOrders, setRestaurantOrders] =
-    useState<IRestaurantOrdersResponse>();
+  const [restaurantOrders, setRestaurantOrders] = useState<
+    IRestaurantOrdersResponse[]
+  >([]);
   const [employeesWeeklyOrders, setEmployeesWeeklyOrders] =
     useState<IEmployeeWeeklyOrdersResponse | null>(null);
+
+  const [employeeChoices, setEmployeeChoices] = useState<
+    IEmployeeChoicesResponse[]
+  >([]);
 
   async function getRestaurantOrders(restaurantId: number) {
     try {
@@ -23,7 +29,11 @@ export const useOrders = () => {
       const response = await restaurantRepository.getRestaurantOrders(
         restaurantId
       );
-      setRestaurantOrders(response.data);
+
+      const validOrders =
+        response.data.filter((order) => order.employeeOrders.length > 0) || [];
+
+      setRestaurantOrders(validOrders);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -66,12 +76,69 @@ export const useOrders = () => {
     }
   }
 
+  async function updateCompanyOrder(
+    restaurantId: number,
+    orderId: number,
+    status: string
+  ) {
+    try {
+      setIsLoading(true);
+      const response = await orderRepository.updateCompanyOrder(
+        restaurantId,
+        orderId,
+        status
+      );
+      await getRestaurantOrders(restaurantId);
+      if (response) {
+        showSuccess("Pedido atualizado com sucesso!");
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function getEmployeeWeeklyOrders(employeeId: number) {
+    try {
+      setIsLoading(true);
+      const response = await orderRepository.getEmployeeWeeklyChosenOrders(
+        employeeId
+      );
+      setEmployeeChoices(response.data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function removeEmployeeChoice(choiceId: number, employeeId: number) {
+    try {
+      setIsLoading(true);
+      await orderRepository.removeEmployeeCoice(choiceId);
+      await getEmployeeWeeklyOrders(employeeId);
+      showSuccess("Pedido removido com sucesso!");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return {
+    employeeChoices,
     isLoading,
     restaurantOrders,
     employeesWeeklyOrders,
+    removeEmployeeChoice,
+    getEmployeeWeeklyOrders,
     getRestaurantOrders,
     getEmployeesWeeklyOrdersCurrentDay,
     createCompanyOrder,
+    updateCompanyOrder,
   };
 };

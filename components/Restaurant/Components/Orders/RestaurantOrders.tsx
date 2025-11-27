@@ -1,16 +1,39 @@
+import { useOrders } from "@/src/hooks/useOrders";
 import { useAuthStore } from "@/src/store/authStore";
 import React from "react";
-import { Text, View } from "react-native";
+import { FlatList } from "react-native";
+import RestaurantOrderCard from "./RestaurantOrderCard";
 
 const RestaurantOrders = () => {
   const { user } = useAuthStore();
+  const {
+    getRestaurantOrders,
+    restaurantOrders,
+    isLoading,
+    updateCompanyOrder,
+  } = useOrders();
 
-  console.log(console.log(JSON.stringify(user?.restaurant, null, 2)));
+  React.useEffect(() => {
+    if (user) {
+      if (!user?.restaurant?.id) return;
+      getRestaurantOrders(user.restaurant.id);
+    }
+  }, [user]);
 
   return (
-    <View>
-      <Text>RestaurantOrders</Text>
-    </View>
+    <FlatList
+      className="px-4"
+      data={restaurantOrders}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <RestaurantOrderCard
+          restaurantOrder={item}
+          updateCompanyOrder={updateCompanyOrder}
+        />
+      )}
+      contentContainerStyle={{ paddingVertical: 16, gap: 16 }}
+      refreshing={isLoading}
+    />
   );
 };
 
