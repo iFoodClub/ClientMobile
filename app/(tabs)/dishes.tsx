@@ -6,6 +6,7 @@ import { useAuthStore } from "@/src/store/authStore";
 import React, { useState } from "react";
 
 import DishForm from "@/components/Forms/DishForm/DishForm";
+import ImageUploadModal from "@/components/Forms/DishForm/ImageUploadModal";
 import { ActionMenu } from "@/components/Restaurant/Components/DishCard/ActionMenu";
 import CModal from "@/components/ui/Modal/CModal";
 import ModalCustom from "@/components/ui/Modal/ModalCustom";
@@ -18,11 +19,11 @@ import { formatPriceToNumber } from "@/src/utils/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useForm } from "react-hook-form";
 import {
-  FlatList,
-  GestureResponderEvent,
-  Pressable,
-  Text,
-  View,
+    FlatList,
+    GestureResponderEvent,
+    Pressable,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -41,6 +42,11 @@ const DishesScreen = () => {
     x: number;
     y: number;
   } | null>(null);
+  
+  // Estados para o modal de upload de imagem
+  const [imageUploadModalVisible, setImageUploadModalVisible] = useState(false);
+  const [createdDishId, setCreatedDishId] = useState<number | null>(null);
+  const [createdDishName, setCreatedDishName] = useState<string>("");
 
   function handleLongPress(
     dish: IDishesResponse,
@@ -104,16 +110,30 @@ const DishesScreen = () => {
     try {
       setCreateLoading(true);
       if (!user?.restaurant?.id) return;
+      
       data = {
         ...data,
         price: formatPriceToNumber(data.price),
         restaurantId: user?.restaurant?.id,
       };
-      await DishRepository.createDish(data);
-      showSuccess("Prato criado com sucesso!");
+      
+      // Criar o prato sem imagem primeiro
+      const response = await DishRepository.createDish(data);
+      
+      // Salvar ID e nome do prato criado
+      const newDishId = response.data.id;
+      setCreatedDishId(newDishId);
+      setCreatedDishName(data.name);
+      
+      showSuccess("Prato criado! Agora adicione uma foto.");
+      
+      // Fechar modal de criação
       setModalVisible(false);
-      await fetchDishes();
       reset();
+      
+      // Abrir modal de upload de imagem
+      setImageUploadModalVisible(true);
+      
     } catch (error) {
       console.error(error);
       showError("Erro ao criar prato.");
@@ -135,12 +155,50 @@ const DishesScreen = () => {
       setModalVisible(false);
       await fetchDishes();
       reset();
+      setSelectedDish(null);
     } catch (error) {
       console.error(error);
       showError("Erro ao atualizar prato.");
     } finally {
       setCreateLoading(false);
     }
+  }
+
+  // Função para lidar com o upload da imagem após criar o prato
+  async function handleImageUploadComplete(imageUrl: string) {
+    try {
+      if (!createdDishId) return;
+
+      // Atualizar o prato com a URL da imagem
+      await DishRepository.updateDish({ image: imageUrl }, createdDishId);
+      
+      showSuccess("Foto adicionada com sucesso!");
+      
+      // Fechar modal de upload
+      setImageUploadModalVisible(false);
+      
+      // Limpar estados
+      setCreatedDishId(null);
+      setCreatedDishName("");
+      
+      // Recarregar lista de pratos
+      await fetchDishes();
+    } catch (error) {
+      console.error(error);
+      showError("Erro ao adicionar foto ao prato.");
+    }
+  }
+
+  // Função para pular o upload da imagem
+  async function handleSkipImageUpload() {
+    setImageUploadModalVisible(false);
+    setCreatedDishId(null);
+    setCreatedDishName("");
+    
+    showSuccess("Prato criado! Você pode adicionar a foto depois editando o prato.");
+    
+    // Recarregar lista de pratos
+    await fetchDishes();
   }
 
   async function handleSubmitDishForm(data: ICreateDishDTO) {
@@ -253,6 +311,14 @@ const DishesScreen = () => {
       >
         <DishForm control={control} />
       </CModal>
+
+      {/* Modal de Upload de Imagem - Aparece após criar o prato */}
+      <ImageUploadModal
+        visible={imageUploadModalVisible}
+        dishName={createdDishName}
+        onUploadComplete={handleImageUploadComplete}
+        onSkip={handleSkipImageUpload}
+      />
     </SafeAreaView>
   );
 };

@@ -190,3 +190,20 @@ export interface IEmployeeChoicesResponse {
     image: string;
   };
 }
+
+// Upload Responses
+export interface IUploadImageResponse {
+  success: boolean;
+  message: string;
+  data: {
+    url: string;
+    key: string;
+  };
+}
+
+export interface IDeleteImageResponse {
+  success: boolean;
+  message: string;
+}
+
+export type UploadFolder = 'dishes' | 'users' | 'restaurants' | 'companies';

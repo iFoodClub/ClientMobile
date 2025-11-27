@@ -104,7 +104,7 @@ export interface ICreateDishDTO {
   name: string;
   description: string;
   price: number;
-  image: string;
+  image?: string;
   restaurantId: number;
 }
 

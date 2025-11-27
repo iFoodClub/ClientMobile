@@ -13,14 +13,6 @@ const DishForm = ({ control }: DishFormProps) => {
     <View>
       <CustomInput
         control={control}
-        name="image"
-        label="Imagem"
-        rules={{
-          required: { value: true, message: "A imagem é obrigatória" },
-        }}
-      />
-      <CustomInput
-        control={control}
         name="name"
         label="Nome"
         maxLength={80}
