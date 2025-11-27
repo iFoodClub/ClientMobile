@@ -17,9 +17,10 @@ export const CompanyOrder = () => {
     isLoading,
   } = useOrders();
 
-  const chosenEmployees = employeesWeeklyOrders?.employees.filter(
-    (w) => w.order && w.order.length > 0
-  );
+  const chosenEmployees =
+    employeesWeeklyOrders?.employees.filter(
+      (w) => w.order && w.order.length > 0
+    ) || [];
 
   const unchosenEmployees =
     employeesWeeklyOrders?.employees.filter(
@@ -68,6 +69,7 @@ export const CompanyOrder = () => {
       ))}
 
       <PressableButton
+        disabled={chosenEmployees.length > 0 ? false : true}
         className="absolute bottom-4 right-4"
         text={isLoading ? "" : "Criar pedido"}
         icon={

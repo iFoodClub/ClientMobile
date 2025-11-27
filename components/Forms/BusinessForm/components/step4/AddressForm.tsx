@@ -53,7 +53,7 @@ const AddressForm = ({
         keyboardType="numeric"
         onChange={handleCEP}
         placeholder="Digite o CEP"
-        maxLength={9}
+        maxLength={8}
         icon={<EvilIcons name="location" size={formIconSize} color="black" />}
       />
       <CustomInput

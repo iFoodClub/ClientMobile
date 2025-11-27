@@ -42,8 +42,8 @@ export function ChoiceCard({
             className="w-28 h-28 rounded-lg mb-2"
           />
         ) : (
-          <View className="w-20 h-20 bg-gray-200 rounded-lg mb-2 flex items-center justify-center">
-            <Ionicons name="image-outline" size={28} color="#9ca3af" />
+          <View className="w-28 h-28 bg-gray-200 rounded-lg mb-2 flex items-center justify-center">
+            <Ionicons name="image-outline" size={40} color="#9ca3af" />
           </View>
         )}
 
@@ -51,7 +51,7 @@ export function ChoiceCard({
           className="text-base font-medium text-textDescription "
           numberOfLines={2}
         >
-          {choice?.dish?.name || "No selection"}
+          {choice?.dish?.name || "Sem escolha"}
         </Text>
       </View>
 

@@ -1,6 +1,5 @@
 import { IDish } from "@/src/interfaces/apiResponses";
 import { formatPrice } from "@/src/utils/utils";
-import { router } from "expo-router";
 import React from "react";
 import {
   GestureResponderEvent,
@@ -15,15 +14,9 @@ type DishCardProps = {
   onLongPress: (event: GestureResponderEvent) => void;
 };
 
-function handleDetails(dish: IDish) {
-  router.push({
-    pathname: "/dish-details",
-  });
-}
-
 const DishCard = ({ dish, onLongPress }: DishCardProps) => {
   return (
-    <Pressable onPress={() => handleDetails(dish)} onLongPress={onLongPress}>
+    <Pressable onLongPress={onLongPress}>
       <View className="flex flex-col  w-24  h-60 ">
         <Image
           className="w-full h-24 object-cover rounded-xl mb-4"

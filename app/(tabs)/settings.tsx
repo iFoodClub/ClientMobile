@@ -71,9 +71,12 @@ const SettingsScreen = () => {
       </View>
 
       <View className="mt-8 px-6">
-        {configItens.map((item, index) => (
-          <ConfigItem key={index} {...item} />
-        ))}
+        {configItens.map((item, index) => {
+          if (item.label.includes("funcionário")) return null;
+          if (item.label.includes("empresa")) return null;
+
+          return <ConfigItem key={index} {...item} />;
+        })}
       </View>
     </SafeAreaView>
   );

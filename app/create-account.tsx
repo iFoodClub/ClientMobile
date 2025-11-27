@@ -22,6 +22,11 @@ const CreateAccount = () => {
   const watchedUserType = useWatch({ control, name: "userType" });
 
   const onSubmit: SubmitHandler<IBusiness> = async (data) => {
+    if (watchedUserType === UserType.company) {
+      if (!data?.company?.name) return;
+      data = { ...data, name: data.company.name };
+    }
+
     try {
       await AuthRepository.createBusiness(data);
       Alert.alert("Sucesso", "Conta criada com sucesso!");

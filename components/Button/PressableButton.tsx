@@ -16,11 +16,15 @@ const PressableButton = ({
   icon,
   className,
   loading,
+  disabled,
   ...props
 }: PressableButtonProps) => {
   return (
     <Pressable
-      className={`flex-row items-center justify-center bg-primary p-3 rounded-full self-start ${className}`}
+      disabled={disabled}
+      className={`flex-row items-center justify-center bg-primary p-3 rounded-full self-start ${className} ${
+        disabled ? "opacity-70" : ""
+      }`}
       onPress={onPress}
       {...props}
     >
