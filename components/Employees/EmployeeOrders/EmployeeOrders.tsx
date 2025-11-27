@@ -6,7 +6,12 @@ import { ChoiceCard } from "./ChoiceCard";
 
 const EmployeeOrders = () => {
   const { user } = useAuthStore();
-  const { getEmployeeWeeklyOrders, employeeChoices } = useOrders();
+  const {
+    getEmployeeWeeklyOrders,
+    employeeChoices,
+    removeEmployeeChoice,
+    isLoading,
+  } = useOrders();
 
   useEffect(() => {
     if (!user?.employee?.id) return;
@@ -15,17 +20,22 @@ const EmployeeOrders = () => {
 
   return (
     <View className="px-6 mt-4">
-      <Text className="text-lg font-bold text-gray-800 mb-3">
+      <Text className="text-2xl font-bold  text-textDescription mb-6">
         Pedidos semanais
       </Text>
 
       <FlatList
         data={employeeChoices}
         numColumns={3}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
+        columnWrapperStyle={{ gap: 16 }}
         keyExtractor={(item) => item.dayOfWeek}
         renderItem={({ item }) => (
-          <ChoiceCard choice={item.dish} day={item.dayOfWeek} />
+          <ChoiceCard
+            choice={item}
+            day={item.dayOfWeek}
+            removeEmployeeChoice={removeEmployeeChoice}
+            isLoading={isLoading}
+          />
         )}
       />
     </View>

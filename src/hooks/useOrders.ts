@@ -115,11 +115,26 @@ export const useOrders = () => {
     }
   }
 
+  async function removeEmployeeChoice(choiceId: number, employeeId: number) {
+    try {
+      setIsLoading(true);
+      await orderRepository.removeEmployeeCoice(choiceId);
+      await getEmployeeWeeklyOrders(employeeId);
+      showSuccess("Pedido removido com sucesso!");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return {
     employeeChoices,
     isLoading,
     restaurantOrders,
     employeesWeeklyOrders,
+    removeEmployeeChoice,
     getEmployeeWeeklyOrders,
     getRestaurantOrders,
     getEmployeesWeeklyOrdersCurrentDay,

@@ -29,6 +29,10 @@ class OrderRepository extends RepositoryBase {
       `/employee-weekly-orders/employee/${employeeId}`
     );
   }
+
+  async removeEmployeeCoice(choiceId: number) {
+    return await this.api.delete(`/employee-weekly-orders/${choiceId}`);
+  }
 }
 
 export default new OrderRepository();

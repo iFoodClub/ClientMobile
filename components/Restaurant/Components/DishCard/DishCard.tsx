@@ -33,7 +33,6 @@ const DishCard = ({ dish, onLongPress }: DishCardProps) => {
           {dish && formatPrice(dish?.price)}
         </Text>
         <Text className="text-textDescription text-base font-medium">
-          {" "}
           {dish?.name}
         </Text>
       </View>
