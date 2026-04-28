@@ -19,10 +19,6 @@ O foco é a praticidade na escolha da refeição. O funcionário não tem acesso
     - **Regra de Validação:** Pelo menos um item deve ser selecionado.
     - **UX Alert:** Caso o usuário selecione apenas sobremesa ou suco (sem marmita), um modal de confirmação será exibido para evitar erros de pedido.
 - **Agendamento Semanal:** Interface para definir as escolhas de segunda a sexta-feira de uma só vez.
-- **Centro de Notificações:** 
-    - Alertas sobre troca de restaurante parceiro pela empresa.
-    - Lembretes para fechamento de pedidos.
-    - Boas-vindas para novos usuários.
 
 ### 2. Perfil: Empresa (RH / Gestor)
 O foco é a gestão da parceria e o controle financeiro centralizado. Toda a conta é paga pela empresa, sem transações financeiras para o funcionário.
@@ -32,8 +28,6 @@ O foco é a gestão da parceria e o controle financeiro centralizado. Toda a con
     - **Controle de Gastos:** Visualização do valor total bruto (sem desconto) vs. valor líquido (com o desconto progressivo aplicado).
     - **Métrica de Economia:** Indicador de "Economia Gerada" (Diferença entre o valor original e o valor com desconto do FoodClub).
 - **Gestão de Funcionários:** Visualização e controle da lista de funcionários ativos.
-- **Centro de Alertas:** Recebe notificações críticas caso o restaurante parceiro atual fique **Indisponível** (exigindo a escolha de um novo parceiro).
-- **Gatilho de Notificação:** Ao alterar o parceiro, o sistema dispara automaticamente uma notificação para todos os funcionários revisarem suas escolhas semanais.
 
 ### 3. Perfil: Restaurante
 O foco é a exposição do cardápio e gestão de grandes volumes de pedidos.
@@ -61,11 +55,13 @@ Esta seção agrupa funcionalidades planejadas ou ideias que podem ser explorada
 - **Restrições Alimentares:** Filtros ou avisos automáticos caso um prato contenha alérgenos configurados no perfil (ex: glúten, lactose).
 - **Avaliação de Pratos:** Sistema de estrelas e comentários para ajudar o restaurante e a empresa a medirem a qualidade.
 - **Favoritos:** Marcar pratos preferidos para facilitar o agendamento semanal.
+- **Centro de Notificações:** Receber alertas sobre troca de restaurante parceiro e lembretes de agendamento.
 
 ### Para a Empresa
 - **Relatórios Mensais:** Exportação de PDFs com o fechamento de gastos e economia total do mês.
 - **Subsídio Parcial:** Possibilidade da empresa pagar uma parte e o funcionário pagar outra (atualmente a empresa paga 100%).
 - **Gestão por Departamentos:** Separar os gastos e pedidos por áreas da empresa.
+- **Centro de Alertas:** Notificações em tempo real sobre indisponibilidade do restaurante parceiro.
 
 ### Para o Restaurante
 - **Análise de Demanda:** Gráficos mostrando quais dias da semana possuem maior volume de pedidos.

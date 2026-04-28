@@ -43,16 +43,17 @@ Este documento lista as funcionalidades planejadas para cada perfil de usuário 
 
 ---
 
-## 🔔 4. Sistema de Notificações (Mapeamento de Gatilhos)
+## 📋 6. Backlog / Planejamento Futuro (Baixa Prioridade)
 
-Esta seção mapeia os eventos do sistema que devem disparar notificações para os usuários.
+Estas funcionalidades são consideradas melhorias e serão implementadas após a conclusão do core do sistema.
 
+### 🔔 Sistema de Notificações (Mapeamento de Gatilhos)
 | Gatilho (Evento) | Destinatário | Descrição da Notificação |
 | :--- | :--- | :--- |
-| **Troca de Restaurante Parceiro** | 👥 Funcionários | Alerta informando que a empresa mudou o parceiro e que os pedidos semanais devem ser revisados/atualizados. |
-| **Indisponibilidade do Restaurante** | 🏢 Empresas | Alerta crítico informando que o restaurante parceiro atual ficou **Indisponível**, exigindo a escolha de um novo parceiro. |
-| **Fechamento de Pedido Diário** | 👥 Funcionários | Lembrete (Push) caso o funcionário ainda não tenha definido sua escolha para o dia seguinte ou atual. |
-| **Novo Colaborador Cadastrado** | 👥 Funcionário | Boas-vindas e instruções para configurar seu primeiro agendamento semanal. |
+| **Troca de Restaurante Parceiro** | 👥 Funcionários | Alerta para revisão de pedidos semanais. |
+| **Indisponibilidade do Restaurante** | 🏢 Empresas | Alerta crítico para escolha de novo parceiro. |
+| **Fechamento de Pedido Diário** | 👥 Funcionários | Lembrete de agendamento. |
+| **Novo Colaborador Cadastrado** | 👥 Funcionário | Boas-vindas e primeiro acesso. |
 
 ---
 
