@@ -30,76 +30,49 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
   }
 
   return (
-    <>
-      <Pressable onPress={handlePress}>
-        <View className="flex flex-row w-full justify-between h-20  ">
-          <View className="flex flex-row gap-x-4">
-            <Image
-              className="h-full w-20 object-cover rounded-full border-2  border-white  "
-              source={{ uri: image }}
-              alt=""
-            />
-            <View className="flex flex-col justify-between ">
-              <Text
-                style={{ color: COLORS.textBody }}
-                className=" font-bold text-lg"
-              >
-                {name}
-              </Text>
-              <View className="flex flex-row gap-x-4 ">
-                <View className="flex flex-row gap-x-1 ">
-                  <AntDesign
-                    name="star"
-                    size={12}
-                    color={COLORS.starsRating}
-                    className="flex align-middle justify-center"
-                  />
-                  <Text
-                    className="font-semibold"
-                    style={{ color: COLORS.starsRating }}
-                  >
-                    {averageRating}
-                  </Text>
-                </View>
-                <View className="flex flex-row gap-x-1">
-                  <Ionicons
-                    name="restaurant-outline"
-                    className="flex align-middle justify-center"
-                    size={14}
-                    color={COLORS.textDescription}
-                  />
-                  <Text style={{ color: COLORS.textDescription }}>
-                    Pratos:{" "}
-                    <Text className="font-semibold">
-                      {dishCount ? dishCount : "16"}
-                    </Text>
-                  </Text>
-                </View>
-              </View>
-              <View className="flex align-middle flex-row gap-x-2 ">
-                <Ionicons
-                  name="cash-outline"
-                  size={16}
-                  color={COLORS.priceText}
-                />
-                <Text
-                  style={{ color: COLORS.priceText }}
-                  className="text-sm text-gray-600 font-semibold"
-                >
-                  Pratos a partir de {formatPrice(minPrice)}
-                </Text>
-              </View>
-            </View>
+    <Pressable onPress={handlePress} className="py-4 border-b border-gray-50">
+      <View className="flex flex-row items-center">
+        {/* Imagem do Restaurante - Estilo Moderno */}
+        <Image
+          className="h-20 w-20 rounded-2xl bg-gray-100"
+          source={{ uri: image }}
+          alt={name}
+        />
+
+        <View className="flex-1 ml-4 justify-center">
+          {/* Nome do Restaurante */}
+          <Text className="font-bold text-gray-900 text-base mb-1" numberOfLines={1}>
+            {name}
+          </Text>
+
+          {/* Linha de Info 1: Nota e Categorias */}
+          <View className="flex-row items-center mb-1">
+            <AntDesign name="star" size={12} color="#F5A623" />
+            <Text className="text-orange-500 font-bold text-xs ml-1">
+              {averageRating || "4.5"}
+            </Text>
+            <Text className="text-gray-400 text-xs ml-1">
+              • Restaurante • {dishCount || "0"} pratos
+            </Text>
           </View>
-          <Entypo
-            name="heart-outlined"
-            size={20}
-            color="black"
-            className=" flex align-middle justify-center border-gray-300 rounded-full p-1 "
-          />
+
+          {/* Linha de Info 2: Preço */}
+          <View className="flex-row items-center">
+            <Text className="text-gray-500 text-xs">
+              Pratos a partir de{" "}
+              <Text className="font-bold text-gray-700">
+                {formatPrice(minPrice)}
+              </Text>
+            </Text>
+          </View>
         </View>
-      </Pressable>
-    </>
+
+        {/* Ícone de Favorito Suave */}
+        <Pressable className="p-2">
+          <Ionicons name="heart-outline" size={22} color="#9CA3AF" />
+        </Pressable>
+      </View>
+    </Pressable>
   );
 };
 

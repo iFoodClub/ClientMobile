@@ -10,7 +10,7 @@ import { useAuthStore } from "@/src/store/authStore";
 import NetInfo from "@react-native-community/netinfo";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View } from "react-native";
 
 const RestaurantForm = () => {
   const { user, updateUserRestaurant } = useAuthStore();
@@ -28,7 +28,6 @@ const RestaurantForm = () => {
 
   useEffect(() => {
     async function hydrate() {
-      // Garantir que as migrações sejam executadas
       await runMigrations();
 
       const state = await NetInfo.fetch();
@@ -78,26 +77,17 @@ const RestaurantForm = () => {
         return;
       }
       setLoading(true);
-
-      // Garantir que as migrações sejam executadas antes de salvar
       await runMigrations();
 
-      // Validação mais robusta do user.id
-      if (!user?.id || user.id === null || user.id === undefined) {
-        showError("Usuário não encontrado. Faça login novamente.");
+      if (!user?.id) {
+        showError("Usuário não encontrado.");
         return;
       }
 
       const userId = String(user.id);
-
       const net = await NetInfo.fetch();
 
       if (!net.isConnected) {
-        // Debug: verificar estado da tabela antes
-
-        LocalProfileRepository.debugTable();
-
-        // salva localmente como sujo para sincronizar depois
         LocalProfileRepository.upsertProfile({
           userId,
           name: data.name,
@@ -107,13 +97,8 @@ const RestaurantForm = () => {
           dirty: 1,
         });
 
-        // Debug: verificar estado da tabela depois
-        LocalProfileRepository.debugTable();
-
         updateUserRestaurant(user?.restaurant?.id as number, data);
-        showSuccess(
-          "Alterações salvas offline. Será sincronizado quando online."
-        );
+        showSuccess("Alterações salvas offline.");
         return;
       }
 
@@ -129,7 +114,6 @@ const RestaurantForm = () => {
 
       if (response.status === 200) {
         updateUserRestaurant(user?.restaurant?.id, data);
-        // atualiza cache local como limpo
         LocalProfileRepository.upsertProfile({
           userId,
           name: data.name,
@@ -138,18 +122,17 @@ const RestaurantForm = () => {
           data,
           dirty: 0,
         });
-        showSuccess("Restaurante atualizado com sucesso!");
+        showSuccess("Restaurante atualizado!");
       }
     } catch (error) {
-      console.error(error);
-      showError("Erro ao atualizar restaurante.");
+      showError("Erro ao atualizar.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <SafeAreaView className="px-4">
+    <View className="px-0">
       <CustomInput control={control} name="name" label="Nome" />
       <CustomInput
         control={control}
@@ -168,33 +151,32 @@ const RestaurantForm = () => {
       <CustomInput
         control={control}
         name="number"
-        label="Número"
+        label="Número"
         maxLength={5}
         keyboardType="numeric"
       />
       <CustomInput control={control} name="profileImage" label="Imagem" />
 
       <Button
-        className="flex flex-row"
-        text="Atualizar"
+        className="mt-6"
+        text="Atualizar Dados"
         onPress={handleSubmit(onSubmit)}
         loading={loading}
-        disabled={isDirty ? false : true}
+        disabled={!isDirty}
       />
 
-      {/* Botão temporário para debug - remover depois */}
       {__DEV__ && (
         <Button
-          className="flex flex-row mt-2 bg-red-500"
+          className="mt-4 bg-gray-100"
           text="Limpar Banco (Debug)"
           onPress={() => {
             clearDatabase();
             runMigrations();
-            showInfo("Banco limpo e migrações executadas");
+            showInfo("Banco limpo");
           }}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -10,7 +10,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, router } from "expo-router";
 import React, { useState } from "react";
 import { Path, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const CreateAccount = () => {
@@ -61,98 +61,115 @@ const CreateAccount = () => {
     }
   }
 
-  return (
-    <SafeAreaView className="bg-white">
-      <View className="h-full  ">
-        <PageHeader
-          title="Criar Conta"
-          subtitle=" Iremos guiar você para criar a sua conta"
-        />
+  const handleBackStep = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    } else {
+      router.back();
+    }
+  };
 
-        {step === 1 && (
-          <View className="px-4">
-            <Text className="text-2xl mb-10">
-              Você quer se cadastrar como um(a):{" "}
-            </Text>
-            <View className="flex-row justify-around">
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setValue("userType", UserType.company)}
-              >
-                <USerType
-                  active={watchedUserType === "company"}
-                  label="Empresa"
-                  icon={
-                    <FontAwesome
-                      name="building-o"
-                      size={60}
-                      color={
-                        watchedUserType === "company" ? COLORS.primary : "black"
-                      }
-                    />
-                  }
+  return (
+    <SafeAreaView className="bg-white flex-1">
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <ScrollView 
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="flex-1 px-4">
+            <View className="flex-row items-center mt-2 -ml-2">
+               <TouchableOpacity onPress={handleBackStep} className="p-2">
+                  <Ionicons name="arrow-back" size={28} color="black" />
+               </TouchableOpacity>
+            </View>
+
+            <PageHeader
+              title="Criar Conta"
+              subtitle="Iremos guiar você para criar a sua conta"
+            />
+
+            <View className="mb-6">
+              {step === 1 && (
+                <View>
+                  <Text className="text-2xl mb-10 text-gray-800">
+                    Você quer se cadastrar como um(a):{" "}
+                  </Text>
+                  <View className="flex-row justify-around">
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => setValue("userType", UserType.company)}
+                    >
+                      <USerType
+                        active={watchedUserType === "company"}
+                        label="Empresa"
+                        icon={
+                          <FontAwesome
+                            name="building-o"
+                            size={60}
+                            color={
+                              watchedUserType === "company" ? COLORS.primary : "black"
+                            }
+                          />
+                        }
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => setValue("userType", UserType.restaurant)}
+                    >
+                      <USerType
+                        label="Restaurante"
+                        active={watchedUserType === "restaurant"}
+                        icon={
+                          <Ionicons
+                            name="restaurant-outline"
+                            size={60}
+                            color={
+                              watchedUserType === "restaurant"
+                                ? COLORS.primary
+                                : "black"
+                            }
+                          />
+                        }
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+
+              {step != 1 && (
+                <BusinessForm
+                  setValue={setValue}
+                  step={step}
+                  setStep={setStep}
+                  control={control}
+                  watchedUserType={watchedUserType}
                 />
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setValue("userType", UserType.restaurant)}
-              >
-                <USerType
-                  label="Restaurante"
-                  active={watchedUserType === "restaurant"}
-                  icon={
-                    <Ionicons
-                      name="restaurant-outline"
-                      size={60}
-                      color={
-                        watchedUserType === "restaurant"
-                          ? COLORS.primary
-                          : "black"
-                      }
-                    />
-                  }
-                />
-              </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Container dos botões sempre no final do conteúdo */}
+            <View className="mt-4 mb-10 items-center">
+              {step < 4 ? (
+                <Button text="Próximo" onPress={handleNextStep} />
+              ) : (
+                <Button text="Criar conta" onPress={handleSubmit(onSubmit)} />
+              )}
+              
+              <Text className="mt-4 text-gray-500 pb-10">
+                Já tem uma conta?{" "}
+                <Link className="text-primary font-semibold" href="/sign-in">
+                  Entrar
+                </Link>
+              </Text>
             </View>
           </View>
-        )}
-
-        {step != 1 && (
-          <View>
-            {watchedUserType === "company" && (
-              <BusinessForm
-                setValue={setValue}
-                step={step}
-                setStep={setStep}
-                control={control}
-                watchedUserType={watchedUserType}
-              />
-            )}
-            {watchedUserType === "restaurant" && (
-              <BusinessForm
-                setValue={setValue}
-                step={step}
-                setStep={setStep}
-                control={control}
-                watchedUserType={watchedUserType}
-              />
-            )}
-          </View>
-        )}
-
-        <View className="mt-auto items-center px-4 ">
-          {step != 4 && <Button text="Seguir" onPress={handleNextStep} />}
-          {step === 4 && (
-            <Button text="Criar conta" onPress={handleSubmit(onSubmit)} />
-          )}
-          <Text className="mt-4">
-            Já tem uma conta?{" "}
-            <Link className="text-primary font-semibold" href="/sign-in">
-              Entrar
-            </Link>{" "}
-          </Text>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

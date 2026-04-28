@@ -46,20 +46,15 @@ const CustomInput = <T extends FieldValues>({
         }) => (
           <>
             <View
-              className={`justify-center border flex flex-row items-center rounded-lg text-base p-1 pl-4  ${
-                error ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
+              className={`flex-row items-center rounded-2xl px-4 py-1 border ${
+                error ? "border-red-500 bg-red-50" : "border-gray-100 bg-gray-50"
               }`}
             >
-              {icon && <View className="w-10">{icon}</View>}
-
+              {icon && <View className="mr-2">{icon}</View>}
               <TextInput
                 maxLength={maxLength}
                 keyboardType={keyboardType}
-                className={` text-base flex-1  ${
-                  error
-                    ? "border-red-500 bg-red-50"
-                    : "border-gray-300 bg-white"
-                }`}
+                className="flex-1 h-12 text-gray-700 text-base"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -68,9 +63,9 @@ const CustomInput = <T extends FieldValues>({
               />
             </View>
 
-            <View className="h-[20px] flex items-end">
+            <View className="h-6 mt-1">
               {error && (
-                <Text className="text-red-500 text-sm">{error.message}</Text>
+                <Text className="text-red-500 text-xs ml-1">{error.message}</Text>
               )}
             </View>
           </>

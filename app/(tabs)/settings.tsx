@@ -3,10 +3,10 @@ import ConfigItem from "@/components/ui/ConfigItem/ConfigItem";
 import { COLORS } from "@/src/constants/colors";
 import { UserType } from "@/src/interfaces/interfaces";
 import { useAuthStore } from "@/src/store/authStore";
-import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import { Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SettingsScreen = () => {
@@ -21,20 +21,28 @@ const SettingsScreen = () => {
   const configItens = [
     {
       icon: (
-        <Entypo name="text-document" size={24} color={COLORS.textDescription} />
+        <Ionicons name="person-outline" size={22} color="#4B5563" />
       ),
-      label: `Informações ${
-        user?.userType === UserType.company
-          ? "da empresa"
-          : user?.userType === UserType.restaurant
-          ? "do restaurante"
-          : "do funcionário"
-      }`,
+      label: "Dados da conta",
       onPress: handleUpdateInfo,
     },
     {
       icon: (
-        <MaterialIcons name="logout" size={24} color={COLORS.textDescription} />
+        <Ionicons name="notifications-outline" size={22} color="#4B5563" />
+      ),
+      label: "Notificações",
+      onPress: () => {},
+    },
+    {
+      icon: (
+        <Ionicons name="help-circle-outline" size={22} color="#4B5563" />
+      ),
+      label: "Ajuda",
+      onPress: () => {},
+    },
+    {
+      icon: (
+        <Ionicons name="log-out-outline" size={22} color="#EF4444" />
       ),
       label: "Sair",
       onPress: logout,
@@ -42,43 +50,60 @@ const SettingsScreen = () => {
   ];
 
   return (
-    <SafeAreaView className="flex-1 ">
-      <PageHeader title="Configurações" subtitle="Configure a sua conta" />
-
-      <View className="border border-gray-200 w-11/12 mx-auto p-4  rounded-2xl flex flex-row justify-between  ">
-        <View className="flex flex-col justify-center items-center  w-3/5  ">
-          <Image
-            className="w-28 h-28 rounded-full border-4 border-white shadow-md"
-            source={{ uri: user?.profileImage }}
-          />
-          <View className="flex flex-col items-center w-full    ">
-            <Text className=" font-bold text-xl w-full text-center ">
-              {user?.name}
-            </Text>
-            <Text className="text-gray-400 font-medium">
-              {user?.restaurant?.cidade}, {user?.restaurant?.estado}
-            </Text>
-          </View>
+    <View className="flex-1 bg-white">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header Estilo iFood: Fundo Colorido Suave */}
+        <View className="bg-primary/10 pt-16 pb-10 px-6 rounded-b-[40px]">
+          <Text className="text-3xl font-bold text-gray-900 mb-8">Perfil</Text>
+          
+          <TouchableOpacity 
+            onPress={handleUpdateInfo}
+            className="flex-row items-center"
+          >
+            <View className="relative">
+              <Image
+                className="w-16 h-16 rounded-full border-2 border-white"
+                source={{ uri: user?.profileImage }}
+              />
+              <View className="absolute bottom-0 right-0 w-5 h-5 bg-white rounded-full items-center justify-center shadow-sm">
+                <Ionicons name="camera" size={12} color={COLORS.primary} />
+              </View>
+            </View>
+            
+            <View className="ml-4 flex-1">
+              <Text className="font-bold text-xl text-gray-900">
+                {user?.name}
+              </Text>
+              <View className="flex-row items-center">
+                <Text className="text-primary font-medium mr-1">Editar perfil</Text>
+                <Ionicons name="chevron-forward" size={14} color={COLORS.primary} />
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
-        <View className="flex flex-col justify-around">
-          <Text className="font-semibold">Email</Text>
-          <Text>{user?.email}</Text>
-          <Text className="font-semibold">CEP</Text>
-          <Text>{user?.restaurant?.cep || user?.company?.cep}</Text>
-          <Text className="font-semibold">CNPJ</Text>
-          <Text>{user?.restaurant?.cnpj || user?.company?.cnpj}</Text>
+
+        {/* Lista de Itens com Divisores */}
+        <View className="mt-4">
+          {configItens.map((item, index) => {
+            return (
+              <View key={index}>
+                <View className="px-6">
+                  <ConfigItem {...item} />
+                </View>
+                {index < configItens.length - 1 && (
+                  <View className="h-[1px] bg-gray-100 ml-20" />
+                )}
+              </View>
+            );
+          })}
         </View>
-      </View>
 
-      <View className="mt-8 px-6">
-        {configItens.map((item, index) => {
-          if (item.label.includes("funcionário")) return null;
-          if (item.label.includes("empresa")) return null;
-
-          return <ConfigItem key={index} {...item} />;
-        })}
-      </View>
-    </SafeAreaView>
+        {/* Versão do App (detalhe charmoso) */}
+        <View className="items-center mt-10 mb-20">
+          <Text className="text-gray-300 text-xs">FoodClub v1.0.0</Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

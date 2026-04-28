@@ -158,9 +158,11 @@ const DishesScreen = () => {
           title="Pratos"
           subtitle="Gerencie os pratos do seu restaurante"
         />
-        <View className="flex-row flex-wrap  gap-4 mt-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <DishCardSkeleton key={index} />
+        <View className="flex-row flex-wrap gap-x-2 mt-4">
+          {Array.from({ length: 9 }).map((_, index) => (
+            <View key={index} className="w-[31%] mb-6">
+              <DishCardSkeleton />
+            </View>
           ))}
         </View>
       </SafeAreaView>

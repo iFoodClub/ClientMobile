@@ -22,37 +22,37 @@ const Button = ({
 }: ButtonProps) => {
   const isDisabled = disabled || loading;
 
-  const finalClassName = ` px-4 py-2 h-14 bg-primary rounded-lg flex-row items-center justify-center w-full
-  ${isDisabled ? "opacity-70" : ""}
-  ${className}`;
+  // Estilos base dependendo do tipo
+  const bgStyle = type === "primary" 
+    ? (isDisabled ? "bg-gray-200" : "bg-primary") 
+    : "bg-white border border-gray-200";
+    
+  const textColor = type === "primary" 
+    ? (isDisabled ? "text-gray-400" : "text-white") 
+    : (isDisabled ? "text-gray-300" : "text-gray-700");
 
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      className={`${finalClassName} ${
-        type === "primary" ? "bg-primary" : "bg-white border border-primary"
-      }  ${className}`}
+      className={`h-14 rounded-2xl flex-row items-center justify-center w-full shadow-sm ${bgStyle} ${className}`}
+      style={({ pressed }) => [
+        { opacity: pressed && !isDisabled ? 0.8 : 1 }
+      ]}
     >
-      <View className="relative flex-row items-center">
-        {icon && !loading && icon}
-
-        <Text
-          className={`${
-            type === "primary" ? "text-white" : "text-primary"
-          } font-semibold text-body ${icon && !loading ? "ml-2" : ""}`}
-        >
-          {text}
-        </Text>
-
-        {loading && (
-          <ActivityIndicator
-            size="small"
-            color="white"
-            className="absolute left-full ml-2"
-          />
-        )}
-      </View>
+      {loading ? (
+        <ActivityIndicator
+          size="small"
+          color={type === "primary" ? "white" : "#4B5563"}
+        />
+      ) : (
+        <View className="flex-row items-center justify-center">
+          {icon && <View className="mr-2">{icon}</View>}
+          <Text className={`${textColor} font-bold text-base`}>
+            {text}
+          </Text>
+        </View>
+      )}
     </Pressable>
   );
 };

@@ -7,6 +7,7 @@ type PageHeaderProps = {
   subtitle?: string;
   backButton?: boolean;
   backButtonFunction?: () => void;
+  className?: string;
 };
 
 const PageHeader = ({
@@ -14,9 +15,10 @@ const PageHeader = ({
   subtitle,
   backButton,
   backButtonFunction,
+  className,
 }: PageHeaderProps) => {
   return (
-    <View className="flex flex-col gap-y-4 pt-4 pb-12 pl-4">
+    <View className={`flex flex-col gap-y-4 pt-4 pb-6 pl-4 ${className}`}>
       {backButton && (
         <View>
           <Pressable onPress={backButtonFunction}>

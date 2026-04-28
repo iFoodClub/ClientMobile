@@ -19,10 +19,10 @@ const TabsLayout = () => {
     {
       name: "index",
       title: "Início",
-      icon: ({ focused, color }: TabBarIconProps) => (
+      icon: ({ focused, color, size }: TabBarIconProps & { size: number }) => (
         <Feather
           name="home"
-          size={24}
+          size={size}
           color={focused ? COLORS.primary : color}
         />
       ),
@@ -31,10 +31,10 @@ const TabsLayout = () => {
       name: "dishes",
       title: "Pratos",
       href: isRestaurant ? "/dishes" : null,
-      icon: ({ focused, color }: TabBarIconProps) => (
+      icon: ({ focused, color, size }: TabBarIconProps & { size: number }) => (
         <Ionicons
           name="fast-food-outline"
-          size={24}
+          size={size}
           color={focused ? COLORS.primary : color}
         />
       ),
@@ -42,10 +42,10 @@ const TabsLayout = () => {
     {
       name: "orders",
       title: "Pedidos",
-      icon: ({ focused, color }: TabBarIconProps) => (
+      icon: ({ focused, color, size }: TabBarIconProps & { size: number }) => (
         <Ionicons
           name="receipt-outline"
-          size={24}
+          size={size}
           color={focused ? COLORS.primary : color}
         />
       ),
@@ -55,10 +55,10 @@ const TabsLayout = () => {
       name: "employees",
       title: "Funcionários",
       href: isCompany ? "/employees" : null,
-      icon: ({ focused, color }: TabBarIconProps) => (
+      icon: ({ focused, color, size }: TabBarIconProps & { size: number }) => (
         <SimpleLineIcons
           name="people"
-          size={24}
+          size={size}
           color={focused ? COLORS.primary : color}
         />
       ),
@@ -66,10 +66,10 @@ const TabsLayout = () => {
     {
       name: "settings",
       title: "Perfil",
-      icon: ({ focused, color }: TabBarIconProps) => (
+      icon: ({ focused, color, size }: TabBarIconProps & { size: number }) => (
         <Octicons
           name="person"
-          size={24}
+          size={size}
           color={focused ? COLORS.primary : color}
         />
       ),
@@ -80,7 +80,26 @@ const TabsLayout = () => {
   ];
 
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          height: 85, // Aumentado para dar espaço à barra do sistema
+          borderTopWidth: 1,
+          borderTopColor: "#F3F4F6",
+          paddingBottom: 25, // Empurra o conteúdo para cima da barra preta
+          paddingTop: 12,
+          backgroundColor: "#FFFFFF",
+          elevation: 0, // Remove sombra estranha no Android
+        },
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: "#9CA3AF",
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "500",
+        },
+      }}
+    >
       {tabsConfig.map(({ name, title, icon, href, options }) => (
         <Tabs.Screen
           key={name}
@@ -89,9 +108,7 @@ const TabsLayout = () => {
             sceneStyle: { backgroundColor: "#fff" },
             title,
             href,
-            tabBarLabelStyle: { fontSize: 12 },
-            tabBarIcon: icon,
-            tabBarActiveTintColor: COLORS.primary,
+            tabBarIcon: ({ focused, color }) => icon({ focused, color, size: 22 }),
             ...options,
           }}
         />

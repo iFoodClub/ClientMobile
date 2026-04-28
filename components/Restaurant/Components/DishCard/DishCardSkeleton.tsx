@@ -4,36 +4,38 @@ import React from "react";
 import { View } from "react-native";
 
 const DishCardSkeleton = () => {
-  const skeletonColors = ["#E5E7EB", "#FFFFFF", "#E5E7EB"];
+  const skeletonColors = ["#F3F4F6", "#F9FAFB", "#F3F4F6"];
 
-  // Duração da animação configurada para 50ms (muito rápido)
   const transition: MotiTransitionProp = {
     type: "timing",
-    duration: 50,
+    duration: 1500, // Duração muito mais suave e agradável
   };
 
   return (
     <Skeleton.Group show={true}>
-      <View className="flex flex-col gap-y-2">
+      <View className="flex flex-col gap-y-3">
+        {/* Imagem do Prato - Ocupando a largura total da coluna */}
         <Skeleton
           colors={skeletonColors}
-          radius="square"
-          height={80}
-          width={80}
+          radius={20}
+          height={100}
+          width={"100%"}
           transition={transition}
         />
+        {/* Nome do Prato */}
         <Skeleton
           colors={skeletonColors}
-          radius="square"
-          height={20}
-          width={90}
+          radius={8}
+          height={14}
+          width={"100%"}
           transition={transition}
         />
+        {/* Detalhe/Preço */}
         <Skeleton
           colors={skeletonColors}
-          radius="square"
-          height={20}
-          width={90}
+          radius={8}
+          height={10}
+          width={"70%"}
           transition={transition}
         />
       </View>

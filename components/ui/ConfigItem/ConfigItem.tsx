@@ -12,19 +12,21 @@ type ConfigItemProps = {
 const ConfigItem = ({ icon, label, onPress }: ConfigItemProps) => {
   return (
     <Pressable
-      className="flex flex-row items-center justify-between  mb-4 pb-4 border-gray-200"
+      className="flex flex-row items-center justify-between py-5"
       onPress={onPress}
     >
-      <View className="flex flex-row gap-x-2 items-center ">
-        {icon}
-        <Text className="text-body font-medium text-textDescription">
+      <View className="flex-row items-center">
+        <View className="mr-5">
+          {icon}
+        </View>
+        <Text className="text-gray-600 font-medium text-base">
           {label}
         </Text>
       </View>
       <MaterialIcons
-        name="arrow-forward-ios"
-        size={16}
-        color={COLORS.textDescription}
+        name="chevron-right"
+        size={20}
+        color="#D1D5DB"
       />
     </Pressable>
   );

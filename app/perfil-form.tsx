@@ -1,42 +1,55 @@
-import PressableButton from "@/components/Button/PressableButton";
 import RestaurantForm from "@/components/Forms/RestaurantForm/RestaurantForm";
-
-import PageHeader from "@/components/PageHeader/PageHeader";
-import { useToastAll } from "@/src/components/Toast";
 import { runMigrations } from "@/src/db";
 import { useAuthStore } from "@/src/store/authStore";
-import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { UserType } from "@/src/interfaces/interfaces";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, View, TouchableOpacity, Text } from "react-native";
 
 const PerfilForm = () => {
-  const { user, isRestaurant, isCompany, isEmployee } = useAuthStore();
-  const { showSuccess, showError } = useToastAll();
+  const { user } = useAuthStore();
+  const router = useRouter();
+  
+  const isRestaurant = user?.userType === UserType.restaurant || !!user?.restaurant;
 
   useEffect(() => {
     runMigrations();
   }, []);
 
   function handleBackButton() {
-    router.push({
-      pathname: "/settings",
-    });
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/(tabs)/settings");
+    }
   }
 
   return (
-    <SafeAreaView>
-      <View className="pl-2">
-        <PressableButton
-          className=""
-          onPress={handleBackButton}
-          icon={<AntDesign name="arrow-left" size={16} color="black" />}
-        />
-      </View>
-      <PageHeader title="Editar Perfil" subtitle="Atualize suas informações" />
-      <ScrollView>{isRestaurant && <RestaurantForm />}</ScrollView>
-    </SafeAreaView>
+    <View className="flex-1 bg-white">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header no estilo iFood */}
+        <View className="bg-primary/10 pt-16 pb-8 px-6 rounded-b-[40px] mb-6">
+          <TouchableOpacity onPress={handleBackButton} className="mb-4 -ml-2">
+            <Ionicons name="arrow-back" size={28} color="black" />
+          </TouchableOpacity>
+          <Text className="text-3xl font-bold text-gray-900">Editar Perfil</Text>
+          <Text className="text-gray-500 mt-1">Atualize suas informações</Text>
+        </View>
+
+        <View className="px-6 pb-20">
+          {isRestaurant ? (
+            <RestaurantForm />
+          ) : (
+            <View className="items-center mt-20">
+              <Text className="text-gray-400">
+                Formulário em breve para este tipo de usuário.
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

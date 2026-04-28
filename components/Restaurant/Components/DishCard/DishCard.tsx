@@ -16,16 +16,21 @@ type DishCardProps = {
 
 const DishCard = ({ dish, onLongPress }: DishCardProps) => {
   return (
-    <Pressable onLongPress={onLongPress}>
-      <View className="flex flex-col  w-24  h-60 ">
+    <Pressable onLongPress={onLongPress} className="flex-1 mb-6">
+      <View className="flex flex-col">
+        {/* Imagem do Prato - Seguindo o estilo do Skeleton */}
         <Image
-          className="w-full h-24 object-cover rounded-xl mb-4"
+          className="w-full h-24 rounded-3xl mb-2"
           source={{ uri: dish.image }}
         />
-        <Text className="font-semibold text-textBody text-base mb-2">
+        
+        {/* Preço em destaque */}
+        <Text className="font-bold text-gray-800 text-sm">
           {dish && formatPrice(dish?.price)}
         </Text>
-        <Text className="text-textDescription text-base font-medium">
+        
+        {/* Nome do Prato - Mais suave */}
+        <Text className="text-gray-400 text-xs font-medium" numberOfLines={2}>
           {dish?.name}
         </Text>
       </View>
