@@ -41,6 +41,12 @@ O foco é a exposição do cardápio e gestão de grandes volumes de pedidos.
 - **Configuração de Agenda:** Definição obrigatória de dias e horários de funcionamento durante o cadastro, editável a qualquer momento nas configurações.
 - **Regra de Habilitação:** O restaurante só será listado para as empresas após possuir pelo menos um item ativo em cada uma das três categorias obrigatórias, estar marcado como "Disponível" e possuir a agenda de funcionamento configurada.
 - **Configuração de Desconto Progressivo:** Definição das regras de desconto baseadas na quantidade total de pedidos (ex: 10 pedidos = 5% OFF, 20 pedidos = 10% OFF).
+- **Dashboard de Performance:** Painel para acompanhar o desempenho de cada prato:
+    - **Volume de Vendas:** Quantidade total vendida de cada item.
+    - **Análise Financeira:** Cálculo de lucro/prejuízo por prato (com campo opcional para inserção do **Preço de Produção**).
+- **Relatório Detalhado por Prato:** Ao selecionar um item, o restaurante acessa:
+    - Histórico de desempenho ao longo do tempo.
+    - **Feedback Direto:** Visualização de todas as avaliações e comentários enviados pelos funcionários sobre aquele prato específico.
 - **Consolidação de Pedidos:** Acesso à lista completa de pedidos por empresa, facilitando a logística de entrega em lotes.
 
 ---
