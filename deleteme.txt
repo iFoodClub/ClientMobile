@@ -1,0 +1,30 @@
+{
+  "email": "restaurante@email.com",
+  "password": "senha123",
+  "userType": "restaurant",
+  "profileImage": "https://exemplo.com/restaurante.jpg",
+  "cnpj": "98765432000188",
+  "restaurant": {
+    "name": "Restaurante Saboroso",
+    "cep": "87654321",
+    "rua": "Rua das Flores",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "number": "200",
+    "complemento": "Sala 101"
+  }
+}
+
+
+{
+  "email": "empresa@email.com",
+  "password": "senha123",
+  "userType": "company",
+  "profileImage": "https://exemplo.com/empresa.jpg",
+  "cnpj": "12345678000199",
+  "company": {
+    "name": "Empresa ABC Ltda",
+    "cep": "12345678",
+    "number": "100"
+  }
+}
