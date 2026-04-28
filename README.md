@@ -12,15 +12,17 @@ Oferecer uma interface intuitiva para que o funcionário possa gerenciar sua ali
 O aplicativo adapta sua interface e funcionalidades com base no perfil do usuário logado:
 
 ### 1. Perfil: Funcionário (Usuário Final)
-O foco é a praticidade na escolha da refeição e economia.
+O foco é a praticidade na escolha da refeição. O funcionário não tem acesso a preços ou informações financeiras, funcionando como um cardápio digital da "cozinha" da empresa.
 - **Painel do Dia:** Visualização do cardápio do restaurante que a empresa escolheu para hoje.
 - **Montagem do Pedido:** 
     - Seleção de Marmita, Sobremesa e/ou Suco.
     - **Regra de Validação:** Pelo menos um item deve ser selecionado.
     - **UX Alert:** Caso o usuário selecione apenas sobremesa ou suco (sem marmita), um modal de confirmação será exibido para evitar erros de pedido.
 - **Agendamento Semanal:** Interface para definir as escolhas de segunda a sexta-feira de uma só vez.
-- **Acompanhamento de Desconto:** Indicador mostrando o desconto atual da empresa baseado no volume de pedidos do dia (Economia Coletiva).
-- **Centro de Notificações:** Alertas sobre troca de restaurante parceiro e lembretes para fechamento de pedidos.
+- **Centro de Notificações:** 
+    - Alertas sobre troca de restaurante parceiro pela empresa.
+    - Lembretes para fechamento de pedidos.
+    - Boas-vindas para novos usuários.
 
 ### 2. Perfil: Empresa (RH / Gestor)
 O foco é a gestão da parceria e o controle financeiro centralizado. Toda a conta é paga pela empresa, sem transações financeiras para o funcionário.
@@ -31,7 +33,7 @@ O foco é a gestão da parceria e o controle financeiro centralizado. Toda a con
     - **Métrica de Economia:** Indicador de "Economia Gerada" (Diferença entre o valor original e o valor com desconto do FoodClub).
 - **Gestão de Funcionários:** Visualização e controle da lista de funcionários ativos.
 - **Centro de Alertas:** Recebe notificações críticas caso o restaurante parceiro atual fique **Indisponível** (exigindo a escolha de um novo parceiro).
-- **Gatilho de Troca:** Ao alterar o parceiro, o sistema notifica automaticamente todos os funcionários para revisarem suas escolhas.
+- **Gatilho de Notificação:** Ao alterar o parceiro, o sistema dispara automaticamente uma notificação para todos os funcionários revisarem suas escolhas semanais.
 
 ### 3. Perfil: Restaurante
 O foco é a exposição do cardápio e gestão de grandes volumes de pedidos.
