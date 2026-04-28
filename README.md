@@ -1,50 +1,83 @@
-# Welcome to your Expo app 👋
+# FoodClub - Mobile Client 📱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+O **FoodClub** é um aplicativo mobile desenvolvido para facilitar a gestão de refeições corporativas. Através dele, funcionários de empresas parceiras podem realizar pedidos diários de restaurantes selecionados, aproveitando descontos exclusivos gerados pelo volume de pedidos da equipe.
 
-## Get started
+## 🚀 Objetivo do Aplicativo
+Oferecer uma interface intuitiva para que o funcionário possa gerenciar sua alimentação semanal, garantindo preços mais acessíveis e praticidade no dia a dia da empresa.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 👥 Perfis de Usuário e Funcionalidades
 
-2. Start the app
+O aplicativo adapta sua interface e funcionalidades com base no perfil do usuário logado:
 
-   ```bash
-   npx expo start
-   ```
+### 1. Perfil: Funcionário (Usuário Final)
+O foco é a praticidade na escolha da refeição e economia.
+- **Painel do Dia:** Visualização do cardápio do restaurante que a empresa escolheu para hoje.
+- **Montagem do Pedido:** 
+    - Seleção de Marmita, Sobremesa e/ou Suco.
+    - **Regra de Validação:** Pelo menos um item deve ser selecionado.
+    - **UX Alert:** Caso o usuário selecione apenas sobremesa ou suco (sem marmita), um modal de confirmação será exibido para evitar erros de pedido.
+- **Agendamento Semanal:** Interface para definir as escolhas de segunda a sexta-feira de uma só vez.
+- **Acompanhamento de Desconto:** Indicador mostrando o desconto atual da empresa baseado no volume de pedidos do dia (Economia Coletiva).
+- **Centro de Notificações:** Alertas sobre troca de restaurante parceiro e lembretes para fechamento de pedidos.
 
-In the output, you'll find options to open the app in a
+### 2. Perfil: Empresa (RH / Gestor)
+O foco é a gestão da parceria e o controle financeiro centralizado. Toda a conta é paga pela empresa, sem transações financeiras para o funcionário.
+- **Seleção de Parceiro:** Dashboard para escolher qual restaurante será o parceiro do dia/semana.
+- **Dashboard Financeiro em Tempo Real:** 
+    - **Monitoramento de Pedidos:** Lista consolidada de quem já pediu e o que foi pedido.
+    - **Controle de Gastos:** Visualização do valor total bruto (sem desconto) vs. valor líquido (com o desconto progressivo aplicado).
+    - **Métrica de Economia:** Indicador de "Economia Gerada" (Diferença entre o valor original e o valor com desconto do FoodClub).
+- **Gestão de Funcionários:** Visualização e controle da lista de funcionários ativos.
+- **Centro de Alertas:** Recebe notificações críticas caso o restaurante parceiro atual fique **Indisponível** (exigindo a escolha de um novo parceiro).
+- **Gatilho de Troca:** Ao alterar o parceiro, o sistema notifica automaticamente todos os funcionários para revisarem suas escolhas.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 3. Perfil: Restaurante
+O foco é a exposição do cardápio e gestão de grandes volumes de pedidos.
+- **Gestão de Cardápio:** Cadastro e edição de pratos categorizados obrigatoriamente como **Principal**, **Sobremesa** ou **Bebida**.
+- **Controle de Disponibilidade:** O restaurante pode se marcar como **Disponível** ou **Indisponível** a qualquer momento.
+    - **UX Alert:** Caso tente ficar "Indisponível", o app deve exibir um modal de confirmação alertando que todas as empresas que o têm como parceiro atual serão notificadas e a parceria será interrompida para aquele período.
+- **Configuração de Agenda:** Definição obrigatória de dias e horários de funcionamento durante o cadastro, editável a qualquer momento nas configurações.
+- **Regra de Habilitação:** O restaurante só será listado para as empresas após possuir pelo menos um item ativo em cada uma das três categorias obrigatórias, estar marcado como "Disponível" e possuir a agenda de funcionamento configurada.
+- **Configuração de Desconto Progressivo:** Definição das regras de desconto baseadas na quantidade total de pedidos (ex: 10 pedidos = 5% OFF, 20 pedidos = 10% OFF).
+- **Consolidação de Pedidos:** Acesso à lista completa de pedidos por empresa, facilitando a logística de entrega em lotes.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 📌 Notas de Interesse (Ideias Futuras)
 
-When you're ready, run:
+Esta seção agrupa funcionalidades planejadas ou ideias que podem ser exploradas no futuro para cada perfil de usuário:
 
-```bash
-npm run reset-project
-```
+### Para o Funcionário
+- **Restrições Alimentares:** Filtros ou avisos automáticos caso um prato contenha alérgenos configurados no perfil (ex: glúten, lactose).
+- **Avaliação de Pratos:** Sistema de estrelas e comentários para ajudar o restaurante e a empresa a medirem a qualidade.
+- **Favoritos:** Marcar pratos preferidos para facilitar o agendamento semanal.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Para a Empresa
+- **Relatórios Mensais:** Exportação de PDFs com o fechamento de gastos e economia total do mês.
+- **Subsídio Parcial:** Possibilidade da empresa pagar uma parte e o funcionário pagar outra (atualmente a empresa paga 100%).
+- **Gestão por Departamentos:** Separar os gastos e pedidos por áreas da empresa.
 
-## Learn more
+### Para o Restaurante
+- **Análise de Demanda:** Gráficos mostrando quais dias da semana possuem maior volume de pedidos.
+- **Destaques do Dia:** Possibilidade de promover um prato específico no topo do cardápio para as empresas parceiras.
+- **Previsão de Insumos:** Relatório antecipado baseado nos pedidos semanais agendados pelos funcionários.
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 🛠 Tech Stack
+- **Framework:** [Expo](https://expo.dev/) (React Native)
+- **Roteamento:** [Expo Router](https://docs.expo.dev/router/introduction/)
+- **Estilização:** [NativeWind](https://www.nativewind.dev/) (Tailwind CSS)
+- **Estado Global:** [Zustand](https://github.com/pmndrs/zustand)
+- **Animações:** [Moti](https://moti.fyi/) & [Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+- **Consumo de API:** [Axios](https://axios-http.com/)
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 📦 Instalação e Execução
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. Acesse a pasta: `cd ClientMobile`
+2. Instale as dependências: `npm install`
+3. Inicie o projeto: `npx expo start`
