@@ -13,7 +13,7 @@ import RestaurantRepository from "@/src/repository/restaurantRepository";
 import { useToastAll } from "@/src/components/Toast";
 
 const SettingsScreen = () => {
-  const { logout, user, updateUserRestaurant } = useAuthStore();
+  const { logout, user, updateUserRestaurant, isCompany } = useAuthStore();
   const { showSuccess, showError } = useToastAll();
   const [modalVisible, setModalVisible] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState(user?.restaurant?.image || "");
@@ -62,6 +62,15 @@ const SettingsScreen = () => {
       label: "Notificações",
       onPress: () => {},
     },
+    ...(isCompany ? [{
+      icon: (
+        <Ionicons name="heart-outline" size={22} color="#4B5563" />
+      ),
+      label: "Meus Favoritos",
+      onPress: () => {
+        router.push("/favorites");
+      },
+    }] : []),
     {
       icon: (
         <Ionicons name="help-circle-outline" size={22} color="#4B5563" />
