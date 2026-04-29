@@ -29,12 +29,12 @@ const PerfilForm = () => {
     <View className="flex-1 bg-white">
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header no estilo iFood */}
-        <View className="bg-primary/10 pt-16 pb-8 px-6 rounded-b-[40px] mb-6">
+        <View className="bg-primary/10 pt-16 pb-8 px-6 rounded-b-[40px] mb-8">
           <TouchableOpacity onPress={handleBackButton} className="mb-4 -ml-2">
             <Ionicons name="arrow-back" size={28} color="black" />
           </TouchableOpacity>
           <Text className="text-3xl font-bold text-gray-900">Editar Perfil</Text>
-          <Text className="text-gray-500 mt-1">Atualize suas informações</Text>
+          <Text className="text-gray-500 mt-1">Atualize as informações do seu restaurante</Text>
         </View>
 
         <View className="px-6 pb-20">
