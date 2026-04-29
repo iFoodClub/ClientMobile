@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   const { restaurants, loading: loadingRestaurants } = useFetchRestaurants();
-  const { favorites, loading: loadingFavorites } = useFavorites();
+  const { favorites, loading: loadingFavorites, toggleFavorite } = useFavorites();
   const { user, isEmployee, isCompany } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
 
