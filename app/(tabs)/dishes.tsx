@@ -158,9 +158,9 @@ const DishesScreen = () => {
           title="Pratos"
           subtitle="Gerencie os pratos do seu restaurante"
         />
-        <View className="flex-row flex-wrap gap-x-2 mt-4">
+        <View className="flex-row flex-wrap gap-x-3 mt-4">
           {Array.from({ length: 9 }).map((_, index) => (
-            <View key={index} className="w-[31%] mb-6">
+            <View key={index} className="w-[30%] mb-6">
               <DishCardSkeleton />
             </View>
           ))}
@@ -184,9 +184,9 @@ const DishesScreen = () => {
           />
         )}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={4}
+        numColumns={3}
         columnWrapperStyle={{
-          gap: 16,
+          gap: 12,
         }}
         ItemSeparatorComponent={() => <View className="h-4" />}
         contentContainerStyle={{

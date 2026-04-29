@@ -40,9 +40,9 @@ const CModal = ({
           onPress={() => setModalVisible(false)}
           className="flex-1 justify-center items-center bg-black/50"
         >
-          <View className="w-full px-4 bg-white py-10 rounded-xl ">
-            <View className="mb-8">
-              <Text className="text-2xl font-semibold ">{title}</Text>
+          <View className="w-[90%] px-6 bg-white py-6 rounded-3xl shadow-lg">
+            <View className="mb-6">
+              <Text className="text-xl font-bold ">{title}</Text>
               {subtitle && (
                 <Text className="text-textDescription">{subtitle}</Text>
               )}

@@ -46,7 +46,7 @@ const CustomInput = <T extends FieldValues>({
         }) => (
           <>
             <View
-              className={`flex-row items-center rounded-2xl px-4 py-1 border ${
+              className={`flex-row items-center rounded-xl px-4 py-0.5 border ${
                 error ? "border-red-500 bg-red-50" : "border-gray-100 bg-gray-50"
               }`}
             >
@@ -54,7 +54,7 @@ const CustomInput = <T extends FieldValues>({
               <TextInput
                 maxLength={maxLength}
                 keyboardType={keyboardType}
-                className="flex-1 h-12 text-gray-700 text-base"
+                className="flex-1 h-11 text-gray-700 text-sm"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -63,9 +63,9 @@ const CustomInput = <T extends FieldValues>({
               />
             </View>
 
-            <View className="h-6 mt-1">
+            <View className="min-h-[20px] mt-0.5">
               {error && (
-                <Text className="text-red-500 text-xs ml-1">{error.message}</Text>
+                <Text className="text-red-500 text-[10px] ml-1">{error.message}</Text>
               )}
             </View>
           </>
