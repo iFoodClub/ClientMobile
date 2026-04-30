@@ -1,4 +1,5 @@
 import { ToastProvider } from "@/src/components/Toast";
+import React, { useEffect, useState } from "react";
 import { useSyncManager } from "@/src/hooks/useSyncManager";
 import { useAuthStore } from "@/src/store/authStore";
 import {
@@ -9,7 +10,12 @@ import {
 } from "@expo-google-fonts/roboto";
 import { Stack } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import * as SplashScreen from 'expo-splash-screen';
+import { AnimatedSplashScreen } from "@/src/components/AnimatedSplashScreen";
 import "./global.css";
+
+// Impede que a splash nativa suma automaticamente
+SplashScreen.preventAutoHideAsync();
 
 function AppContent() {
   const { isLoggedIn } = useAuthStore();
@@ -56,22 +62,29 @@ function AppContent() {
 }
 
 export default function RootLayout() {
+  const [splashAnimationFinished, setSplashAnimationFinished] = useState(false);
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_500Medium,
     Roboto_700Bold,
   });
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      // Quando as fontes carregam, escondemos a splash nativa
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <View style={{ flex: 1, backgroundColor: '#FF6D00' }} />;
   }
 
   return (
     <ToastProvider>
+      {!splashAnimationFinished && (
+        <AnimatedSplashScreen onAnimationFinish={() => setSplashAnimationFinished(true)} />
+      )}
       <AppContent />
     </ToastProvider>
   );
