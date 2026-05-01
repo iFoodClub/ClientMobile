@@ -6,9 +6,8 @@ import { useAuthStore } from "@/src/store/authStore";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const orders = () => {
+const Orders = () => {
   const { isEmployee, isCompany, isRestaurant } = useAuthStore();
-  const { user } = useAuthStore();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -26,4 +25,4 @@ const orders = () => {
   );
 };
 
-export default orders;
+export default Orders;

@@ -1,4 +1,3 @@
-import { COLORS } from "@/src/constants/colors";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
 import { Pressable, Text, View } from "react-native";

@@ -16,7 +16,7 @@ const EmployeeOrders = () => {
   useEffect(() => {
     if (!user?.employee?.id) return;
     getEmployeeWeeklyOrders(user.employee.id);
-  }, []);
+  }, [getEmployeeWeeklyOrders, user?.employee?.id]);
 
   return (
     <View className="px-6 mt-4">

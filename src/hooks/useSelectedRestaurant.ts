@@ -16,7 +16,10 @@ export const useSelectedRestaurant = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!restaurantId) return;
+      if (!restaurantId) {
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         const response = await RestaurantRepository.fetchSelectedRestaurant(
@@ -31,7 +34,7 @@ export const useSelectedRestaurant = ({
     };
 
     fetchData();
-  }, []);
+  }, [restaurantId]);
 
   return { selectedRestaurant, loading, error };
 };

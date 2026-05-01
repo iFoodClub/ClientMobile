@@ -86,22 +86,6 @@ export interface ILoginResponse {
   userDetails: IUserDetailsResponse;
 }
 
-export interface ICepResponse {
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  unidade: string;
-  bairro: string;
-  localidade: string;
-  uf: string;
-  estado: string;
-  regiao: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
-}
-
 export interface ICreateDishDTO {
   name: string;
   description: string;

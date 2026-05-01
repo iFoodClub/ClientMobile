@@ -21,7 +21,7 @@ const BusinessInfo = ({
 
   useEffect(() => {
     setValue("name", watchedRestaurantName);
-  }, [watchedRestaurantName]);
+  }, [watchedRestaurantName, setValue]);
 
   return (
     <View>

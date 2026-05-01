@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import RestaurantRepository from '../repository/restaurantRepository';
 import { IRestaurantResponse } from '../interfaces/apiResponses';
 import { useAuthStore } from '../store/authStore';
@@ -8,7 +8,7 @@ export const useFavorites = () => {
   const [favorites, setFavorites] = useState<IRestaurantResponse[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchFavorites = async () => {
+  const fetchFavorites = useCallback(async () => {
     if (!user?.id) return;
     try {
       setLoading(true);
@@ -19,9 +19,9 @@ export const useFavorites = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
 
-  const toggleFavorite = async (restaurantId: number) => {
+  const toggleFavorite = useCallback(async (restaurantId: number) => {
     if (!user?.id || !user?.userType) return;
     try {
       const response = await RestaurantRepository.toggleFavorite(user.id, restaurantId, user.userType as any);
@@ -30,11 +30,11 @@ export const useFavorites = () => {
     } catch (error) {
       console.error("Erro ao alternar favorito:", error);
     }
-  };
+  }, [user?.id, user?.userType, fetchFavorites]);
 
   useEffect(() => {
     fetchFavorites();
-  }, [user?.id]);
+  }, [fetchFavorites]);
 
   return { favorites, loading, toggleFavorite, fetchFavorites };
 };

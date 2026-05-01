@@ -12,7 +12,6 @@ const CompanyEmployeeOrderCard = ({
   employeeOrder,
   employeesWithoutOrder,
 }: CompanyEmployeeOrderCardProps) => {
-  const hasOrder = employeeOrder?.order !== null;
 
   const isEmployeeWithoutOrder = employeesWithoutOrder.some(
     (employee) => employee.id === employeeOrder.id

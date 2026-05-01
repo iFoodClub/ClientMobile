@@ -31,7 +31,7 @@ export const CompanyOrder = () => {
     if (!user?.company?.id) return;
     fetchEmployees();
     getEmployeesWeeklyOrdersCurrentDay(user.company.id);
-  }, []);
+  }, [fetchEmployees, getEmployeesWeeklyOrdersCurrentDay, user?.company?.id]);
 
   const weekDays = [
     "Domingo",

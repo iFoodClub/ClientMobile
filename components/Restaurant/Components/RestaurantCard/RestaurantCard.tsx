@@ -2,7 +2,6 @@ import { COLORS } from "@/src/constants/colors";
 import { IRestaurantResponse } from "@/src/interfaces/apiResponses";
 import { formatPrice } from "@/src/utils/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import React from "react";
