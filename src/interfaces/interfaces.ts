@@ -39,6 +39,7 @@ export interface ICompany {
   cep: string;
   number: string;
   restaurantId: number;
+  selectedRestaurantId?: number;
 }
 
 export interface IBusiness {

@@ -107,7 +107,7 @@ const TabsLayout = () => {
           options={{
             sceneStyle: { backgroundColor: "#fff" },
             title,
-            href,
+            href: href as any,
             tabBarIcon: ({ focused, color }) => icon({ focused, color, size: 22 }),
             ...options,
           }}

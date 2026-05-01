@@ -24,7 +24,7 @@ type IAuthStore = {
   isEmployee: boolean;
 };
 
-export const useAuthStore = create<IAuthStore>((set, get) => ({
+export const useAuthStore = create<IAuthStore>((set, _get) => ({
   loading: false,
   token: "",
   isRestaurant: false,
@@ -90,7 +90,7 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
       return {
         user: {
           ...state.user,
-          company: { ...state.user.company, restaurantId: id },
+          company: { ...state.user.company, selectedRestaurantId: id },
         },
       };
     });
@@ -122,13 +122,25 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
         user: {
           id: perfilLocal.userId,
           email: perfilLocal.email,
+          name: perfilLocal.name || "",
+          token: "",
+          profileImage: perfilLocal.photo || "",
+          userType: UserType.restaurant,
           restaurant: {
             id: Number(perfilLocal.userId),
+            userId: Number(perfilLocal.userId),
+            cnpj: "",
+            cep: "",
+            rua: "",
+            cidade: "",
+            estado: "",
+            number: "",
+            complemento: "",
             ...perfilLocal.data,
             name: perfilLocal.name,
             image: perfilLocal.photo,
           },
-        },
+        } as IUserDetailsResponse,
         isRestaurant: true,
         isEmployee: false,
         isCompany: false,
