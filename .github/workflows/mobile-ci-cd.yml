@@ -23,18 +23,15 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: ClientMobile/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: ClientMobile
         run: npm ci
 
       - name: Run linter
-        working-directory: ClientMobile
         run: npm run lint
 
       - name: Type check
-        working-directory: ClientMobile
         run: npx tsc --noEmit
 
   build:
@@ -54,10 +51,9 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: ClientMobile/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: ClientMobile
         run: npm ci
 
       - name: Setup Expo
@@ -68,7 +64,6 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Set Environment Variables
-        working-directory: ClientMobile
         run: |
           if [ "${{ github.ref_name }}" == "main" ]; then
             echo "EXPO_PUBLIC_API_BASE_URL=${{ secrets.EXPO_PUBLIC_API_BASE_URL_PRD }}" >> $GITHUB_ENV
@@ -80,7 +75,6 @@ jobs:
 
       - name: Build APK
         id: build
-        working-directory: ClientMobile
         run: |
           # Executa o build e captura a URL do artefato
           eas build --platform android --profile ${{ env.EAS_PROFILE }} --non-interactive --local=false > build_output.txt
@@ -90,7 +84,6 @@ jobs:
 
       - name: Get Version
         id: version
-        working-directory: ClientMobile
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if [ "${{ github.ref_name }}" == "development" ]; then
