@@ -12,6 +12,7 @@ import employeeRepository from "@/src/repository/employeeRepository";
 import { useAuthStore } from "@/src/store/authStore";
 import { formatPrice } from "@/src/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
+import { useFavorites } from "@/src/hooks/useFavorites";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -26,6 +27,9 @@ const RestaurantDetails = () => {
     restaurantId: Number(id),
   });
   const { token, user, updateSelectedRestaurant, isEmployee } = useAuthStore();
+  const { favorites, toggleFavorite } = useFavorites();
+
+  const isFavorite = favorites.some(f => f.id === Number(id));
 
   function handleCancel() {
     setOpen(false);
@@ -112,6 +116,21 @@ const RestaurantDetails = () => {
             )
           }
           onPress={handleChooseRestaurant}
+        />
+      )}
+
+      {/* Botão de Favorito - Apenas para Empresas */}
+      {user?.userType === UserType.company && (
+        <PressableButton
+          className={`absolute top-14 ${user?.userType === UserType.company ? 'right-20' : 'right-4'} z-10`}
+          icon={
+            <Ionicons 
+              name={isFavorite ? "heart" : "heart-outline"} 
+              size={22} 
+              color={isFavorite ? COLORS.primary : "white"} 
+            />
+          }
+          onPress={() => toggleFavorite(Number(id))}
         />
       )}
 

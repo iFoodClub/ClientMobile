@@ -28,6 +28,8 @@ export interface IRestaurant {
   number: string;
   complemento: string;
   image: string;
+  openingTime?: string;
+  closingTime?: string;
 }
 export interface ICompany {
   id: number;

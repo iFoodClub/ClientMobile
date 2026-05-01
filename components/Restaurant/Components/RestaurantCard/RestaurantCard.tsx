@@ -8,11 +8,20 @@ import { router } from "expo-router";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
+import { useAuthStore } from "@/src/store/authStore";
+
 type RestaurantCardProps = {
   restaurant: IRestaurantResponse;
+  isFavorited?: boolean;
+  onToggleFavorite?: (id: number) => void;
 };
 
-const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
+const RestaurantCard = ({ 
+  restaurant, 
+  isFavorited = false, 
+  onToggleFavorite 
+}: RestaurantCardProps) => {
+  const { isCompany } = useAuthStore();
   const {
     id,
     name,
@@ -27,6 +36,12 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
       pathname: "/restaurant-details",
       params: { id },
     });
+  }
+
+  function handleToggleFavorite() {
+    if (onToggleFavorite) {
+      onToggleFavorite(id);
+    }
   }
 
   return (
@@ -67,10 +82,20 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
           </View>
         </View>
 
-        {/* Ícone de Favorito Suave */}
-        <Pressable className="p-2">
-          <Ionicons name="heart-outline" size={22} color="#9CA3AF" />
-        </Pressable>
+        {/* Ícone de Favorito Interativo - Apenas para Empresas */}
+        {isCompany && (
+          <Pressable 
+            onPress={handleToggleFavorite} 
+            className="p-2 hit-slop-10"
+            hitSlop={10}
+          >
+            <Ionicons 
+              name={isFavorited ? "heart" : "heart-outline"} 
+              size={24} 
+              color={isFavorited ? COLORS.primary : "#9CA3AF"} 
+            />
+          </Pressable>
+        )}
       </View>
     </Pressable>
   );

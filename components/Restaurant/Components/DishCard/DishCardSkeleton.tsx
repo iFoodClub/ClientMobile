@@ -13,31 +13,35 @@ const DishCardSkeleton = () => {
 
   return (
     <Skeleton.Group show={true}>
-      <View className="flex flex-col gap-y-3">
-        {/* Imagem do Prato - Ocupando a largura total da coluna */}
+      <View className="flex flex-col">
+        {/* Imagem do Prato - Mapeando h-24 e rounded-3xl */}
         <Skeleton
           colors={skeletonColors}
-          radius={20}
-          height={100}
+          radius={24}
+          height={96}
           width={"100%"}
           transition={transition}
         />
-        {/* Nome do Prato */}
-        <Skeleton
-          colors={skeletonColors}
-          radius={8}
-          height={14}
-          width={"100%"}
-          transition={transition}
-        />
-        {/* Detalhe/Preço */}
-        <Skeleton
-          colors={skeletonColors}
-          radius={8}
-          height={10}
-          width={"70%"}
-          transition={transition}
-        />
+        
+        <View className="mt-2 gap-y-1">
+          {/* Preço - Mapeando text-sm font-bold */}
+          <Skeleton
+            colors={skeletonColors}
+            radius={4}
+            height={16}
+            width={"50%"}
+            transition={transition}
+          />
+          
+          {/* Nome do Prato - Mapeando text-xs */}
+          <Skeleton
+            colors={skeletonColors}
+            radius={4}
+            height={12}
+            width={"100%"}
+            transition={transition}
+          />
+        </View>
       </View>
     </Skeleton.Group>
   );

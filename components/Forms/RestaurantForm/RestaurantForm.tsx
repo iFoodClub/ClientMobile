@@ -2,7 +2,6 @@ import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
 import { useToastAll } from "@/src/components/Toast";
 import { runMigrations } from "@/src/db";
-import { clearDatabase } from "@/src/db/sqlite";
 import { IUpdateRestaurantDTO } from "@/src/interfaces/dtos";
 import { LocalProfileRepository } from "@/src/repository/localProfileRepository";
 import RestaurantRepository from "@/src/repository/restaurantRepository";
@@ -10,7 +9,7 @@ import { useAuthStore } from "@/src/store/authStore";
 import NetInfo from "@react-native-community/netinfo";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 
 const RestaurantForm = () => {
   const { user, updateUserRestaurant } = useAuthStore();
@@ -37,8 +36,11 @@ const RestaurantForm = () => {
           name: user?.restaurant?.name,
           cnpj: user?.restaurant?.cnpj,
           cep: user?.restaurant?.cep,
+          rua: user?.restaurant?.rua,
           number: user?.restaurant?.number,
           profileImage: user?.restaurant?.image,
+          openingTime: user?.restaurant?.openingTime,
+          closingTime: user?.restaurant?.closingTime,
         });
         return;
       }
@@ -54,6 +56,9 @@ const RestaurantForm = () => {
             number: data.number ?? user?.restaurant?.number,
             profileImage:
               data.profileImage ?? local.photo ?? user?.restaurant?.image,
+            rua: data.rua ?? user?.restaurant?.rua,
+            openingTime: data.openingTime ?? user?.restaurant?.openingTime,
+            closingTime: data.closingTime ?? user?.restaurant?.closingTime,
           });
           return;
         }
@@ -63,8 +68,11 @@ const RestaurantForm = () => {
         name: user?.restaurant?.name,
         cnpj: user?.restaurant?.cnpj,
         cep: user?.restaurant?.cep,
+        rua: user?.restaurant?.rua,
         number: user?.restaurant?.number,
         profileImage: user?.restaurant?.image,
+        openingTime: user?.restaurant?.openingTime,
+        closingTime: user?.restaurant?.closingTime,
       });
     }
     hydrate();
@@ -132,34 +140,88 @@ const RestaurantForm = () => {
   }
 
   return (
-    <View className="px-0">
-      <CustomInput control={control} name="name" label="Nome" />
-      <CustomInput
-        control={control}
-        name="cnpj"
-        label="CNPJ"
-        maxLength={14}
-        keyboardType="numeric"
-      />
-      <CustomInput
-        control={control}
-        name="cep"
-        label="CEP"
-        maxLength={9}
-        keyboardType="numeric"
-      />
-      <CustomInput
-        control={control}
-        name="number"
-        label="Número"
-        maxLength={5}
-        keyboardType="numeric"
-      />
-      <CustomInput control={control} name="profileImage" label="Imagem" />
+    <View className="px-0 pb-10">
+      {/* Seção: Informações Básicas */}
+      <View className="mb-6">
+        <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">Informações do Restaurante</Text>
+        <CustomInput 
+          control={control} 
+          name="name" 
+          label="Nome Fantasia" 
+          placeholder="Ex: Sabores do Chef" 
+        />
+      </View>
+
+      {/* Seção: Operação */}
+      <View className="mb-6">
+        <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">Funcionamento</Text>
+        <View className="flex-row gap-x-4">
+          <View className="flex-1">
+            <CustomInput
+              control={control}
+              name="openingTime"
+              label="Abre às"
+              placeholder="08:00"
+              maxLength={5}
+            />
+          </View>
+          <View className="flex-1">
+            <CustomInput
+              control={control}
+              name="closingTime"
+              label="Fecha às"
+              placeholder="22:00"
+              maxLength={5}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* Seção: Endereço */}
+      <View className="mb-6">
+        <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">Localização</Text>
+        <CustomInput
+          control={control}
+          name="cep"
+          label="CEP"
+          placeholder="00000-000"
+          maxLength={9}
+          keyboardType="numeric"
+        />
+        <CustomInput 
+          control={control} 
+          name="rua" 
+          label="Rua / Logradouro" 
+          placeholder="Nome da rua"
+        />
+        <CustomInput
+          control={control}
+          name="number"
+          label="Número"
+          placeholder="123"
+          maxLength={10}
+          keyboardType="numeric"
+        />
+      </View>
+
+      {/* Seção: Dados Jurídicos */}
+      <View className="mb-8 opacity-70">
+        <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">Dados Cadastrais</Text>
+        <CustomInput
+          control={control}
+          name="cnpj"
+          label="CNPJ"
+          placeholder="00.000.000/0001-00"
+          editable={false}
+        />
+        <Text className="text-gray-400 text-[10px] ml-1 -mt-2">
+          Para alterar o CNPJ, entre em contato com o suporte.
+        </Text>
+      </View>
 
       <Button
-        className="mt-6"
-        text="Atualizar Dados"
+        className="mt-4"
+        text="Salvar Alterações"
         onPress={handleSubmit(onSubmit)}
         loading={loading}
         disabled={!isDirty}
@@ -167,7 +229,7 @@ const RestaurantForm = () => {
 
       {__DEV__ && (
         <Button
-          className="mt-4 bg-gray-100"
+          className="mt-10 bg-gray-100"
           text="Limpar Banco (Debug)"
           onPress={() => {
             clearDatabase();

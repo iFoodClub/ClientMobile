@@ -28,6 +28,18 @@ class RestaurantRepository extends RepositoryBase {
       `/restaurant/${restaurantId}/orders`
     );
   }
+
+  async toggleFavorite(userId: number, restaurantId: number, userType: string) {
+    return await this.api.post<{ favorited: boolean }>("/Restaurant/favorites/toggle", {
+      userId,
+      restaurantId,
+      userType,
+    });
+  }
+
+  async fetchFavorites(userId: number) {
+    return await this.api.get<IRestaurantResponse[]>(`/Restaurant/favorites/${userId}`);
+  }
 }
 
 export default new RestaurantRepository();
