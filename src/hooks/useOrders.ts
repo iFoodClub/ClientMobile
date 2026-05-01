@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useToastAll } from "../components/Toast";
 import {
   IEmployeeChoicesResponse,
@@ -11,7 +11,7 @@ import restaurantRepository from "../repository/restaurantRepository";
 
 export const useOrders = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { showSuccess, showError } = useToastAll();
+  const { showSuccess } = useToastAll();
 
   const [restaurantOrders, setRestaurantOrders] = useState<
     IRestaurantOrdersResponse[]
@@ -23,7 +23,7 @@ export const useOrders = () => {
     IEmployeeChoicesResponse[]
   >([]);
 
-  async function getRestaurantOrders(restaurantId: number) {
+  const getRestaurantOrders = useCallback(async (restaurantId: number) => {
     try {
       setIsLoading(true);
       const response = await restaurantRepository.getRestaurantOrders(
@@ -41,9 +41,9 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  async function getEmployeesWeeklyOrdersCurrentDay(companyId: number) {
+  const getEmployeesWeeklyOrdersCurrentDay = useCallback(async (companyId: number) => {
     try {
       setIsLoading(true);
       const response =
@@ -57,9 +57,9 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  async function createCompanyOrder(companyId: number) {
+  const createCompanyOrder = useCallback(async (companyId: number) => {
     try {
       setIsLoading(true);
       const response = await orderRepository.createCompanyWeeklyOrder(
@@ -74,13 +74,13 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [showSuccess]);
 
-  async function updateCompanyOrder(
+  const updateCompanyOrder = useCallback(async (
     restaurantId: number,
     orderId: number,
     status: string
-  ) {
+  ) => {
     try {
       setIsLoading(true);
       const response = await orderRepository.updateCompanyOrder(
@@ -98,9 +98,9 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [getRestaurantOrders, showSuccess]);
 
-  async function getEmployeeWeeklyOrders(employeeId: number) {
+  const getEmployeeWeeklyOrders = useCallback(async (employeeId: number) => {
     try {
       setIsLoading(true);
       const response = await orderRepository.getEmployeeWeeklyChosenOrders(
@@ -113,9 +113,9 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  async function removeEmployeeChoice(choiceId: number, employeeId: number) {
+  const removeEmployeeChoice = useCallback(async (choiceId: number, employeeId: number) => {
     try {
       setIsLoading(true);
       await orderRepository.removeEmployeeCoice(choiceId);
@@ -127,7 +127,7 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [getEmployeeWeeklyOrders, showSuccess]);
 
   return {
     employeeChoices,

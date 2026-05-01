@@ -40,13 +40,12 @@ const EmployeesScreen = () => {
 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [fetchEmployees]);
 
   const {
     control,
     handleSubmit,
     reset,
-    formState: { isDirty },
   } = useForm<IEmployeeDTO>({
     mode: "onBlur",
   });
@@ -84,7 +83,7 @@ const EmployeesScreen = () => {
       );
       fetchEmployees();
       setEmployeeModalVisible(false);
-    } catch (error) {
+    } catch (_error) {
       showError(
         `Erro ao ${
           mode === formMode.create ? "criar" : "atualizar"
@@ -117,7 +116,7 @@ const EmployeesScreen = () => {
       await deleteEmployee(employeeId);
       showSuccess("Funcionário deletado com sucesso!");
       await fetchEmployees();
-    } catch (error) {
+    } catch (_error) {
       showError("Erro ao deletar funcionário.");
     } finally {
       setSelectedEmployeeId(null);

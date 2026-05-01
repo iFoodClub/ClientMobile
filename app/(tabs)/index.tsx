@@ -7,12 +7,12 @@ import { useAuthStore } from "@/src/store/authStore";
 import { COLORS } from "@/src/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { FlatList, Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { FlatList, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   const { restaurants, loading: loadingRestaurants } = useFetchRestaurants();
-  const { favorites, loading: loadingFavorites, toggleFavorite } = useFavorites();
+  const { favorites, toggleFavorite } = useFavorites();
   const { user, isEmployee, isCompany } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
 

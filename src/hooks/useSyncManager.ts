@@ -33,7 +33,7 @@ export const useSyncManager = () => {
             
             if (response?.data) {
               // Atualiza zustand
-              useAuthStore.getState().updateUserRestaurant(user.restaurant.id, response.data);
+              useAuthStore.getState().updateUserRestaurant(response.data);
               // Atualiza perfil local removendo dirty e salvando dados mais recentes do servidor
               LocalProfileRepository.upsertProfile({
                 userId,

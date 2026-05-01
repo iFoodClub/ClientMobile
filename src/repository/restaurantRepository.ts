@@ -1,4 +1,5 @@
 import {
+  IRestaurantDetailsResponse,
   IRestaurantOrdersResponse,
   IRestaurantResponse,
 } from "../interfaces/apiResponses";
@@ -11,7 +12,7 @@ class RestaurantRepository extends RepositoryBase {
   }
 
   async fetchSelectedRestaurant(id: number) {
-    return await this.api.get<IRestaurantResponse>(`/restaurant/${id}`);
+    return await this.api.get<IRestaurantDetailsResponse>(`/restaurant/${id}`);
   }
 
   async updateRestaurant(

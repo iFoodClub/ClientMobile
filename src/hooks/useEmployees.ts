@@ -1,14 +1,13 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { IEmployeeSimple } from "../interfaces/apiResponses";
 import { IEmployeeDTO } from "../interfaces/dtos";
-import { DayOfWeek } from "../interfaces/interfaces";
 import EmployeeRepository from "../repository/employeeRepository";
 
 export const useEmployees = (companyId: number | undefined) => {
   const [employees, setEmployees] = useState<IEmployeeSimple[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  async function fetchEmployees() {
+  const fetchEmployees = useCallback(async () => {
     try {
       setLoading(true);
       if (!companyId) return;
@@ -19,9 +18,9 @@ export const useEmployees = (companyId: number | undefined) => {
     } finally {
       setLoading(false);
     }
-  }
+  }, [companyId]);
 
-  async function deleteEmployee(employeeId: number) {
+  const deleteEmployee = useCallback(async (employeeId: number) => {
     try {
       setLoading(true);
       await EmployeeRepository.deleteEmployee(employeeId);
@@ -31,9 +30,9 @@ export const useEmployees = (companyId: number | undefined) => {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  async function createEmployee(data: IEmployeeDTO) {
+  const createEmployee = useCallback(async (data: IEmployeeDTO) => {
     try {
       setLoading(true);
       await EmployeeRepository.createEmployee(data);
@@ -43,12 +42,12 @@ export const useEmployees = (companyId: number | undefined) => {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  async function updateEmployee(
+  const updateEmployee = useCallback(async (
     employeeId: number,
     data: Partial<IEmployeeSimple>
-  ) {
+  ) => {
     try {
       setLoading(true);
       await EmployeeRepository.updateEmployee(employeeId, data);
@@ -58,12 +57,7 @@ export const useEmployees = (companyId: number | undefined) => {
     } finally {
       setLoading(false);
     }
-  }
-
-  async function getEmployeesOrdersByDay(
-    employees: IEmployeeSimple[],
-    day: DayOfWeek
-  ) {}
+  }, []);
 
   return {
     employees,

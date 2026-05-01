@@ -5,9 +5,6 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { AccountInfo } from "./components/step2/AccountInfo";
 import BusinessInfo from "./components/step3/BusinessInfo";
 import AddressForm from "./components/step4/AddressForm";
-type AccountInfoProps = {
-  control: Control<IBusiness>;
-};
 
 type BusinessFormProps = {
   setStep: React.Dispatch<React.SetStateAction<number>>;

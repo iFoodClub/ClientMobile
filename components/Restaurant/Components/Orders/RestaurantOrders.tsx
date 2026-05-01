@@ -14,11 +14,10 @@ const RestaurantOrders = () => {
   } = useOrders();
 
   React.useEffect(() => {
-    if (user) {
-      if (!user?.restaurant?.id) return;
+    if (user?.restaurant?.id) {
       getRestaurantOrders(user.restaurant.id);
     }
-  }, [user]);
+  }, [getRestaurantOrders, user?.restaurant?.id]);
 
   return (
     <FlatList

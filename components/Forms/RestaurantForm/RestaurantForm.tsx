@@ -1,7 +1,7 @@
 import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
 import { useToastAll } from "@/src/components/Toast";
-import { runMigrations } from "@/src/db";
+import { runMigrations, clearDatabase } from "@/src/db";
 import { IUpdateRestaurantDTO } from "@/src/interfaces/dtos";
 import { LocalProfileRepository } from "@/src/repository/localProfileRepository";
 import RestaurantRepository from "@/src/repository/restaurantRepository";
@@ -105,7 +105,7 @@ const RestaurantForm = () => {
           dirty: 1,
         });
 
-        updateUserRestaurant(user?.restaurant?.id as number, data);
+        updateUserRestaurant(data);
         showSuccess("Alterações salvas offline.");
         return;
       }
@@ -121,7 +121,7 @@ const RestaurantForm = () => {
       );
 
       if (response.status === 200) {
-        updateUserRestaurant(user?.restaurant?.id, data);
+        updateUserRestaurant(data);
         LocalProfileRepository.upsertProfile({
           userId,
           name: data.name,
@@ -132,7 +132,7 @@ const RestaurantForm = () => {
         });
         showSuccess("Restaurante atualizado!");
       }
-    } catch (error) {
+    } catch (_error) {
       showError("Erro ao atualizar.");
     } finally {
       setLoading(false);

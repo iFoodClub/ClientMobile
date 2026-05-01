@@ -32,12 +32,12 @@ export const AccountInfo = ({ control, watchedUserType }: AccountInfoProps) => {
             message: "Por favor, insira um email válido",
           },
 
-          validate: async (value) => {
+          validate: async (value: any) => {
             try {
               if (!value) return "O e-mail é obrigatório";
-              const isUsedEmail = await AuthRepository.isAvaliableEmail(value);
+              const isUsedEmail = await AuthRepository.isAvaliableEmail(String(value));
               return !isUsedEmail || "Este e-mail já está em uso.";
-            } catch (error) {
+            } catch (_error) {
               return "Não foi possível verificar o e-mail. Tente novamente.";
             }
           },

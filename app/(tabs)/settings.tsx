@@ -32,11 +32,11 @@ const SettingsScreen = () => {
       setLoading(true);
       const response = await RestaurantRepository.updateRestaurant(
         user.restaurant.id,
-        { ...user.restaurant, profileImage: newImageUrl } as any
+        { ...user.restaurant, image: newImageUrl } as any
       );
 
       if (response.status === 200) {
-        updateUserRestaurant(user.restaurant.id, { profileImage: newImageUrl } as any);
+        updateUserRestaurant({ profileImage: newImageUrl } as any);
         showSuccess("Foto atualizada!");
         setModalVisible(false);
       }

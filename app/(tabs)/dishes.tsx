@@ -58,7 +58,6 @@ const DishesScreen = () => {
     control,
     handleSubmit,
     reset,
-    formState: { isDirty },
   } = useForm<ICreateDishDTO>({
     mode: "onBlur",
   });
@@ -82,21 +81,18 @@ const DishesScreen = () => {
   }
 
   async function handleDelete() {
-    setDeleteLoading(true);
     if (!selectedDish?.restaurantId) return;
     try {
+      setDeleteLoading(true);
       await DishRepository.deleteDish(selectedDish.id);
       await fetchDishes();
       showSuccess("Prato removido com sucesso!");
-      setDeleteLoading(false);
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       showError("Erro ao remover prato.");
     } finally {
       setDeleteLoading(false);
       setRemoveModalVisible(false);
       setSelectedDish(null);
-      fetchDishes();
     }
   }
 
@@ -114,8 +110,7 @@ const DishesScreen = () => {
       setModalVisible(false);
       await fetchDishes();
       reset();
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       showError("Erro ao criar prato.");
     } finally {
       setCreateLoading(false);
@@ -135,8 +130,7 @@ const DishesScreen = () => {
       setModalVisible(false);
       await fetchDishes();
       reset();
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       showError("Erro ao atualizar prato.");
     } finally {
       setCreateLoading(false);
