@@ -76,11 +76,8 @@ jobs:
       - name: Build APK
         id: build
         run: |
-          # Executa o build e captura a URL do artefato
-          eas build --platform android --profile ${{ env.EAS_PROFILE }} --non-interactive --local=false > build_output.txt
-          cat build_output.txt
-          BUILD_URL=$(grep -o 'https://expo.dev/artifacts/[^ ]*' build_output.txt | head -n 1)
-          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+          # Executa o build
+          eas build --platform android --profile ${{ env.EAS_PROFILE }} --non-interactive --no-wait --auto-credentials
 
       - name: Get Version
         id: version
