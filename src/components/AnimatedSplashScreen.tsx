@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
-import { MotiView, MotiText, AnimatePresence } from 'moti';
+import { AnimatePresence, MotiText, MotiView } from 'moti';
 import { BowlFood } from 'phosphor-react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
