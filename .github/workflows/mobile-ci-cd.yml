@@ -82,7 +82,6 @@ jobs:
             --platform android \
             --profile ${{ env.EAS_PROFILE }} \
             --non-interactive \
-            --auto-credentials \
             --json \
             --no-wait > build_raw.json 2>&1 || {
               echo "❌ O comando EAS Build falhou! Veja o erro abaixo:"
