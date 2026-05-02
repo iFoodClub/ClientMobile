@@ -76,25 +76,29 @@ jobs:
       - name: Build APK
         id: build
         run: |
-          # 1. Inicia o build (captura stdout e stderr juntos para debug)
           echo "--- Iniciando EAS Build ---"
-          BUILD_JSON=$(eas build \
+          # Executa o build salvando tudo em um arquivo para não perder o erro se o comando falhar
+          eas build \
             --platform android \
             --profile ${{ env.EAS_PROFILE }} \
             --non-interactive \
             --auto-credentials \
             --json \
-            --no-wait 2>&1)
+            --no-wait > build_raw.json 2>&1 || {
+              echo "❌ O comando EAS Build falhou! Veja o erro abaixo:"
+              cat build_raw.json
+              exit 1
+            }
 
-          echo "--- Output bruto do EAS ---"
-          echo "$BUILD_JSON"
-          echo "--- Fim do output ---"
-
-          # Extrai o ID do JSON retornado
-          BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.id')
+          echo "--- Output do EAS ---"
+          cat build_raw.json
+          
+          # Extrai o ID (agora temos certeza que o arquivo existe e o comando passou)
+          BUILD_ID=$(cat build_raw.json | jq -r '.id')
           echo "Build ID: $BUILD_ID"
+          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
 
-          # 2. Aguarda o build terminar nos servidores da Expo (pode levar 15-30 min)
+          # 2. Aguarda o build terminar nos servidores da Expo
           eas build:wait --id $BUILD_ID --non-interactive
 
           # 3. Busca a URL do APK gerado
