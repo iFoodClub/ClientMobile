@@ -76,8 +76,25 @@ jobs:
       - name: Build APK
         id: build
         run: |
-          # Executa o build
-          eas build --platform android --profile ${{ env.EAS_PROFILE }} --non-interactive --no-wait --auto-credentials
+          # 1. Inicia o build e captura o ID imediatamente
+          BUILD_JSON=$(eas build \
+            --platform android \
+            --profile ${{ env.EAS_PROFILE }} \
+            --non-interactive \
+            --auto-credentials \
+            --json \
+            --no-wait 2>/dev/null)
+
+          BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.id')
+          echo "Build iniciado com ID: $BUILD_ID"
+
+          # 2. Aguarda o build terminar nos servidores da Expo (pode levar 15-30 min)
+          eas build:wait --id $BUILD_ID --non-interactive
+
+          # 3. Busca a URL do APK gerado
+          BUILD_URL=$(eas build:view $BUILD_ID --json 2>/dev/null | jq -r '.artifacts.buildUrl')
+          echo "APK disponível em: $BUILD_URL"
+          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
       - name: Get Version
         id: version
