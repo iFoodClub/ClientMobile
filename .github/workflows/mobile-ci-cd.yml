@@ -83,7 +83,7 @@ jobs:
             --non-interactive \
             --auto-credentials \
             --json \
-            --no-wait 2>/dev/null)
+            --no-wait)
 
           BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.id')
           echo "Build iniciado com ID: $BUILD_ID"
@@ -92,7 +92,7 @@ jobs:
           eas build:wait --id $BUILD_ID --non-interactive
 
           # 3. Busca a URL do APK gerado
-          BUILD_URL=$(eas build:view $BUILD_ID --json 2>/dev/null | jq -r '.artifacts.buildUrl')
+          BUILD_URL=$(eas build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
           echo "APK disponível em: $BUILD_URL"
           echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
