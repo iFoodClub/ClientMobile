@@ -98,7 +98,7 @@ jobs:
           echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
 
           # 2. Aguarda o build terminar nos servidores da Expo
-          eas build:wait --id $BUILD_ID --non-interactive
+          eas build --id $BUILD_ID --non-interactive
 
           # 3. Busca a URL do APK gerado
           BUILD_URL=$(eas build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
