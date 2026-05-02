@@ -76,17 +76,23 @@ jobs:
       - name: Build APK
         id: build
         run: |
-          # 1. Inicia o build e captura o ID imediatamente
+          # 1. Inicia o build (captura stdout e stderr juntos para debug)
+          echo "--- Iniciando EAS Build ---"
           BUILD_JSON=$(eas build \
             --platform android \
             --profile ${{ env.EAS_PROFILE }} \
             --non-interactive \
             --auto-credentials \
             --json \
-            --no-wait)
+            --no-wait 2>&1)
 
+          echo "--- Output bruto do EAS ---"
+          echo "$BUILD_JSON"
+          echo "--- Fim do output ---"
+
+          # Extrai o ID do JSON retornado
           BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.id')
-          echo "Build iniciado com ID: $BUILD_ID"
+          echo "Build ID: $BUILD_ID"
 
           # 2. Aguarda o build terminar nos servidores da Expo (pode levar 15-30 min)
           eas build:wait --id $BUILD_ID --non-interactive
