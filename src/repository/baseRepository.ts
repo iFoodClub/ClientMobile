@@ -1,11 +1,16 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
+import { getApiBaseUrl } from "../config/apiBaseUrl";
 import { useAuthStore } from "../store/authStore";
 
 export class RepositoryBase {
   protected api: AxiosInstance;
 
   constructor() {
-    const baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
+    const baseUrl = getApiBaseUrl();
+
+    if (__DEV__) {
+      console.log("[API] baseURL:", baseUrl);
+    }
 
     this.api = axios.create({
       baseURL: baseUrl,

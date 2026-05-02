@@ -2,7 +2,10 @@ import PressableButton from "@/components/Button/PressableButton";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
 import DishCardSkeleton from "@/components/Restaurant/Components/DishCard/DishCardSkeleton";
+import { VoiceCommandButton } from "@/src/components/VoiceCommand/VoiceCommandButton";
+import { VoiceDishModal } from "@/src/components/VoiceCommand/VoiceDishModal";
 import { useAuthStore } from "@/src/store/authStore";
+import { voiceTabHref } from "@/src/utils/voiceNavigation";
 import React, { useState } from "react";
 
 import DishForm from "@/components/Forms/DishForm/DishForm";
@@ -16,6 +19,7 @@ import { ICreateDishDTO } from "@/src/interfaces/interfaces";
 import DishRepository from "@/src/repository/dishRepository";
 import { formatPriceToNumber } from "@/src/utils/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { router } from "expo-router";
 import { useForm } from "react-hook-form";
 import {
   FlatList,
@@ -27,9 +31,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const DishesScreen = () => {
-  const { user } = useAuthStore();
-  const { dishes, loading, fetchDishes } = useDishes(user?.restaurant?.id);
+  const { user, isRestaurant, isEmployee } = useAuthStore();
+  const employeeRestaurantId = user?.employee?.company?.selectedRestaurantId;
+  const ownerRestaurantId = user?.restaurant?.id;
+  const activeRestaurantId = isEmployee
+    ? employeeRestaurantId
+    : ownerRestaurantId;
+
+  const { dishes, loading, fetchDishes } = useDishes(activeRestaurantId);
   const [modalVisible, setModalVisible] = useState(false);
+  const [voiceDishModalOpen, setVoiceDishModalOpen] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const { showSuccess, showError } = useToastAll();
@@ -150,7 +161,11 @@ const DishesScreen = () => {
       <SafeAreaView className="flex-1 bg-white p-4">
         <PageHeader
           title="Pratos"
-          subtitle="Gerencie os pratos do seu restaurante"
+          subtitle={
+            isEmployee
+              ? "Cardápio do restaurante da semana"
+              : "Gerencie os pratos do seu restaurante"
+          }
         />
         <View className="flex-row flex-wrap gap-x-3 mt-4">
           {Array.from({ length: 9 }).map((_, index) => (
@@ -167,14 +182,23 @@ const DishesScreen = () => {
     <SafeAreaView className="flex-1 bg-white relative h-full ">
       <PageHeader
         title="Pratos"
-        subtitle="Gerencie os pratos do seu restaurante"
+        subtitle={
+          isEmployee
+            ? "Cardápio do restaurante da semana"
+            : "Gerencie os pratos do seu restaurante"
+        }
       />
       <FlatList
+        style={{ flex: 1 }}
         data={dishes || []}
         renderItem={({ item }) => (
           <DishCard
             dish={item}
-            onLongPress={(event) => handleLongPress(item, event)}
+            onLongPress={
+              isRestaurant
+                ? (event) => handleLongPress(item, event)
+                : () => {}
+            }
           />
         )}
         keyExtractor={(item) => item.id.toString()}
@@ -194,14 +218,14 @@ const DishesScreen = () => {
         )}
       />
 
-      {selectedDish && (
+      {isRestaurant && selectedDish && (
         <Pressable
           className="absolute inset-0 z-5"
           onPress={() => setSelectedDish(null)}
         />
       )}
 
-      {selectedDish && menuPosition && (
+      {isRestaurant && selectedDish && menuPosition && (
         <ActionMenu
           position={menuPosition}
           onEdit={handleEditClick}
@@ -225,19 +249,44 @@ const DishesScreen = () => {
         </Text>
       </ModalCustom>
 
-      <PressableButton
-        className="absolute bottom-8 right-8"
-        onPress={() => {
-          setModalVisible(true);
-          reset({
-            name: undefined,
-            description: undefined,
-            price: undefined,
-            image: undefined,
-          });
-        }}
-        icon={<AntDesign name="plus" size={24} color="white" />}
-      />
+      {isRestaurant && (
+        <PressableButton
+          className="absolute bottom-8 right-8"
+          onPress={() => {
+            setModalVisible(true);
+            reset({
+              name: undefined,
+              description: undefined,
+              price: undefined,
+              image: undefined,
+            });
+          }}
+          icon={<AntDesign name="plus" size={24} color="white" />}
+        />
+      )}
+
+      {isEmployee && (
+        <>
+          <VoiceCommandButton
+            mode="employee"
+            enabled={!loading}
+            onMatch={(m) => {
+              if (m.type === "PEDIDO_DO_DIA") {
+                setVoiceDishModalOpen(true);
+                return;
+              }
+              if (m.type === "NAVIGATE_TAB") {
+                router.push(voiceTabHref(m.tab));
+              }
+            }}
+          />
+          <VoiceDishModal
+            visible={voiceDishModalOpen}
+            onClose={() => setVoiceDishModalOpen(false)}
+            restaurantId={employeeRestaurantId}
+          />
+        </>
+      )}
       <CModal
         confirmText={selectedDish ? "Atualizar" : "Criar"}
         onClose={handleCancel}

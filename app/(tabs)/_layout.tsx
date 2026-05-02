@@ -13,7 +13,7 @@ type TabBarIconProps = Parameters<
 >[0];
 
 const TabsLayout = () => {
-  const { isRestaurant, isCompany } = useAuthStore();
+  const { isRestaurant, isCompany, isEmployee } = useAuthStore();
 
   const tabsConfig = [
     {
@@ -30,7 +30,7 @@ const TabsLayout = () => {
     {
       name: "dishes",
       title: "Pratos",
-      href: isRestaurant ? "/dishes" : null,
+      href: isRestaurant || isEmployee ? "/dishes" : null,
       icon: ({ focused, color, size }: TabBarIconProps & { size: number }) => (
         <Ionicons
           name="fast-food-outline"

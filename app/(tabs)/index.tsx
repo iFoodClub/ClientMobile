@@ -1,11 +1,14 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
 import RestaurantCard from "@/components/Restaurant/Components/RestaurantCard/RestaurantCard";
 import RestaurantCardSkeleton from "@/components/Restaurant/Components/RestaurantCard/RestaurantCardSkeleton";
+import { VoiceCommandButton } from "@/src/components/VoiceCommand/VoiceCommandButton";
 import { useFetchRestaurants } from "@/src/hooks/useRestaurants";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { useAuthStore } from "@/src/store/authStore";
 import { COLORS } from "@/src/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { voiceTabHref } from "@/src/utils/voiceNavigation";
 import React, { useMemo, useState } from "react";
 import { FlatList, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -94,6 +97,7 @@ const HomeScreen = () => {
       />
 
       <FlatList
+        style={{ flex: 1 }}
         data={filteredRestaurants}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
@@ -163,6 +167,34 @@ const HomeScreen = () => {
         )}
         ListFooterComponent={() => <View className="h-20" />}
       />
+
+      {isCompany && (
+        <VoiceCommandButton
+          mode="company"
+          restaurants={restaurants}
+          enabled={!loadingRestaurants}
+          onMatch={(m) => {
+            if (m.type === "RESTAURANTES") {
+              setActiveTab("all");
+              return;
+            }
+            if (m.type === "FAVORITOS") {
+              setActiveTab("favorites");
+              return;
+            }
+            if (m.type === "NAVIGATE_TAB") {
+              router.push(voiceTabHref(m.tab));
+              return;
+            }
+            if (m.type === "NAVIGATE_RESTAURANT") {
+              router.push({
+                pathname: "/restaurant-details",
+                params: { id: String(m.restaurantId) },
+              });
+            }
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };

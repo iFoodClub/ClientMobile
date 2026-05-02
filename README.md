@@ -85,3 +85,4 @@ Esta seção agrupa funcionalidades planejadas ou ideias que podem ser explorada
 1. Acesse a pasta: `cd ClientMobile`
 2. Instale as dependências: `npm install`
 3. Inicie o projeto: `npx expo start`
+obs: rodar android/ios via usb -> expo run:android / expo run:ios
