@@ -66,12 +66,19 @@ jobs:
       - name: Set Environment Variables
         run: |
           if [ "${{ github.ref_name }}" == "main" ]; then
-            echo "EXPO_PUBLIC_API_BASE_URL=${{ secrets.EXPO_PUBLIC_API_BASE_URL_PRD }}" >> $GITHUB_ENV
+            echo "EXPO_PUBLIC_API_BASE_URL=${{ secrets.EXPO_PUBLIC_API_BASE_URL_PRD }}" >> .env
             echo "EAS_PROFILE=preview-prd" >> $GITHUB_ENV
           else
-            echo "EXPO_PUBLIC_API_BASE_URL=${{ secrets.EXPO_PUBLIC_API_BASE_URL_HML }}" >> $GITHUB_ENV
+            echo "EXPO_PUBLIC_API_BASE_URL=${{ secrets.EXPO_PUBLIC_API_BASE_URL_HML }}" >> .env
             echo "EAS_PROFILE=preview-hml" >> $GITHUB_ENV
           fi
+          
+          # Garante que o EAS Build envie o .env mesmo estando no .gitignore
+          cp .gitignore .easignore
+          sed -i '/\.env/d' .easignore
+          
+          echo "✅ .env e .easignore criados com sucesso"
+          cat .env
 
       - name: Build APK
         id: build

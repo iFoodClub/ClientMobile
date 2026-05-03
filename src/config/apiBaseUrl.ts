@@ -14,10 +14,16 @@ export function getApiBaseUrl(): string {
   if (!url) {
     const hint =
       "Defina EXPO_PUBLIC_API_BASE_URL no .env (ex.: http://192.168.1.10:3000)";
+    
     if (__DEV__) {
       console.error("[API]", hint);
+      throw new Error(hint);
+    } else {
+      console.error("[API] CRITICAL: EXPO_PUBLIC_API_BASE_URL is not defined!");
+      // Retorna uma string vazia ou placeholder em produção para não quebrar o app no boot,
+      // embora as chamadas de rede venham a falhar.
+      return ""; 
     }
-    throw new Error(hint);
   }
   return url;
 }
