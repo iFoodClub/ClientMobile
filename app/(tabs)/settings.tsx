@@ -83,7 +83,10 @@ const SettingsScreen = () => {
         <Ionicons name="log-out-outline" size={22} color="#EF4444" />
       ),
       label: "Sair",
-      onPress: logout,
+      onPress: async () => {
+        await logout();
+        router.replace("/sign-in");
+      },
     },
   ];
 

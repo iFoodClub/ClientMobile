@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { getApiBaseUrl } from "../config/apiBaseUrl";
 import { useAuthStore } from "../store/authStore";
+import { router } from "expo-router";
 
 export class RepositoryBase {
   protected api: AxiosInstance;
@@ -55,6 +56,7 @@ export class RepositoryBase {
           if (__DEV__)
             console.warn("⚠️ Token inválido ou expirado. Efetuando logout...");
           logout();
+          router.replace("/sign-in");
         }
 
         if (__DEV__) {
