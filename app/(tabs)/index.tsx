@@ -93,7 +93,7 @@ const HomeScreen = () => {
     <SafeAreaView className="bg-white flex-1" edges={['top']}>
       <PageHeader
         title="Restaurantes"
-        subtitle="Navegue entre nossos parceiros"
+        subtitle={user ? `Olá, ${user.restaurant?.name || user.name || 'Usuário'}` : "Navegue entre nossos parceiros"}
       />
 
       <FlatList

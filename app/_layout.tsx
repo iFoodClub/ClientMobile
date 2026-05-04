@@ -18,7 +18,9 @@ import "./global.css";
 SplashScreen.preventAutoHideAsync();
 
 function AppContent() {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, user } = useAuthStore();
+  
+  console.log('🚀 [AppContent] Estado de Login:', { isLoggedIn, userEmail: user?.email });
 
   // Hook global para sincronização automática
   useSyncManager();

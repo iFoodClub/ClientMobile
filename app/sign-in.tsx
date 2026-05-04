@@ -100,6 +100,7 @@ const SignInScreen = () => {
 
     try {
       await login(data.email, data.password);
+      router.replace("/");
 
       setTimeout(() => {
         const currentUser = useAuthStore.getState().user;
