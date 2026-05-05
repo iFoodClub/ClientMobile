@@ -78,15 +78,17 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return <View style={{ flex: 1, backgroundColor: '#FF6D00' }} />;
+    return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
   }
 
   return (
-    <ToastProvider>
-      {!splashAnimationFinished && (
-        <AnimatedSplashScreen onAnimationFinish={() => setSplashAnimationFinished(true)} />
-      )}
-      <AppContent />
-    </ToastProvider>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <ToastProvider>
+        {!splashAnimationFinished && (
+          <AnimatedSplashScreen onAnimationFinish={() => setSplashAnimationFinished(true)} />
+        )}
+        <AppContent />
+      </ToastProvider>
+    </View>
   );
 }
