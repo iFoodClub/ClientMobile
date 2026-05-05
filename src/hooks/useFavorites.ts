@@ -4,12 +4,12 @@ import { IRestaurantResponse } from '../interfaces/apiResponses';
 import { useAuthStore } from '../store/authStore';
 
 export const useFavorites = () => {
-  const { user } = useAuthStore();
+  const { user, isCompany } = useAuthStore();
   const [favorites, setFavorites] = useState<IRestaurantResponse[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchFavorites = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id || !isCompany) return;
     try {
       setLoading(true);
       const response = await RestaurantRepository.fetchFavorites(user.id);
@@ -19,10 +19,10 @@ export const useFavorites = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, isCompany]);
 
   const toggleFavorite = useCallback(async (restaurantId: number) => {
-    if (!user?.id || !user?.userType) return;
+    if (!user?.id || !user?.userType || !isCompany) return;
     try {
       const response = await RestaurantRepository.toggleFavorite(user.id, restaurantId, user.userType as any);
       await fetchFavorites(); // Recarrega a lista
@@ -30,11 +30,13 @@ export const useFavorites = () => {
     } catch (error) {
       console.error("Erro ao alternar favorito:", error);
     }
-  }, [user?.id, user?.userType, fetchFavorites]);
+  }, [user?.id, user?.userType, isCompany, fetchFavorites]);
 
   useEffect(() => {
-    fetchFavorites();
-  }, [fetchFavorites]);
+    if (isCompany) {
+      fetchFavorites();
+    }
+  }, [fetchFavorites, isCompany]);
 
   return { favorites, loading, toggleFavorite, fetchFavorites };
 };
