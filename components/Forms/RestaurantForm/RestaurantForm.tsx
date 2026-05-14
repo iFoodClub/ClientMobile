@@ -172,11 +172,11 @@ const RestaurantForm = () => {
               label="Fecha às"
               rules={{
                 validate: (value) => {
-                  const opening = watch("openingTime");
+                  const opening = String(watch("openingTime") || "");
                   if (!opening || !value) return true;
 
                   const [hStart, mStart] = opening.split(":").map(Number);
-                  const [hEnd, mEnd] = value.split(":").map(Number);
+                  const [hEnd, mEnd] = String(value).split(":").map(Number);
 
                   const startInMinutes = hStart * 60 + mStart;
                   const endInMinutes = hEnd * 60 + mEnd;
