@@ -1,5 +1,6 @@
 import Button from "@/components/Button/Button";
 import CustomInput from "@/components/CustomInput/CustomInput";
+import TimePickerInput from "@/components/TimePickerInput/TimePickerInput";
 import { useToastAll } from "@/src/components/Toast";
 import { runMigrations, clearDatabase } from "@/src/db";
 import { IUpdateRestaurantDTO } from "@/src/interfaces/dtos";
@@ -20,6 +21,7 @@ const RestaurantForm = () => {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { isDirty },
   } = useForm<IUpdateRestaurantDTO>({
     mode: "onBlur",
@@ -157,21 +159,39 @@ const RestaurantForm = () => {
         <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">Funcionamento</Text>
         <View className="flex-row gap-x-4">
           <View className="flex-1">
-            <CustomInput
+            <TimePickerInput
               control={control}
               name="openingTime"
               label="Abre às"
-              placeholder="08:00"
-              maxLength={5}
             />
           </View>
           <View className="flex-1">
-            <CustomInput
+            <TimePickerInput
               control={control}
               name="closingTime"
               label="Fecha às"
-              placeholder="22:00"
-              maxLength={5}
+              rules={{
+                validate: (value) => {
+                  const opening = watch("openingTime");
+                  if (!opening || !value) return true;
+
+                  const [hStart, mStart] = opening.split(":").map(Number);
+                  const [hEnd, mEnd] = value.split(":").map(Number);
+
+                  const startInMinutes = hStart * 60 + mStart;
+                  const endInMinutes = hEnd * 60 + mEnd;
+
+                  if (endInMinutes <= startInMinutes) {
+                    return "Deve ser após a abertura.";
+                  }
+
+                  if (endInMinutes - startInMinutes < 120) {
+                    return "Mínimo 2h de funcionamento.";
+                  }
+
+                  return true;
+                },
+              }}
             />
           </View>
         </View>
@@ -220,7 +240,7 @@ const RestaurantForm = () => {
       </View>
 
       <Button
-        className="mt-4"
+        className="mt-8"
         text="Salvar Alterações"
         onPress={handleSubmit(onSubmit)}
         loading={loading}
@@ -229,7 +249,8 @@ const RestaurantForm = () => {
 
       {__DEV__ && (
         <Button
-          className="mt-10 bg-gray-100"
+          type="secondary"
+          className="mt-3"
           text="Limpar Banco (Debug)"
           onPress={() => {
             clearDatabase();
