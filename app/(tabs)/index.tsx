@@ -9,12 +9,13 @@ import { COLORS } from "@/src/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { voiceTabHref } from "@/src/utils/voiceNavigation";
+import { isRestaurantOpen } from "@/src/utils/restaurantStatus";
 import React, { useMemo, useState } from "react";
 import { FlatList, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
-  const { restaurants, loading: loadingRestaurants } = useFetchRestaurants();
+  const { restaurants, loading: loadingRestaurants, refetch } = useFetchRestaurants();
   const { favorites, toggleFavorite } = useFavorites();
   const { user, isEmployee, isCompany } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
@@ -31,7 +32,19 @@ const HomeScreen = () => {
   }, [restaurants, selectedRestaurantId]);
 
   const filteredRestaurants = useMemo(() => {
-    return activeTab === 'all' ? restaurants : favorites;
+    // 1. Filtra apenas quem tem horário confirmado
+    const withHours = (activeTab === 'all' ? restaurants : favorites).filter(
+      r => r.openingTime && r.closingTime
+    );
+
+    // 2. Ordena: Abertos primeiro
+    return [...withHours].sort((a, b) => {
+      const aOpen = isRestaurantOpen(a.openingTime, a.closingTime);
+      const bOpen = isRestaurantOpen(b.openingTime, b.closingTime);
+      if (aOpen && !bOpen) return -1;
+      if (!aOpen && bOpen) return 1;
+      return 0;
+    });
   }, [activeTab, restaurants, favorites]);
 
   const renderHighlightedCard = () => {
@@ -136,10 +149,17 @@ const HomeScreen = () => {
               </View>
             )}
 
-            <View className="px-4 mb-4">
+            <View className="px-4 mb-4 flex-row items-center justify-between">
                <Text className="text-xl font-bold text-gray-900">
                   {activeTab === 'all' || !isCompany ? 'Descobrir' : 'Seus Favoritos'}
                </Text>
+               <TouchableOpacity 
+                 onPress={refetch}
+                 disabled={loadingRestaurants}
+                 className="p-2 bg-gray-50 rounded-full active:opacity-50"
+               >
+                 <Ionicons name="refresh" size={18} color={loadingRestaurants ? "#D1D5DB" : "#6B7280"} />
+               </TouchableOpacity>
             </View>
           </View>
         )}

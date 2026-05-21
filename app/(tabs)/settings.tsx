@@ -47,6 +47,8 @@ const SettingsScreen = () => {
     }
   };
 
+  const hoursMissing = !!user?.restaurant && (!user.restaurant.openingTime || !user.restaurant.closingTime);
+
   const configItens = [
     {
       icon: (
@@ -54,6 +56,7 @@ const SettingsScreen = () => {
       ),
       label: "Dados da conta",
       onPress: handleUpdateInfo,
+      showBadge: hoursMissing,
     },
     {
       icon: (

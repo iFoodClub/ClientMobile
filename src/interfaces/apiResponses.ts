@@ -34,6 +34,8 @@ export interface IRestaurantResponse {
   averageRating: number;
   dishCount: number;
   minPrice: number;
+  openingTime?: string;
+  closingTime?: string;
 }
 
 export interface IDish {
