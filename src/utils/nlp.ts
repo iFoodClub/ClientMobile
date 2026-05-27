@@ -10,6 +10,19 @@ interface TrainingSample {
   category: string;
 }
 
+// Estrutura para ações nativas mapeadas no app
+export interface ChatbotAction {
+  type: "navigate" | "logout";
+  payload?: string;
+}
+
+export interface ChatbotResponse {
+  category: string;
+  answer: string;
+  confidence: number;
+  action?: ChatbotAction;
+}
+
 // Tokenizador básico em português
 export function tokenize(text: string): string[] {
   if (!text) return [];
@@ -240,6 +253,14 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "status do pedido", category: "pedidos" },
   { text: "pedido com atraso", category: "pedidos" },
   { text: "meu prato esta demorando", category: "pedidos" },
+  { text: "onde vejo minha comida", category: "pedidos" },
+  { text: "pedidos de hoje", category: "pedidos" },
+  { text: "lista de pedidos", category: "pedidos" },
+  { text: "onde fica a tela de pedidos", category: "pedidos" },
+  { text: "como abrir meus pedidos", category: "pedidos" },
+  { text: "meu almoco esta atrasado", category: "pedidos" },
+  { text: "abrir pedidos", category: "pedidos" },
+  { text: "tela de pedidos", category: "pedidos" },
 
   // 2. CANCELAMENTO
   { text: "como cancelo um pedido", category: "cancelamento" },
@@ -272,6 +293,13 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "qual restaurante podemos pedir hoje", category: "restaurantes" },
   { text: "mudar de restaurante", category: "restaurantes" },
   { text: "escolha do restaurante", category: "restaurantes" },
+  { text: "mudar restaurante parceiro", category: "restaurantes" },
+  { text: "qual restaurante escolher", category: "restaurantes" },
+  { text: "ver a lista de parceiros", category: "restaurantes" },
+  { text: "mudar de restaurante para almoco", category: "restaurantes" },
+  { text: "onde seleciono o restaurante", category: "restaurantes" },
+  { text: "abrir home", category: "restaurantes" },
+  { text: "ir para home", category: "restaurantes" },
 
   // 4. CARDÁPIO
   { text: "ver os pratos de hoje", category: "cardápio" },
@@ -289,6 +317,11 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "prato principal de hoje", category: "cardápio" },
   { text: "quais comidas tem no menu", category: "cardápio" },
   { text: "ingredientes do prato", category: "cardápio" },
+  { text: "ver comida de hoje", category: "cardápio" },
+  { text: "abrir o cardapio", category: "cardápio" },
+  { text: "ver pratos disponiveis", category: "cardápio" },
+  { text: "aba de pratos", category: "cardápio" },
+  { text: "ir para pratos", category: "cardápio" },
 
   // 5. FUNCIONÁRIOS
   { text: "como cadastrar funcionarios", category: "funcionários" },
@@ -305,6 +338,12 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "adicionar funcionario", category: "funcionários" },
   { text: "contratar colaboradores no app", category: "funcionários" },
   { text: "novo funcionario cadastrado", category: "funcionários" },
+  { text: "lista de colaboradores", category: "funcionários" },
+  { text: "cadastrar minha equipe", category: "funcionários" },
+  { text: "remover trabalhador", category: "funcionários" },
+  { text: "gerenciar equipe", category: "funcionários" },
+  { text: "adicionar um novo funcionario", category: "funcionários" },
+  { text: "ir para funcionarios", category: "funcionários" },
 
   // 6. CONTA/SENHA
   { text: "esqueci minha senha", category: "conta/senha" },
@@ -321,6 +360,13 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "mudar meu email ou telefone", category: "conta/senha" },
   { text: "resetar senha", category: "conta/senha" },
   { text: "modificar dados da conta", category: "conta/senha" },
+  { text: "mudar minha senha", category: "conta/senha" },
+  { text: "atualizar meus dados", category: "conta/senha" },
+  { text: "trocar e-mail", category: "conta/senha" },
+  { text: "alterar cadastro de perfil", category: "conta/senha" },
+  { text: "esqueci a senha da conta", category: "conta/senha" },
+  { text: "ir para perfil", category: "conta/senha" },
+  { text: "abrir configuracoes da conta", category: "conta/senha" },
 
   // 7. SUPORTE
   { text: "preciso de ajuda", category: "suporte" },
@@ -338,7 +384,7 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "app com erro ou travando", category: "suporte" },
   { text: "suporte técnico de TI", category: "suporte" },
 
-  // 8. SAUDAÇÃO (Excelente complemento para experiência premium)
+  // 8. SAUDAÇÃO
   { text: "oi", category: "saudacao" },
   { text: "ola", category: "saudacao" },
   { text: "bom dia", category: "saudacao" },
@@ -349,28 +395,55 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "oi tudo bem", category: "saudacao" },
   { text: "oi chatbot", category: "saudacao" },
   { text: "o que voce pode fazer", category: "saudacao" },
-  { text: "oi quem e voce", category: "saudacao" }
+  { text: "oi quem e voce", category: "saudacao" },
+
+  // 9. LOGOUT (Ação Nativa Inteligente)
+  { text: "quero deslogar", category: "logout" },
+  { text: "sair da minha conta", category: "logout" },
+  { text: "fazer logoff", category: "logout" },
+  { text: "quero sair", category: "logout" },
+  { text: "desconectar perfil", category: "logout" },
+  { text: "deslogar do ifoodclub", category: "logout" },
+  { text: "como faco para sair", category: "logout" },
+  { text: "sair do aplicativo", category: "logout" },
+  { text: "desconectar da minha conta", category: "logout" },
+  { text: "encerrar sessao", category: "logout" },
+  { text: "fazer logout", category: "logout" },
+  { text: "desconectar do app", category: "logout" },
+  { text: "deslogar", category: "logout" }
 ];
 
 const ANSWERS: { [category: string]: string } = {
   pedidos:
-    "Para consultar o status do seu pedido atual, acesse a aba **Pedidos** no menu inferior. Lá você verá o andamento da preparação e a entrega em tempo real.",
+    "Sem problemas! Estou te redirecionando para a aba **Pedidos** agora mesmo. Lá você poderá acompanhar o andamento da sua entrega em tempo real! 📦",
   cancelamento:
     "Você pode solicitar o cancelamento de um pedido diretamente na tela de detalhes dele em até 5 minutos após a confirmação. Após esse prazo, entre em contato direto com o suporte ou com o restaurante.",
   restaurantes:
-    "Para visualizar os restaurantes parceiros e selecionar o seu preferido, navegue pela aba **Início** ou acesse a lista de restaurantes associados à sua empresa.",
+    "Entendido! Estou abrindo a aba **Início** para você visualizar todos os restaurantes parceiros e selecionar o seu favorito! 🏪",
   cardápio:
-    "Para ver os pratos do dia, acesse a aba **Início** ou **Pratos** no menu inferior. Lembre-se de que os pratos disponíveis variam de acordo com o restaurante selecionado.",
+    "Com certeza! Estou te levando para a aba **Pratos** para você conferir todas as deliciosas opções de refeições de hoje! 🍽️",
   funcionários:
-    "Se você for um administrador da **Empresa**, poderá cadastrar, editar e remover colaboradores acessando a aba **Funcionários** no menu inferior do aplicativo.",
+    "Perfeito! Redirecionando você para a aba **Funcionários** para você gerenciar, cadastrar ou editar os colaboradores da sua empresa. 👥",
   "conta/senha":
-    "Para atualizar sua senha ou dados cadastrais, vá até a aba **Perfil** e clique em editar informações. Se esqueceu sua senha, utilize a opção 'Esqueci minha senha' na tela de login.",
+    "Claro! Estou te levando para a aba de **Perfil** para você poder atualizar seus dados cadastrais, alterar sua senha ou editar sua foto de perfil. 🔑",
   suporte:
     "Precisa de ajuda com outra coisa? Nosso suporte está disponível de segunda a sexta, das 8h às 18h. Você pode falar conosco pelo e-mail suporte@ifoodclub.com.br ou pelo telefone (11) 99999-9999.",
   saudacao:
     "Olá! Sou o assistente virtual do iFoodClub. Como posso te ajudar hoje? Posso tirar dúvidas sobre pedidos, cancelamentos, restaurantes, cardápio, funcionários, conta ou dar suporte geral. 😊",
+  logout:
+    "Você tem certeza que deseja sair e encerrar a sua sessão no iFoodClub? 🚪",
   fallback:
     "Desculpe, não consegui compreender sua dúvida com certeza. 😕 Poderia reformular a pergunta? Se preferir, digite 'suporte' para ver nossos canais de atendimento."
+};
+
+// Mapeamento de intenções para ações nativas correspondentes
+const ACTIONS: { [category: string]: ChatbotAction } = {
+  pedidos: { type: "navigate", payload: "/orders" },
+  restaurantes: { type: "navigate", payload: "/index" },
+  cardápio: { type: "navigate", payload: "/dishes" },
+  funcionários: { type: "navigate", payload: "/employees" },
+  "conta/senha": { type: "navigate", payload: "/settings" },
+  logout: { type: "logout" }
 };
 
 /**
@@ -392,7 +465,8 @@ export class ChatbotService {
       "funcionários",
       "conta/senha",
       "suporte",
-      "saudacao"
+      "saudacao",
+      "logout"
     ];
     this.vectorizer = new TfidfVectorizer();
     this.svm = new MulticlassSVM(categories);
@@ -447,9 +521,9 @@ export class ChatbotService {
   }
 
   /**
-   * Processa a mensagem do usuário e devolve a resposta classificada e a intenção predita.
+   * Processa a mensagem do usuário e devolve a resposta classificada e a intenção predita com ação associada.
    */
-  public query(text: string): { category: string; answer: string; confidence: number } {
+  public query(text: string): ChatbotResponse {
     // Garante que o modelo está treinado
     this.train();
 
@@ -491,10 +565,13 @@ export class ChatbotService {
       };
     }
 
+    // Retorna a resposta completa com a ação mapeada se aplicável
+    const action = ACTIONS[bestCategory] || undefined;
     return {
       category: bestCategory,
       answer: ANSWERS[bestCategory] || ANSWERS.fallback,
-      confidence: maxScore
+      confidence: maxScore,
+      action
     };
   }
 }

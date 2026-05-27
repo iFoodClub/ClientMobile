@@ -1,5 +1,6 @@
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   FlatList,
@@ -14,6 +15,7 @@ import {
   View
 } from "react-native";
 import Toast from "react-native-root-toast";
+import { useAuthStore } from "../src/store/authStore";
 import { Message, useChatStore } from "../src/store/chatStore";
 
 export default function ChatbotModal() {
@@ -22,10 +24,15 @@ export default function ChatbotModal() {
   const messages = useChatStore((state) => state.messages);
   const isTyping = useChatStore((state) => state.isTyping);
   const sendMessage = useChatStore((state) => state.sendMessage);
+  const addCustomMessage = useChatStore((state) => state.addCustomMessage);
   const clearHistory = useChatStore((state) => state.clearHistory);
+
+  const { logout } = useAuthStore();
+  const router = useRouter();
 
   const [inputText, setInputText] = useState("");
   const flatListRef = useRef<FlatList<Message>>(null);
+  const processedMessageIds = useRef<Set<string>>(new Set());
 
   // Rola para o final da lista sempre que uma nova mensagem chega ou o bot começa a digitar
   useEffect(() => {
@@ -37,12 +44,84 @@ export default function ChatbotModal() {
     }
   }, [messages.length, isTyping, isModalVisible]);
 
+  // Escuta novas mensagens do bot para executar ações automatizadas (ex: redirecionamento de tela com 1.5s delay)
+  useEffect(() => {
+    if (!isModalVisible) return;
+    if (messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+    if (
+      lastMessage.sender === "bot" &&
+      lastMessage.action &&
+      !processedMessageIds.current.has(lastMessage.id)
+    ) {
+      processedMessageIds.current.add(lastMessage.id);
+
+      if (lastMessage.action.type === "navigate" && lastMessage.action.payload) {
+        const payload = lastMessage.action.payload;
+        const timer = setTimeout(() => {
+          closeModal();
+          router.push(payload as any);
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [messages, isModalVisible, closeModal, router]);
+
   // Envia a mensagem do usuário
   const handleSend = () => {
     if (inputText.trim() === "") return;
     sendMessage(inputText.trim());
     setInputText("");
     Keyboard.dismiss(); // Fecha o teclado imediatamente ao enviar!
+  };
+
+  // Trata cliques em botões interativos dentro do chat (ex: confirmação de Logout)
+  const handleOptionPress = async (option: { label: string; actionType: string }) => {
+    if (option.actionType === "CONFIRM_LOGOUT") {
+      // 1. Insere mensagem do usuário confirmando
+      addCustomMessage({
+        id: `user-confirm-${Date.now()}`,
+        text: option.label,
+        sender: "user",
+        timestamp: new Date()
+      });
+
+      // 2. Insere resposta imediata do bot informando a desconexão
+      addCustomMessage({
+        id: `bot-logout-msg-${Date.now()}`,
+        text: "Sessão encerrada com sucesso! Até logo! 👋🚪",
+        sender: "bot",
+        timestamp: new Date()
+      });
+
+      // 3. Após um breve delay para leitura, fecha o chat e desloga
+      setTimeout(async () => {
+        closeModal();
+        try {
+          await logout();
+        } catch (err) {
+          console.error("Erro ao efetuar logout via Chatbot:", err);
+        }
+      }, 1500);
+
+    } else if (option.actionType === "CANCEL_LOGOUT") {
+      // 1. Insere mensagem do usuário cancelando
+      addCustomMessage({
+        id: `user-cancel-${Date.now()}`,
+        text: option.label,
+        sender: "user",
+        timestamp: new Date()
+      });
+
+      // 2. Insere resposta do bot de cancelamento
+      addCustomMessage({
+        id: `bot-cancel-msg-${Date.now()}`,
+        text: "Cancelado! Fico feliz que você vai continuar conosco. Como posso te ajudar com outra coisa? 😊",
+        sender: "bot",
+        timestamp: new Date()
+      });
+    }
   };
 
   // Simula o acionamento de voz para a entrega final
@@ -83,6 +162,8 @@ export default function ChatbotModal() {
   // Renderiza cada mensagem individualmente
   const renderItem = ({ item }: { item: Message }) => {
     const isUser = item.sender === "user";
+    const isLastMessage = messages[messages.length - 1]?.id === item.id;
+
     return (
       <View className={`flex-row ${isUser ? "justify-end" : "justify-start"} mb-4`}>
         {!isUser && (
@@ -104,6 +185,29 @@ export default function ChatbotModal() {
           }}
         >
           {renderMessageText(item.text, isUser)}
+
+          {/* Se a mensagem for do bot, tiver opções de resposta e for a última mensagem, exibe botões interativos */}
+          {!isUser && item.options && item.options.length > 0 && isLastMessage && (
+            <View className="mt-3 flex-row flex-wrap gap-2">
+              {item.options.map((option, idx) => (
+                <Pressable
+                  key={idx}
+                  onPress={() => handleOptionPress(option)}
+                  className="bg-white border border-red-200/30 px-3.5 py-2 rounded-xl active:bg-gray-50 flex-row items-center justify-center"
+                  style={{
+                    elevation: 1,
+                    shadowColor: "#EF4444",
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 1
+                  }}
+                >
+                  <Text className="text-xs font-bold text-primary">{option.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+
           <Text
             className={`text-[9px] mt-1 text-right ${isUser ? "text-red-100" : "text-gray-400"
               }`}

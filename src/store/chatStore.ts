@@ -1,11 +1,13 @@
 import { create } from "zustand";
-import { chatbotService } from "../utils/nlp";
+import { chatbotService, ChatbotAction } from "../utils/nlp";
 
 export interface Message {
   id: string;
   text: string;
   sender: "user" | "bot";
   timestamp: Date;
+  action?: ChatbotAction;
+  options?: { label: string; actionType: string }[];
 }
 
 interface IChatStore {
@@ -15,6 +17,7 @@ interface IChatStore {
   openModal: () => void;
   closeModal: () => void;
   sendMessage: (text: string) => Promise<void>;
+  addCustomMessage: (message: Message) => void;
   clearHistory: () => void;
 }
 
@@ -63,8 +66,17 @@ export const useChatStore = create<IChatStore>((set, get) => ({
         id: `bot-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         text: prediction.answer,
         sender: "bot",
-        timestamp: new Date()
+        timestamp: new Date(),
+        action: prediction.action
       };
+
+      // Se for logout, adiciona botões interativos
+      if (prediction.category === "logout") {
+        botMessage.options = [
+          { label: "Sim, Sair", actionType: "CONFIRM_LOGOUT" },
+          { label: "Não, Cancelar", actionType: "CANCEL_LOGOUT" }
+        ];
+      }
 
       // 6. Atualiza o estado com a resposta e remove o indicador de digitação
       set((state) => ({
@@ -88,6 +100,10 @@ export const useChatStore = create<IChatStore>((set, get) => ({
       }));
     }
   },
+
+  addCustomMessage: (message: Message) => set((state) => ({
+    messages: [...state.messages, message]
+  })),
 
   clearHistory: () => set({ messages: [INITIAL_WELCOME_MESSAGE], isTyping: false })
 }));
