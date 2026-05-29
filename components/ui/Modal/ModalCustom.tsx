@@ -2,11 +2,17 @@ import { AntDesign } from "@expo/vector-icons";
 import React from "react";
 import {
   ActivityIndicator,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   Modal as RNModal,
+  ScrollView,
   Text,
   View,
 } from "react-native";
+
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 type ModalCustomProps = {
   visible: boolean;
@@ -41,49 +47,63 @@ const ModalCustom = ({
         className="flex-1 items-center justify-center bg-black/50 px-4"
         onPress={onClose}
       >
-        <Pressable className="bg-white rounded-lg w-full max-w-md shadow-xl">
-          <View className="flex-row justify-between items-center p-4 ">
-            <Text className="text-lg font-bold text-gray-800">{title}</Text>
-            <Pressable onPress={onClose} hitSlop={10}>
-              <AntDesign name="close" size={22} color="#6B7280" />
-            </Pressable>
-          </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ width: "100%", maxWidth: 448 }}
+        >
+          <Pressable
+            style={{ maxHeight: SCREEN_HEIGHT * 0.85 }}
+            className="bg-white rounded-lg w-full shadow-xl flex"
+          >
+            <View className="flex-row justify-between items-center p-4">
+              <Text className="text-lg font-bold text-gray-800">{title}</Text>
+              <Pressable onPress={onClose} hitSlop={10}>
+                <AntDesign name="close" size={22} color="#6B7280" />
+              </Pressable>
+            </View>
 
-          <View className="p-6">{children}</View>
-
-          <View className="flex-row justify-end items-center gap-x-2 p-4 ">
-            <Pressable
-              onPress={onClose}
-              disabled={loading}
-              className="px-4 py-4 flex-1 text-center rounded-md justify-center border border-primary text-primary "
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 8 }}
             >
-              <Text className="font-semibold text-primary text-center">
-                {cancelText}
-              </Text>
-            </Pressable>
+              {children}
+            </ScrollView>
 
-            {onConfirm && (
+            <View className="flex-row justify-end items-center gap-x-2 p-4">
               <Pressable
-                onPress={onConfirm}
+                onPress={onClose}
                 disabled={loading}
-                className={`px-4 flex-1 py-4 rounded-md bg-primary flex-row items-center justify-center ${
-                  loading ? "opacity-50" : ""
-                }`}
+                className="px-4 py-4 flex-1 text-center rounded-md justify-center border border-primary text-primary"
               >
-                {loading && (
-                  <ActivityIndicator
-                    size="small"
-                    color="white"
-                    className="mr-2"
-                  />
-                )}
-                <Text className="font-semibold text-white text-center">
-                  {confirmText}
+                <Text className="font-semibold text-primary text-center">
+                  {cancelText}
                 </Text>
               </Pressable>
-            )}
-          </View>
-        </Pressable>
+
+              {onConfirm && (
+                <Pressable
+                  onPress={onConfirm}
+                  disabled={loading}
+                  className={`px-4 flex-1 py-4 rounded-md bg-primary flex-row items-center justify-center ${
+                    loading ? "opacity-50" : ""
+                  }`}
+                >
+                  {loading && (
+                    <ActivityIndicator
+                      size="small"
+                      color="white"
+                      className="mr-2"
+                    />
+                  )}
+                  <Text className="font-semibold text-white text-center">
+                    {confirmText}
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          </Pressable>
+        </KeyboardAvoidingView>
       </Pressable>
     </RNModal>
   );

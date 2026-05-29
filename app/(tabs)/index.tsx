@@ -58,11 +58,13 @@ const HomeScreen = () => {
         
         {highlightedRestaurant ? (
           <View className="border-2 border-primary/20 rounded-3xl overflow-hidden bg-primary/5">
-            <RestaurantCard 
-              restaurant={highlightedRestaurant} 
-              isFavorited={favorites.some(fav => fav.id === highlightedRestaurant.id)}
-              onToggleFavorite={toggleFavorite}
-            />
+            <View className="px-4">
+              <RestaurantCard 
+                restaurant={highlightedRestaurant} 
+                isFavorited={favorites.some(fav => fav.id === highlightedRestaurant.id)}
+                onToggleFavorite={toggleFavorite}
+              />
+            </View>
             <View className="bg-primary/10 px-4 py-2 flex-row items-center justify-center">
               <Ionicons name="star" size={12} color={COLORS.primary} />
               <Text className="text-primary text-[10px] font-bold ml-1 uppercase">
