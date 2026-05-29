@@ -58,13 +58,6 @@ const SettingsScreen = () => {
       onPress: handleUpdateInfo,
       showBadge: hoursMissing,
     },
-    {
-      icon: (
-        <Ionicons name="notifications-outline" size={22} color="#4B5563" />
-      ),
-      label: "Notificações",
-      onPress: () => {},
-    },
     ...(isCompany ? [{
       icon: (
         <Ionicons name="heart-outline" size={22} color="#4B5563" />
@@ -74,13 +67,6 @@ const SettingsScreen = () => {
         router.push("/favorites");
       },
     }] : []),
-    {
-      icon: (
-        <Ionicons name="help-circle-outline" size={22} color="#4B5563" />
-      ),
-      label: "Ajuda",
-      onPress: () => {},
-    },
     {
       icon: (
         <Ionicons name="log-out-outline" size={22} color="#EF4444" />

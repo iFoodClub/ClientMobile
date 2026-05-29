@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { getApiBaseUrl } from "../config/apiBaseUrl";
 import { useAuthStore } from "../store/authStore";
-import { router } from "expo-router";
 
 export class RepositoryBase {
   protected api: AxiosInstance;
@@ -39,24 +38,27 @@ export class RepositoryBase {
       async (error: AxiosError<any>) => {
         const { logout } = useAuthStore.getState();
         const requestUrl = error.config?.url || "";
-        const message = error.response?.data?.message?.toLowerCase?.() || "";
-
-        const tokenError =
-          message.includes("token") ||
-          message.includes("jwt") ||
-          message.includes("unauthorized") ||
-          message.includes("invalid") ||
-          message.includes("expired");
 
         if (
           error.response?.status === 401 &&
           !requestUrl.includes("/user/logout") &&
-          tokenError
+          !requestUrl.includes("/user/login")
         ) {
           if (__DEV__)
-            console.warn("⚠️ Token inválido ou expirado. Efetuando logout...");
+            console.warn("⚠️ Sessão expirada ou não autorizada. Efetuando logout automático...");
+          
           logout();
-          router.replace("/sign-in");
+          
+          // Pequeno delay para garantir que o estado da store seja processado
+          // antes de forçar a navegação, evitando concorrência com Toast/Alerts
+          setTimeout(async () => {
+            try {
+              const { router } = await import("expo-router");
+              router.replace("/sign-in");
+            } catch (navError) {
+              console.error("Erro ao redirecionar após logout:", navError);
+            }
+          }, 100);
         }
 
         if (__DEV__) {

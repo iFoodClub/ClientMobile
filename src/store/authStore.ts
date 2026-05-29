@@ -17,6 +17,7 @@ type IAuthStore = {
   updateSelectedRestaurant: (id: number) => void;
   updateUserRestaurant: (data: IUpdateRestaurantDTO) => void;
   loginOffline: (perfilLocal: any) => void;
+  updateCompanyCutoffTime: (time: string) => void;
 
   user: IUserDetailsResponse | null;
   isRestaurant: boolean;
@@ -66,6 +67,16 @@ export const useAuthStore = create<IAuthStore>((set, _get) => ({
     } catch (error) {
       console.log("Erro no logout API:", error);
     } finally {
+      // Limpa as sessões offline gravadas no SQLite para evitar re-login offline automático
+      try {
+        const { getDatabase } = await import("../db/sqlite");
+        const db = getDatabase();
+        db.execSync("DELETE FROM auth_sessions");
+        console.log("🧹 SQLite: auth_sessions limpo com sucesso!");
+      } catch (dbError) {
+        console.error("Erro ao limpar sessões SQLite no logout:", dbError);
+      }
+
       const axios = (await import("axios")).default;
       delete axios.defaults.headers.common["Authorization"];
 
@@ -103,6 +114,18 @@ export const useAuthStore = create<IAuthStore>((set, _get) => ({
         user: {
           ...state.user,
           restaurant: { ...state.user.restaurant, ...data },
+        },
+      };
+    });
+  },
+
+  updateCompanyCutoffTime: (time: string) => {
+    set((state) => {
+      if (!state.user?.company) return state;
+      return {
+        user: {
+          ...state.user,
+          company: { ...state.user.company, orderCutoffTime: time },
         },
       };
     });

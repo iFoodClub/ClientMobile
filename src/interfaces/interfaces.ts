@@ -40,6 +40,7 @@ export interface ICompany {
   number: string;
   restaurantId: number;
   selectedRestaurantId?: number;
+  orderCutoffTime?: string | null;
 }
 
 export interface IBusiness {
