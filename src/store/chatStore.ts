@@ -4,6 +4,7 @@ import RestaurantRepository from "../repository/restaurantRepository";
 import OrderRepository from "../repository/orderRepository";
 import DishRepository from "../repository/dishRepository";
 import CompanyRepository from "../repository/companyRepository";
+import { generateGeminiResponse } from "../utils/gemini";
 import { useAuthStore } from "./authStore";
 
 export interface Message {
@@ -83,12 +84,15 @@ export const useChatStore = create<IChatStore>((set, get) => ({
         ];
       }
 
+      let fetchedData: any = undefined;
+
       // 5.1 Busca dinâmica em APIs/Repositories baseada na intenção
       if (prediction.category === "restaurantes") {
         try {
           const response = await RestaurantRepository.fetchRestaurants();
           const list = response.data;
           if (list && list.length > 0) {
+            fetchedData = list; // Salva para o Gemini sintetizar!
             let answerText = "Temos excelentes opções registradas no iFoodClub! Veja os restaurantes parceiros disponíveis:\n\n";
             list.slice(0, 5).forEach((rest) => {
               const rating = rest.averageRating ? `⭐ **${rest.averageRating.toFixed(1)}**` : "sem avaliações";
@@ -109,6 +113,7 @@ export const useChatStore = create<IChatStore>((set, get) => ({
             const response = await DishRepository.fetchDishesByRestaurantId(selectedRestaurantId);
             const dishes = response.data;
             if (dishes && dishes.length > 0) {
+              fetchedData = dishes; // Salva para o Gemini sintetizar!
               let answerText = `Aqui estão as deliciosas opções de pratos do dia no restaurante parceiro da sua empresa:\n\n`;
               dishes.slice(0, 5).forEach((dish) => {
                 answerText += `• 🍽️ **${dish.name}** - R$ ${Number(dish.price).toFixed(2)}\n  _${dish.description || "Sem descrição"}_\n\n`;
@@ -132,6 +137,7 @@ export const useChatStore = create<IChatStore>((set, get) => ({
             const response = await CompanyRepository.getEmployeesWeeklyOrdersCurrentDay(companyId);
             const data = response.data;
             if (data && data.employees && data.employees.length > 0) {
+              fetchedData = data; // Salva para o Gemini sintetizar!
               let answerText = `Aqui está o status dos pedidos de hoje da equipe no restaurante parceiro (**${data.restaurant?.name || "Parceiro da Empresa"}**):\n\n`;
               let hasOrders = false;
               data.employees.forEach((emp) => {
@@ -157,6 +163,7 @@ export const useChatStore = create<IChatStore>((set, get) => ({
             const response = await OrderRepository.getEmployeeWeeklyChosenOrders(user.employee.id);
             const choices = response.data;
             if (choices && choices.length > 0) {
+              fetchedData = choices; // Salva para o Gemini sintetizar!
               const dayNamesPT: Record<string, string> = {
                 Monday: "Segunda-feira",
                 Tuesday: "Terça-feira",
@@ -189,6 +196,7 @@ export const useChatStore = create<IChatStore>((set, get) => ({
             const response = await CompanyRepository.getEmployeeByCompanyId(companyId);
             const list = response.data;
             if (list && list.length > 0) {
+              fetchedData = list; // Salva para o Gemini sintetizar!
               let answerText = "Encontrei os seguintes colaboradores ativos cadastrados na sua empresa:\n\n";
               list.forEach((emp) => {
                 const vacationStatus = emp.vacation ? " 🏖️ *(Em férias)*" : "";
@@ -203,6 +211,23 @@ export const useChatStore = create<IChatStore>((set, get) => ({
           }
         } catch (err) {
           console.error("Erro ao buscar colaboradores da empresa no chatbot:", err);
+        }
+      }
+
+      // 5.2 Se a chave do Gemini estiver configurada no .env, realiza a síntese cognitiva híbrida!
+      if (process.env.EXPO_PUBLIC_GEMINI_API_KEY) {
+        try {
+          const isGeneralCategory = ["saudacao", "suporte", "fallback"].includes(prediction.category);
+          if (fetchedData || isGeneralCategory) {
+            console.log("🤖 [Chatbot Gemini] Iniciando síntese via LLM (gemini-1.5-flash)...");
+            const geminiReply = await generateGeminiResponse(text.trim(), fetchedData);
+            botMessage.text = geminiReply;
+            if (fetchedData) {
+              botMessage.action = undefined; // UX: Mantém o chat aberto no sucesso
+            }
+          }
+        } catch (geminiErr) {
+          console.warn("⚠️ Falha ou lentidão na API do Gemini. Usando resposta offline local:", geminiErr);
         }
       }
 
