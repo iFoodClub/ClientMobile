@@ -8,7 +8,7 @@ import {
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import * as SplashScreen from 'expo-splash-screen';
 import { AnimatedSplashScreen } from "@/src/components/AnimatedSplashScreen";
@@ -19,11 +19,26 @@ SplashScreen.preventAutoHideAsync();
 
 function AppContent() {
   const { isLoggedIn, user } = useAuthStore();
+  const [isMounted, setIsMounted] = useState(false);
   
   console.log('🚀 [AppContent] Estado de Login:', { isLoggedIn, userEmail: user?.email });
 
   // Hook global para sincronização automática
   useSyncManager();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    if (isLoggedIn) {
+      router.replace("/(tabs)");
+    } else {
+      router.replace("/sign-in");
+    }
+  }, [isLoggedIn, isMounted]);
 
   return (
     <Stack
@@ -32,31 +47,23 @@ function AppContent() {
         contentStyle: { backgroundColor: "#fff" },
       }}
     >
-      {isLoggedIn ? (
-        <>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="restaurant-details"
-            options={{ headerShown: false, animation: "slide_from_right" }}
-          />
-          <Stack.Screen
-            name="perfil-form"
-            options={{ headerShown: false, animation: "slide_from_right" }}
-          />
-        </>
-      ) : (
-        <>
-          <Stack.Screen
-            name="sign-in"
-            options={{ headerShown: false, animation: "slide_from_left" }}
-          />
-          <Stack.Screen
-            name="create-account"
-            options={{ headerShown: false, animation: "slide_from_right" }}
-          />
-        </>
-      )}
-
+      <Stack.Screen
+        name="sign-in"
+        options={{ headerShown: false, animation: "slide_from_left" }}
+      />
+      <Stack.Screen
+        name="create-account"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="restaurant-details"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
+      <Stack.Screen
+        name="perfil-form"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
       <Stack.Screen name="modal" options={{ presentation: "modal" }} />
     </Stack>
   );

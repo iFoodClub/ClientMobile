@@ -35,6 +35,56 @@ export function tokenize(text: string): string[] {
     .filter((word) => word.trim().length > 1);
 }
 
+// Distância Levenshtein para suportar erros de digitação (Fuzzy Match)
+export function levenshteinDistance(a: string, b: string): number {
+  const tmp: number[][] = [];
+  let i, j;
+  for (i = 0; i <= a.length; i++) tmp[i] = [i];
+  for (j = 0; j <= b.length; j++) tmp[0][j] = j;
+  for (i = 1; i <= a.length; i++) {
+    for (j = 1; j <= b.length; j++) {
+      tmp[i][j] = Math.min(
+        tmp[i - 1][j] + 1, // exclusão
+        tmp[i][j - 1] + 1, // inserção
+        tmp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1) // substituição
+      );
+    }
+  }
+  return tmp[a.length][b.length];
+}
+
+// Stemming sutil em português para tolerar plurais, gêneros e flexões
+export function stem(word: string): string {
+  if (!word || word.length <= 2) return word;
+  
+  let w = word.toLowerCase();
+
+  // 1. Plurais
+  if (w.endsWith("s")) {
+    if (w.endsWith("oes")) w = w.slice(0, -3) + "ao";
+    else if (w.endsWith("es")) w = w.slice(0, -2);
+    else w = w.slice(0, -1);
+  }
+
+  // 2. Sufixos comuns de equipe/cadastro/cancelamento
+  const suffixes = ["inhos", "inho", "inhas", "inha", "idade", "mente", "toria", "dor", "ores"];
+  for (const suffix of suffixes) {
+    if (w.endsWith(suffix) && w.length - suffix.length > 2) {
+      return w.slice(0, -suffix.length);
+    }
+  }
+
+  // 3. Sufixos de verbos e processos (light)
+  const processSuffixes = ["acao", "acoes", "amento", "amentos", "aria", "arias", "agem", "agens", "ar", "er", "ir", "ei", "ou", "ou-se"];
+  for (const suffix of processSuffixes) {
+    if (w.endsWith(suffix) && w.length - suffix.length > 2) {
+      return w.slice(0, -suffix.length);
+    }
+  }
+
+  return w;
+}
+
 // Lista básica de Stopwords em português para filtrar palavras de baixa importância
 const STOPWORDS = new Set([
   "a", "o", "as", "os", "de", "do", "da", "dos", "das", "em", "no", "na", "nos", "nas",
@@ -57,8 +107,9 @@ export class TfidfVectorizer {
    */
   public fit(documents: string[]): void {
     const docTokens = documents.map((doc) => {
-      // Tokeniza e remove stopwords para treinar com palavras mais significativas
-      return filterStopwords(tokenize(doc));
+      // Tokeniza, remove stopwords e aplica light stem
+      const tokens = filterStopwords(tokenize(doc));
+      return tokens.map((token) => stem(token));
     });
 
     const N = documents.length;
@@ -80,7 +131,6 @@ export class TfidfVectorizer {
     });
 
     // Calcula o IDF de cada termo usando a fórmula suavizada do scikit-learn
-    // idf(t) = ln((1 + N) / (1 + df(t))) + 1
     this.idfs = {};
     this.vocabulary.forEach((word) => {
       const df = documentFrequencies[word] || 0;
@@ -92,7 +142,30 @@ export class TfidfVectorizer {
    * Transforma um texto em um vetor numérico TF-IDF com normalização L2.
    */
   public transform(text: string): number[] {
-    const tokens = filterStopwords(tokenize(text));
+    const rawTokens = filterStopwords(tokenize(text));
+    // Aplica stemming sutil em cada token
+    const stemmedTokens = rawTokens.map((token) => stem(token));
+
+    // Fuzzy Match / Levenshtein Correction para tolerância extrema a typos
+    const tokens = stemmedTokens.map((token) => {
+      if (this.termIndexMap[token] !== undefined) return token;
+
+      let bestMatch = token;
+      let minDistance = 3; // aceita distância de até 2 edições
+
+      this.vocabulary.forEach((vocabWord) => {
+        // Tolerância de 1 erro para palavras curtas (<=4 letras), 2 para longas
+        const maxAllowedDist = vocabWord.length <= 4 ? 1 : 2;
+        const dist = levenshteinDistance(token, vocabWord);
+        if (dist <= maxAllowedDist && dist < minDistance) {
+          minDistance = dist;
+          bestMatch = vocabWord;
+        }
+      });
+
+      return bestMatch;
+    });
+
     const vector = new Array(this.vocabulary.length).fill(0);
 
     if (tokens.length === 0) return vector;
@@ -261,6 +334,24 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "meu almoco esta atrasado", category: "pedidos" },
   { text: "abrir pedidos", category: "pedidos" },
   { text: "tela de pedidos", category: "pedidos" },
+  { text: "quem pediu hoje na empresa", category: "pedidos" },
+  { text: "pedidos de hoje da equipe", category: "pedidos" },
+  { text: "quais sao os pedidos da empresa", category: "pedidos" },
+  { text: "quais sao meus pratos semanais", category: "pedidos" },
+  { text: "minhas escolhas semanais", category: "pedidos" },
+  { text: "pedidos pessoais", category: "pedidos" },
+  { text: "meus pratos da semana", category: "pedidos" },
+  { text: "minhas refeicoes semanais", category: "pedidos" },
+  { text: "ver minhas escolhas", category: "pedidos" },
+  { text: "agenda de refeicoes", category: "pedidos" },
+  { text: "cronograma de pratos", category: "pedidos" },
+  { text: "refeicoes agendadas", category: "pedidos" },
+  { text: "minhas escolhas de comida", category: "pedidos" },
+  { text: "pratos escolhidos para a semana", category: "pedidos" },
+  { text: "meu plano semanal", category: "pedidos" },
+  { text: "ver minha agenda de almoco", category: "pedidos" },
+  { text: "pedidos da semana", category: "pedidos" },
+  { text: "minhas refeicoes programadas", category: "pedidos" },
 
   // 2. CANCELAMENTO
   { text: "como cancelo um pedido", category: "cancelamento" },
@@ -344,6 +435,9 @@ const TRAINING_CORPUS: TrainingSample[] = [
   { text: "gerenciar equipe", category: "funcionários" },
   { text: "adicionar um novo funcionario", category: "funcionários" },
   { text: "ir para funcionarios", category: "funcionários" },
+  { text: "quais sao os funcionarios da equipe", category: "funcionários" },
+  { text: "quem e a minha equipe", category: "funcionários" },
+  { text: "ver colaboradores da empresa", category: "funcionários" },
 
   // 6. CONTA/SENHA
   { text: "esqueci minha senha", category: "conta/senha" },
@@ -438,11 +532,11 @@ const ANSWERS: { [category: string]: string } = {
 
 // Mapeamento de intenções para ações nativas correspondentes
 const ACTIONS: { [category: string]: ChatbotAction } = {
-  pedidos: { type: "navigate", payload: "/orders" },
-  restaurantes: { type: "navigate", payload: "/index" },
-  cardápio: { type: "navigate", payload: "/dishes" },
-  funcionários: { type: "navigate", payload: "/employees" },
-  "conta/senha": { type: "navigate", payload: "/settings" },
+  pedidos: { type: "navigate", payload: "/(tabs)/orders" },
+  restaurantes: { type: "navigate", payload: "/(tabs)" },
+  cardápio: { type: "navigate", payload: "/(tabs)/dishes" },
+  funcionários: { type: "navigate", payload: "/(tabs)/employees" },
+  "conta/senha": { type: "navigate", payload: "/(tabs)/settings" },
   logout: { type: "logout" }
 };
 

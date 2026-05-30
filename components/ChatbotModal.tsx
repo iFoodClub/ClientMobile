@@ -34,15 +34,21 @@ export default function ChatbotModal() {
   const flatListRef = useRef<FlatList<Message>>(null);
   const processedMessageIds = useRef<Set<string>>(new Set());
 
-  // Rola para o final da lista sempre que uma nova mensagem chega ou o bot começa a digitar
+  const scrollToBottom = (delay = 100) => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }, delay);
+  };
+
+  // Rola para o final da lista de forma agressiva e múltipla sempre que mensagens ou estado de digitação mudam
   useEffect(() => {
     if (isModalVisible) {
-      // Pequeno delay para garantir que o layout da FlatList foi renderizado
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+      scrollToBottom(50);
+      scrollToBottom(150);
+      scrollToBottom(300);
+      scrollToBottom(500); // Garante a rolagem final mesmo após renderizações assíncronas complexas
     }
-  }, [messages.length, isTyping, isModalVisible]);
+  }, [messages, messages.length, isTyping, isModalVisible]);
 
   // Escuta novas mensagens do bot para executar ações automatizadas (ex: redirecionamento de tela com 1.5s delay)
   useEffect(() => {
@@ -74,6 +80,8 @@ export default function ChatbotModal() {
     sendMessage(inputText.trim());
     setInputText("");
     Keyboard.dismiss(); // Fecha o teclado imediatamente ao enviar!
+    scrollToBottom(50);
+    scrollToBottom(200);
   };
 
   // Trata cliques em botões interativos dentro do chat (ex: confirmação de Logout)
@@ -94,6 +102,9 @@ export default function ChatbotModal() {
         sender: "bot",
         timestamp: new Date()
       });
+
+      scrollToBottom(50);
+      scrollToBottom(200);
 
       // 3. Após um breve delay para leitura, fecha o chat e desloga
       setTimeout(async () => {
@@ -121,6 +132,10 @@ export default function ChatbotModal() {
         sender: "bot",
         timestamp: new Date()
       });
+
+      scrollToBottom(50);
+      scrollToBottom(200);
+      scrollToBottom(450);
     }
   };
 
@@ -279,6 +294,11 @@ export default function ChatbotModal() {
                 renderItem={renderItem}
                 contentContainerStyle={{ padding: 16, paddingBottom: 24 }}
                 className="flex-1 bg-gray-50/50"
+                onContentSizeChange={() => {
+                  if (isModalVisible) {
+                    flatListRef.current?.scrollToEnd({ animated: true });
+                  }
+                }}
                 ListFooterComponent={() => {
                   if (!isTyping) return null;
                   return (
