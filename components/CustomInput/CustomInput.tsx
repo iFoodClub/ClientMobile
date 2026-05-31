@@ -16,7 +16,29 @@ interface CustomInputProps<T extends FieldValues> extends TextInputProps {
   rules?: RegisterOptions<T, Path<T>>;
   icon?: React.ReactNode;
   maxLength?: number;
+  maskType?: "currency";
 }
+
+const formatCurrency = (text: string) => {
+  const cleanText = text.replace(/\D/g, "");
+  if (!cleanText) return "";
+  const cents = parseInt(cleanText, 10);
+  const value = cents / 100;
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+};
+
+const getDisplayValue = (val: any, maskType?: "currency") => {
+  if (maskType === "currency" && val !== undefined && val !== null && val !== "") {
+    if (typeof val === "string" && val.includes("R$")) {
+      return val;
+    }
+    return formatCurrency(val.toString());
+  }
+  return val;
+};
 
 const CustomInput = <T extends FieldValues>({
   control,
@@ -26,6 +48,7 @@ const CustomInput = <T extends FieldValues>({
   rules = {},
   icon,
   maxLength,
+  maskType,
   ...textInputProps
 }: CustomInputProps<T>) => {
   return (
@@ -56,8 +79,15 @@ const CustomInput = <T extends FieldValues>({
                 keyboardType={keyboardType}
                 className="flex-1 h-11 text-gray-700 text-sm"
                 onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
+                onChangeText={(text) => {
+                  if (maskType === "currency") {
+                    const formatted = formatCurrency(text);
+                    onChange(formatted);
+                  } else {
+                    onChange(text);
+                  }
+                }}
+                value={getDisplayValue(value, maskType)}
                 placeholderTextColor={"#9CA3AF"}
                 {...textInputProps}
               />

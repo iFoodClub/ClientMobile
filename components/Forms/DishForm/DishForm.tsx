@@ -45,6 +45,7 @@ const DishForm = ({ control }: DishFormProps) => {
         name="price"
         label="Preço"
         keyboardType="numeric"
+        maskType="currency"
         rules={{
           required: { value: true, message: "O preço é obrigatório" },
         }}
