@@ -116,7 +116,7 @@ const SettingsScreen = () => {
       ),
       label: "Meus Favoritos",
       onPress: () => {
-        router.push("/favorites");
+        router.push("/favorites" as any);
       },
     }] : []),
     {
