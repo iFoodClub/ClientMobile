@@ -13,7 +13,7 @@ import { useAuthStore } from "@/src/store/authStore";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FlatList, Pressable, View } from "react-native";
+import { FlatList, Pressable, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import UploadRepository from "@/src/repository/uploadRepository";
 
@@ -143,6 +143,13 @@ const EmployeesScreen = () => {
           title="Funcionários"
           subtitle="Gerencie seus colaboradores"
         />
+        {employees && employees.length > 0 && (
+          <View className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex-row items-center">
+            <Text className="text-gray-400 text-xs italic">
+              💡 Dica: Toque e segure em um colaborador para ver as opções (Editar/Excluir).
+            </Text>
+          </View>
+        )}
         {loading && (
           <View className="mt-4 space-y-4 gap-y-4">
             {Array.from({ length: 5 }).map((_, index) => (

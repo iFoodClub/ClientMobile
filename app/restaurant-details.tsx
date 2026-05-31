@@ -203,9 +203,16 @@ const RestaurantDetails = () => {
         </View>
 
         <View className="pt-6 px-4">
-          <Text className="text-xl font-semibold text-textBody mb-4">
-            Pratos
-          </Text>
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-xl font-semibold text-textBody">
+              Pratos
+            </Text>
+            {isEmployee && selectedRestaurant?.dishes && selectedRestaurant.dishes.length > 0 && (
+              <Text className="text-gray-400 text-xs italic">
+                💡 Toque e segure para definir pedido semanal
+              </Text>
+            )}
+          </View>
           <View className="flex flex-row flex-wrap gap-8">
             {loading &&
               Array.from({ length: 3 }).map((_, index) => (

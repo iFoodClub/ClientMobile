@@ -219,6 +219,13 @@ const DishesScreen = () => {
             : "Gerencie os pratos do seu restaurante"
         }
       />
+      {isRestaurant && dishes && dishes.length > 0 && (
+        <View className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex-row items-center">
+          <Text className="text-gray-400 text-xs italic">
+            💡 Dica: Toque e segure em um prato para ver as opções (Editar/Excluir).
+          </Text>
+        </View>
+      )}
       <FlatList
         style={{ flex: 1 }}
         data={dishes || []}
