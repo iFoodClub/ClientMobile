@@ -30,9 +30,14 @@ export function formatPrice(price: number | string | null | undefined): string {
   return `R$ ${priceWithComma}`;
 }
 
-export function formatPriceToNumber(price: number): number {
-  const fixedPrice = price.toString().replace(",", ".");
-  return Number(fixedPrice);
+export function formatPriceToNumber(price: number | string): number {
+  if (typeof price === "number") return price;
+  if (!price) return 0;
+  const cleanPrice = price
+    .replace(/[R$\s ]/g, "") // Remove R$, espaços e NBSP
+    .replace(/\./g, "")      // Remove pontos de milhar
+    .replace(",", ".");      // Troca vírgula decimal por ponto
+  return Number(cleanPrice) || 0;
 }
 
 export function getOrderBadgeByStatus(status: OrderStatus) {

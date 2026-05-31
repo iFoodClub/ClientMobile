@@ -10,14 +10,40 @@ import { Image, ScrollView, Text, View, TouchableOpacity, TextInput } from "reac
 import { SafeAreaView } from "react-native-safe-area-context";
 import CModal from "@/components/ui/Modal/CModal";
 import RestaurantRepository from "@/src/repository/restaurantRepository";
+import CompanyRepository from "@/src/repository/companyRepository";
+import EmployeeRepository from "@/src/repository/employeeRepository";
 import { useToastAll } from "@/src/components/Toast";
 
 const SettingsScreen = () => {
-  const { logout, user, updateUserRestaurant, isCompany } = useAuthStore();
+  const {
+    logout,
+    user,
+    updateUserRestaurant,
+    updateUserCompany,
+    updateUserEmployee,
+    isCompany,
+    isRestaurant,
+    isEmployee
+  } = useAuthStore();
+
   const { showSuccess, showError } = useToastAll();
   const [modalVisible, setModalVisible] = useState(false);
-  const [newImageUrl, setNewImageUrl] = useState(user?.restaurant?.image || "");
+  const [newImageUrl, setNewImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const getProfileImage = () => {
+    if (isRestaurant && user?.restaurant) return user.restaurant.image;
+    if (isCompany && user?.company) return user.company.profileImage;
+    if (isEmployee && user?.employee) return user.employee.profileImage;
+    return user?.profileImage || "";
+  };
+
+  const getProfileName = () => {
+    if (isRestaurant && user?.restaurant) return user.restaurant.name;
+    if (isCompany && user?.company) return user.company.name;
+    if (isEmployee && user?.employee) return user.employee.name;
+    return user?.name || "";
+  };
 
   const handleUpdateInfo = () => {
     router.push({
@@ -26,19 +52,41 @@ const SettingsScreen = () => {
   };
 
   const handleUpdateImage = async () => {
-    if (!newImageUrl || !user?.restaurant?.id) return;
+    if (!newImageUrl) return;
     
     try {
       setLoading(true);
-      const response = await RestaurantRepository.updateRestaurant(
-        user.restaurant.id,
-        { ...user.restaurant, image: newImageUrl } as any
-      );
 
-      if (response.status === 200) {
-        updateUserRestaurant({ profileImage: newImageUrl } as any);
-        showSuccess("Foto atualizada!");
-        setModalVisible(false);
+      if (isRestaurant && user?.restaurant?.id) {
+        const response = await RestaurantRepository.updateRestaurant(
+          user.restaurant.id,
+          { ...user.restaurant, image: newImageUrl } as any
+        );
+        if (response.status === 200) {
+          updateUserRestaurant({ image: newImageUrl } as any);
+          showSuccess("Foto atualizada!");
+          setModalVisible(false);
+        }
+      } else if (isCompany && user?.company?.id) {
+        const response = await CompanyRepository.updateCompany(
+          user.company.id,
+          { ...user.company, profileImage: newImageUrl } as any
+        );
+        if (response.status === 200) {
+          updateUserCompany({ profileImage: newImageUrl } as any);
+          showSuccess("Foto atualizada!");
+          setModalVisible(false);
+        }
+      } else if (isEmployee && user?.employee?.id) {
+        const response = await EmployeeRepository.updateEmployee(
+          user.employee.id,
+          { ...user.employee, profileImage: newImageUrl } as any
+        );
+        if (response.status === 200) {
+          updateUserEmployee({ profileImage: newImageUrl } as any);
+          showSuccess("Foto atualizada!");
+          setModalVisible(false);
+        }
       }
     } catch (e) {
       showError("Erro ao atualizar foto.");
@@ -102,12 +150,15 @@ const SettingsScreen = () => {
             activeOpacity={0.7}
           >
             <TouchableOpacity 
-              onPress={() => setModalVisible(true)}
+              onPress={() => {
+                setNewImageUrl(getProfileImage() || "");
+                setModalVisible(true);
+              }}
               className="relative"
             >
               <Image
                 className="w-20 h-20 rounded-full border-2 border-white bg-gray-100 shadow-sm"
-                source={{ uri: user?.restaurant?.image || user?.profileImage }}
+                source={{ uri: getProfileImage() }}
               />
               <View className="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full items-center justify-center shadow-md">
                 <Ionicons name="camera" size={16} color={COLORS.primary} />
@@ -119,7 +170,7 @@ const SettingsScreen = () => {
               className="ml-4 flex-1"
             >
               <Text className="font-bold text-xl text-gray-900">
-                {user?.restaurant?.name || user?.name}
+                {getProfileName()}
               </Text>
               <View className="flex-row items-center">
                 <Text className="text-primary font-medium mr-1">Editar perfil</Text>

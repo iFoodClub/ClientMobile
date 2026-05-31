@@ -1,10 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useRef, useState } from "react";
 import { Alert, Platform } from "react-native";
-import {
-  ExpoSpeechRecognitionModule,
-  useSpeechRecognitionEvent,
-} from "expo-speech-recognition";
 
 import { IRestaurantResponse } from "../interfaces/apiResponses";
 import {
@@ -12,6 +8,24 @@ import {
   matchEmployeeVoice,
   VoiceMatch,
 } from "../utils/voiceCommandMatcher";
+// Importações dinâmicas e seguras para evitar travamentos no Expo Go
+let ExpoSpeechRecognitionModule: any;
+let useSpeechRecognitionEvent: (event: string, callback: (...args: any[]) => void) => void;
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const speech = require("expo-speech-recognition");
+  ExpoSpeechRecognitionModule = speech.ExpoSpeechRecognitionModule;
+  useSpeechRecognitionEvent = speech.useSpeechRecognitionEvent;
+} catch {
+  // Mock seguro para o Expo Go (onde o módulo nativo de reconhecimento de fala não existe no container)
+  ExpoSpeechRecognitionModule = {
+    requestPermissionsAsync: async () => ({ granted: false }),
+    start: () => {},
+    stop: () => {},
+  };
+  useSpeechRecognitionEvent = () => {};
+}
 
 export type VoiceCommandMode = "company" | "employee";
 

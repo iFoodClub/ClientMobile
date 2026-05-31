@@ -7,6 +7,9 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { Tabs } from "expo-router";
 import React from "react";
+import { View } from "react-native";
+import ChatbotFAB from "@/components/ChatbotFAB";
+import ChatbotModal from "@/components/ChatbotModal";
 
 type TabBarIconProps = Parameters<
   NonNullable<BottomTabNavigationOptions["tabBarIcon"]>
@@ -80,40 +83,44 @@ const TabsLayout = () => {
   ];
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          height: 85, // Aumentado para dar espaço à barra do sistema
-          borderTopWidth: 1,
-          borderTopColor: "#F3F4F6",
-          paddingBottom: 25, // Empurra o conteúdo para cima da barra preta
-          paddingTop: 12,
-          backgroundColor: "#FFFFFF",
-          elevation: 0, // Remove sombra estranha no Android
-        },
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: "#9CA3AF",
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: "500",
-        },
-      }}
-    >
-      {tabsConfig.map(({ name, title, icon, href, options }) => (
-        <Tabs.Screen
-          key={name}
-          name={name}
-          options={{
-            sceneStyle: { backgroundColor: "#fff" },
-            title,
-            href: href as any,
-            tabBarIcon: ({ focused, color }) => icon({ focused, color, size: 22 }),
-            ...options,
-          }}
-        />
-      ))}
-    </Tabs>
+    <View className="flex-1">
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            height: 85, // Aumentado para dar espaço à barra do sistema
+            borderTopWidth: 1,
+            borderTopColor: "#F3F4F6",
+            paddingBottom: 25, // Empurra o conteúdo para cima da barra preta
+            paddingTop: 12,
+            backgroundColor: "#FFFFFF",
+            elevation: 0, // Remove sombra estranha no Android
+          },
+          tabBarActiveTintColor: COLORS.primary,
+          tabBarInactiveTintColor: "#9CA3AF",
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: "500",
+          },
+        }}
+      >
+        {tabsConfig.map(({ name, title, icon, href, options }) => (
+          <Tabs.Screen
+            key={name}
+            name={name}
+            options={{
+              sceneStyle: { backgroundColor: "#fff" },
+              title,
+              href: href as any,
+              tabBarIcon: ({ focused, color }) => icon({ focused, color, size: 22 }),
+              ...options,
+            }}
+          />
+        ))}
+      </Tabs>
+      <ChatbotFAB />
+      <ChatbotModal />
+    </View>
   );
 };
 

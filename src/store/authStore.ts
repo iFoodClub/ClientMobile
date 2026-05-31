@@ -16,6 +16,8 @@ type IAuthStore = {
   reset: () => void;
   updateSelectedRestaurant: (id: number) => void;
   updateUserRestaurant: (data: IUpdateRestaurantDTO) => void;
+  updateUserCompany: (data: any) => void;
+  updateUserEmployee: (data: any) => void;
   loginOffline: (perfilLocal: any) => void;
 
   user: IUserDetailsResponse | null;
@@ -103,6 +105,30 @@ export const useAuthStore = create<IAuthStore>((set, _get) => ({
         user: {
           ...state.user,
           restaurant: { ...state.user.restaurant, ...data },
+        },
+      };
+    });
+  },
+
+  updateUserCompany: (data: any) => {
+    set((state) => {
+      if (!state.user?.company) return state;
+      return {
+        user: {
+          ...state.user,
+          company: { ...state.user.company, ...data },
+        },
+      };
+    });
+  },
+
+  updateUserEmployee: (data: any) => {
+    set((state) => {
+      if (!state.user?.employee) return state;
+      return {
+        user: {
+          ...state.user,
+          employee: { ...state.user.employee, ...data },
         },
       };
     });

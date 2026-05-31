@@ -197,7 +197,7 @@ const DishesScreen = () => {
             onLongPress={
               isRestaurant
                 ? (event) => handleLongPress(item, event)
-                : () => {}
+                : () => { }
             }
           />
         )}
@@ -251,7 +251,7 @@ const DishesScreen = () => {
 
       {isRestaurant && (
         <PressableButton
-          className="absolute bottom-8 right-8"
+          className="absolute bottom-20 right-7"
           onPress={() => {
             setModalVisible(true);
             reset({
