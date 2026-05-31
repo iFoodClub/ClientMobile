@@ -13,6 +13,13 @@ class CompanyRepository extends RepositoryBase {
     return await this.api.put(`/company/${id}`, companyData);
   }
 
+  async updateCompany(
+    id: number,
+    companyData: Partial<ICompany> & { profileImage?: string }
+  ) {
+    return await this.api.put(`/company/${id}`, companyData);
+  }
+
   async getEmployeeByCompanyId(companyId: number) {
     return await this.api.get<IEmployeeSimple[]>(
       `/company/${companyId}/employees`

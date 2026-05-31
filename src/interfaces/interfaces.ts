@@ -40,6 +40,7 @@ export interface ICompany {
   number: string;
   restaurantId: number;
   selectedRestaurantId?: number;
+  profileImage?: string;
 }
 
 export interface IBusiness {

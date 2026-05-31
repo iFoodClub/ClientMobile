@@ -77,16 +77,14 @@ const EmployeesScreen = () => {
         await updateEmployee(selectedEmployeeId, updateEmployeeData);
       }
       showSuccess(
-        `Colaborador ${
-          mode === formMode.create ? "criado" : "atualizado"
+        `Colaborador ${mode === formMode.create ? "criado" : "atualizado"
         } com sucesso!`
       );
       fetchEmployees();
       setEmployeeModalVisible(false);
     } catch (_error) {
       showError(
-        `Erro ao ${
-          mode === formMode.create ? "criar" : "atualizar"
+        `Erro ao ${mode === formMode.create ? "criar" : "atualizar"
         } colaborador.`
       );
     } finally {
@@ -159,7 +157,7 @@ const EmployeesScreen = () => {
         )}
 
         <PressableButton
-          className="absolute bottom-8 right-8"
+          className="absolute bottom-20 right-7"
           onPress={() => {
             setMode(formMode.create);
             reset({
