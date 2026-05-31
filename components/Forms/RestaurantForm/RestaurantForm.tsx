@@ -9,7 +9,11 @@ import { useAuthStore } from "@/src/store/authStore";
 import NetInfo from "@react-native-community/netinfo";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { View, Text } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import UploadRepository from "@/src/repository/uploadRepository";
+import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from "@/src/constants/colors";
 
 const RestaurantForm = () => {
   const { user, updateUserRestaurant } = useAuthStore();
@@ -20,10 +24,14 @@ const RestaurantForm = () => {
     control,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { isDirty },
   } = useForm<IUpdateRestaurantDTO>({
     mode: "onBlur",
   });
+
+  const profileImage = watch("profileImage");
 
   useEffect(() => {
     async function hydrate() {
@@ -78,6 +86,30 @@ const RestaurantForm = () => {
     hydrate();
   }, [user, reset]);
 
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        showError("Precisamos da permissão de acesso à galeria para selecionar a foto.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets?.[0]?.uri) {
+        setValue("profileImage", result.assets[0].uri, { shouldDirty: true });
+      }
+    } catch (err) {
+      console.error("[ImagePicker] Erro ao selecionar:", err);
+      showError("Erro ao acessar a galeria.");
+    }
+  };
+
   async function onSubmit(data: IUpdateRestaurantDTO) {
     try {
       if (!isDirty) {
@@ -105,7 +137,7 @@ const RestaurantForm = () => {
           dirty: 1,
         });
 
-        updateUserRestaurant(data);
+        updateUserRestaurant({ ...data, image: data.profileImage } as any);
         showSuccess("Alterações salvas offline.");
         return;
       }
@@ -115,24 +147,40 @@ const RestaurantForm = () => {
         return;
       }
 
+      let finalProfileImageUrl = data.profileImage;
+      if (data.profileImage && !data.profileImage.startsWith("http")) {
+        const uploadRes = await UploadRepository.uploadImage(data.profileImage, "perfis");
+        if (uploadRes.data?.success && uploadRes.data?.data?.url) {
+          finalProfileImageUrl = uploadRes.data.data.url;
+        } else {
+          throw new Error("Falha ao subir foto de perfil");
+        }
+      }
+
+      const updatedData = {
+        ...data,
+        profileImage: finalProfileImageUrl,
+      };
+
       const response = await RestaurantRepository.updateRestaurant(
-        user?.restaurant?.id,
-        data
+        user.restaurant.id,
+        updatedData
       );
 
       if (response.status === 200) {
-        updateUserRestaurant(data);
+        updateUserRestaurant({ ...updatedData, image: finalProfileImageUrl } as any);
         LocalProfileRepository.upsertProfile({
           userId,
-          name: data.name,
+          name: updatedData.name,
           email: user?.email,
-          photo: data.profileImage,
-          data,
+          photo: finalProfileImageUrl,
+          data: updatedData,
           dirty: 0,
         });
         showSuccess("Restaurante atualizado!");
       }
     } catch (_error) {
+      console.error("[RestaurantForm] Erro ao salvar:", _error);
       showError("Erro ao atualizar.");
     } finally {
       setLoading(false);
@@ -141,6 +189,33 @@ const RestaurantForm = () => {
 
   return (
     <View className="px-0 pb-10">
+      {/* Seção: Foto de Perfil */}
+      <View className="items-center mb-8">
+        <TouchableOpacity
+          onPress={pickImage}
+          disabled={loading}
+          activeOpacity={0.8}
+          className="relative"
+        >
+          <View className="w-28 h-28 rounded-full border-4 border-gray-100 bg-gray-50 shadow-md items-center justify-center overflow-hidden">
+            {profileImage ? (
+              <Image
+                source={{ uri: profileImage }}
+                className="w-full h-full"
+                resizeMode="cover"
+              />
+            ) : (
+              <Ionicons name="restaurant-outline" size={40} color="#9CA3AF" />
+            )}
+          </View>
+          {/* Overlay da câmera */}
+          <View className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full items-center justify-center border-2 border-white shadow-md">
+            <Ionicons name="camera" size={16} color="white" />
+          </View>
+        </TouchableOpacity>
+        <Text className="text-gray-500 text-xs mt-2 font-medium">Toque para alterar a foto do restaurante</Text>
+      </View>
+
       {/* Seção: Informações Básicas */}
       <View className="mb-6">
         <Text className="text-gray-900 font-bold text-lg mb-4 ml-1">Informações do Restaurante</Text>
