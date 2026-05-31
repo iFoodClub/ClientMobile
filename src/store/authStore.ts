@@ -116,6 +116,7 @@ export const useAuthStore = create<IAuthStore>((set, _get) => ({
       return {
         user: {
           ...state.user,
+          profileImage: data.profileImage ?? state.user.profileImage,
           company: { ...state.user.company, ...data },
         },
       };
@@ -128,6 +129,7 @@ export const useAuthStore = create<IAuthStore>((set, _get) => ({
       return {
         user: {
           ...state.user,
+          profileImage: data.profileImage ?? state.user.profileImage,
           employee: { ...state.user.employee, ...data },
         },
       };

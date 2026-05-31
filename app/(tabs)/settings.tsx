@@ -35,8 +35,8 @@ const SettingsScreen = () => {
 
   const getProfileImage = () => {
     if (isRestaurant && user?.restaurant) return user.restaurant.image;
-    if (isCompany && user?.company) return user.company.profileImage;
-    if (isEmployee && user?.employee) return user.employee.profileImage;
+    if (isCompany && user?.company) return user.company.profileImage || user.profileImage || "";
+    if (isEmployee && user?.employee) return user.employee.profileImage || user.profileImage || "";
     return user?.profileImage || "";
   };
 

@@ -2,7 +2,7 @@ import CustomInput from "@/components/CustomInput/CustomInput";
 import { IEmployeeDTO } from "@/src/interfaces/dtos";
 import { formMode } from "@/src/interfaces/interfaces";
 import React from "react";
-import { Control } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -10,7 +10,12 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   View,
+  Image,
+  TouchableOpacity,
+  Text,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 
 type EmployeeFormProps = {
   control: Control<IEmployeeDTO>;
@@ -32,6 +37,69 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
           keyboardShouldPersistTaps="handled"
         >
           <View className="">
+            {/* Foto de Perfil do Colaborador */}
+            <Controller
+              control={control}
+              name="profileImage"
+              rules={{
+                required: { value: true, message: "A foto de perfil é obrigatória" },
+              }}
+              render={({ field: { value, onChange }, fieldState: { error } }) => {
+                const pickImage = async () => {
+                  try {
+                    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                    if (status !== "granted") {
+                      alert("Precisamos da permissão de acesso à galeria para selecionar a foto.");
+                      return;
+                    }
+
+                    const result = await ImagePicker.launchImageLibraryAsync({
+                      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                      allowsEditing: true,
+                      aspect: [1, 1],
+                      quality: 0.8,
+                    });
+
+                    if (!result.canceled && result.assets?.[0]?.uri) {
+                      onChange(result.assets[0].uri);
+                    }
+                  } catch (err) {
+                    console.error("[ImagePicker] Erro ao selecionar:", err);
+                  }
+                };
+
+                return (
+                  <View className="items-center mb-6">
+                    <TouchableOpacity
+                      onPress={pickImage}
+                      activeOpacity={0.8}
+                      className="relative"
+                    >
+                      <View className="w-24 h-24 rounded-full border-4 border-gray-100 bg-gray-50 shadow-md items-center justify-center overflow-hidden">
+                        {value ? (
+                          <Image
+                            source={{ uri: value }}
+                            className="w-full h-full"
+                            resizeMode="cover"
+                          />
+                        ) : (
+                          <Ionicons name="person-outline" size={36} color="#9CA3AF" />
+                        )}
+                      </View>
+                      {/* Badge da câmera */}
+                      <View className="absolute bottom-0 right-0 w-7 h-7 bg-primary rounded-full items-center justify-center border-2 border-white shadow-md">
+                        <Ionicons name="camera" size={14} color="white" />
+                      </View>
+                    </TouchableOpacity>
+                    <Text className="text-gray-500 text-xs mt-2 font-medium">Toque para alterar a foto do funcionário</Text>
+                    {error && (
+                      <Text className="text-red-500 text-xs mt-1 font-semibold">{error.message}</Text>
+                    )}
+                  </View>
+                );
+              }}
+            />
+
             <CustomInput
               control={control}
               name="name"
@@ -102,16 +170,6 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
             )}
 
             <CustomInput
-              placeholder="Insira a imagem"
-              control={control}
-              name="profileImage"
-              label="Imagem do perfil"
-              rules={{
-                required: { value: true, message: "O nome é obrigatório" },
-              }}
-            />
-
-            <CustomInput
               placeholder="Digite o CPF"
               control={control}
               name="cpf"
@@ -119,7 +177,7 @@ const EmployeeForm = ({ control, mode }: EmployeeFormProps) => {
               maxLength={11}
               keyboardType="numeric"
               rules={{
-                required: { value: true, message: "O nome é obrigatório" },
+                required: { value: true, message: "O CPF é obrigatório" },
               }}
             />
           </View>
