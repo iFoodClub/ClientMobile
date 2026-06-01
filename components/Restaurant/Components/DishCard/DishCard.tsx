@@ -16,7 +16,7 @@ type DishCardProps = {
 
 const DishCard = ({ dish, onLongPress }: DishCardProps) => {
   return (
-    <Pressable onLongPress={onLongPress} className="flex-1 mb-6">
+    <Pressable onLongPress={onLongPress} className="w-[30%] mb-6">
       <View className="flex flex-col">
         {/* Imagem do Prato - Seguindo o estilo do Skeleton */}
         <Image

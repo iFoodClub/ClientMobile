@@ -6,13 +6,15 @@ import { useAuthStore } from "@/src/store/authStore";
 import { Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Image, ScrollView, Text, View, TouchableOpacity, TextInput } from "react-native";
+import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CModal from "@/components/ui/Modal/CModal";
 import RestaurantRepository from "@/src/repository/restaurantRepository";
 import CompanyRepository from "@/src/repository/companyRepository";
 import EmployeeRepository from "@/src/repository/employeeRepository";
 import { useToastAll } from "@/src/components/Toast";
+import * as ImagePicker from "expo-image-picker";
+import UploadRepository from "@/src/repository/uploadRepository";
 
 const SettingsScreen = () => {
   const {
@@ -33,8 +35,8 @@ const SettingsScreen = () => {
 
   const getProfileImage = () => {
     if (isRestaurant && user?.restaurant) return user.restaurant.image;
-    if (isCompany && user?.company) return user.company.profileImage;
-    if (isEmployee && user?.employee) return user.employee.profileImage;
+    if (isCompany && user?.company) return user.company.profileImage || user.profileImage || "";
+    if (isEmployee && user?.employee) return user.employee.profileImage || user.profileImage || "";
     return user?.profileImage || "";
   };
 
@@ -51,39 +53,100 @@ const SettingsScreen = () => {
     });
   };
 
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        showError("Precisamos da permissão de acesso à galeria para selecionar a foto.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets?.[0]?.uri) {
+        setNewImageUrl(result.assets[0].uri);
+      }
+    } catch (err) {
+      console.error("[ImagePicker] Erro ao selecionar:", err);
+      showError("Erro ao acessar a galeria.");
+    }
+  };
+
   const handleUpdateImage = async () => {
     if (!newImageUrl) return;
     
     try {
       setLoading(true);
 
+      // Se a imagem for local, faz o upload para a pasta 'perfis' na Azure primeiro
+      let finalImageUrl = newImageUrl;
+      if (newImageUrl && !newImageUrl.startsWith("http")) {
+        const uploadRes = await UploadRepository.uploadImage(newImageUrl, "perfis");
+        if (uploadRes.data?.success && uploadRes.data?.data?.url) {
+          finalImageUrl = uploadRes.data.data.url;
+        } else {
+          throw new Error("Falha ao subir foto");
+        }
+      }
+
       if (isRestaurant && user?.restaurant?.id) {
         const response = await RestaurantRepository.updateRestaurant(
           user.restaurant.id,
-          { ...user.restaurant, image: newImageUrl } as any
+          {
+            userId: user.id,
+            name: user.restaurant.name,
+            cnpj: user.restaurant.cnpj,
+            cep: user.restaurant.cep,
+            rua: user.restaurant.rua,
+            number: user.restaurant.number,
+            profileImage: finalImageUrl,
+            openingTime: user.restaurant.openingTime,
+            closingTime: user.restaurant.closingTime,
+          }
         );
         if (response.status === 200) {
-          updateUserRestaurant({ image: newImageUrl } as any);
+          updateUserRestaurant({ image: finalImageUrl } as any);
           showSuccess("Foto atualizada!");
           setModalVisible(false);
         }
       } else if (isCompany && user?.company?.id) {
         const response = await CompanyRepository.updateCompany(
           user.company.id,
-          { ...user.company, profileImage: newImageUrl } as any
+          {
+            userId: user.id,
+            name: user.company.name,
+            cnpj: user.company.cnpj,
+            cep: user.company.cep,
+            number: user.company.number,
+            restaurantId: user.company.restaurantId,
+            profileImage: finalImageUrl,
+          } as any
         );
         if (response.status === 200) {
-          updateUserCompany({ profileImage: newImageUrl } as any);
+          updateUserCompany({ profileImage: finalImageUrl } as any);
           showSuccess("Foto atualizada!");
           setModalVisible(false);
         }
       } else if (isEmployee && user?.employee?.id) {
         const response = await EmployeeRepository.updateEmployee(
           user.employee.id,
-          { ...user.employee, profileImage: newImageUrl } as any
+          {
+            userId: user.id,
+            companyId: user.employee.companyId,
+            name: user.employee.name || user.name,
+            cpf: user.employee.cpf,
+            birthDate: user.employee.birthDate,
+            vacation: user.employee.vacation,
+            profileImage: finalImageUrl,
+          } as any
         );
         if (response.status === 200) {
-          updateUserEmployee({ profileImage: newImageUrl } as any);
+          updateUserEmployee({ profileImage: finalImageUrl } as any);
           showSuccess("Foto atualizada!");
           setModalVisible(false);
         }
@@ -116,7 +179,7 @@ const SettingsScreen = () => {
       ),
       label: "Meus Favoritos",
       onPress: () => {
-        router.push("/favorites");
+        router.push("/favorites" as any);
       },
     }] : []),
     {
@@ -207,21 +270,42 @@ const SettingsScreen = () => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         title="Alterar Foto de Perfil"
-        subtitle="Informe a URL da nova imagem"
+        subtitle="Selecione uma foto da sua galeria"
         onClose={() => setModalVisible(false)}
         onConfirm={handleUpdateImage}
         confirmText="Salvar Foto"
         loading={loading}
       >
         <View className="mt-2">
-          <Text className="text-xs font-semibold text-gray-600 mb-2 ml-1">URL da Imagem</Text>
-          <TextInput 
-            className="w-full h-12 bg-gray-50 border border-gray-100 rounded-xl px-4 text-sm text-gray-700"
-            placeholder="https://link-da-imagem.com/foto.jpg"
-            value={newImageUrl}
-            onChangeText={setNewImageUrl}
-            autoCapitalize="none"
-          />
+          <Text className="text-sm font-semibold text-gray-600 mb-2 ml-1">Foto de Perfil</Text>
+          <TouchableOpacity
+            onPress={pickImage}
+            disabled={loading}
+            activeOpacity={0.7}
+            className="w-full h-40 bg-gray-50 border border-dashed border-gray-300 rounded-2xl items-center justify-center mb-4 overflow-hidden relative"
+          >
+            {newImageUrl ? (
+              <>
+                <Image
+                  source={{ uri: newImageUrl }}
+                  className="w-full h-full"
+                  resizeMode="cover"
+                />
+                <View className="absolute inset-0 bg-black/40 items-center justify-center">
+                  <View className="flex-row items-center bg-black/50 px-3 py-1.5 rounded-full">
+                    <Ionicons name="camera-outline" size={16} color="white" />
+                    <Text className="text-white text-xs font-semibold ml-1.5">Trocar imagem</Text>
+                  </View>
+                </View>
+              </>
+            ) : (
+              <View className="items-center px-4">
+                <Ionicons name="image-outline" size={36} color="#9CA3AF" />
+                <Text className="text-gray-500 font-semibold text-sm mt-2">Escolher foto de perfil</Text>
+                <Text className="text-gray-400 text-xs text-center mt-1">JPEG, PNG ou WebP até 5MB</Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </CModal>
     </View>

@@ -13,8 +13,9 @@ import { useAuthStore } from "@/src/store/authStore";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FlatList, Pressable, View } from "react-native";
+import { FlatList, Pressable, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import UploadRepository from "@/src/repository/uploadRepository";
 
 const EmployeesScreen = () => {
   const [employeeModalVisible, setEmployeeModalVisible] = useState(false);
@@ -52,24 +53,37 @@ const EmployeesScreen = () => {
 
   async function handleSubmitForm(data: IEmployeeDTO) {
     if (!user?.company?.id) return;
-    data = {
-      ...data,
-      userType: UserType.employee,
-      company: { id: user.company.id },
-    };
 
     try {
       setCreateEmployeeLoading(true);
 
+      // Se a imagem for um caminho local, realiza o upload primeiro
+      let finalProfileImageUrl = data.profileImage;
+      if (data.profileImage && !data.profileImage.startsWith("http")) {
+        const uploadRes = await UploadRepository.uploadImage(data.profileImage, "perfis");
+        if (uploadRes.data?.success && uploadRes.data?.data?.url) {
+          finalProfileImageUrl = uploadRes.data.data.url;
+        } else {
+          throw new Error("Falha ao subir foto de perfil");
+        }
+      }
+
+      const submissionData: IEmployeeDTO = {
+        ...data,
+        profileImage: finalProfileImageUrl,
+        userType: UserType.employee,
+        company: { id: user.company.id },
+      };
+
       if (mode === formMode.create) {
-        await createEmployee(data);
+        await createEmployee(submissionData);
       } else {
         if (!selectedEmployeeId) return;
         const updateEmployeeData: Partial<IEmployeeSimple> = {
-          name: data.name,
-          profileImage: data.profileImage,
-          birthDate: data.employee.birthDate,
-          cpf: data.cpf,
+          name: submissionData.name,
+          profileImage: submissionData.profileImage,
+          birthDate: submissionData.employee.birthDate,
+          cpf: submissionData.cpf,
           companyId: user.company.id,
           userId: selectedEmployee?.userId,
           vacation: false,
@@ -83,6 +97,7 @@ const EmployeesScreen = () => {
       fetchEmployees();
       setEmployeeModalVisible(false);
     } catch (_error) {
+      console.error("[EmployeesScreen] Erro ao submeter:", _error);
       showError(
         `Erro ao ${mode === formMode.create ? "criar" : "atualizar"
         } colaborador.`
@@ -128,6 +143,13 @@ const EmployeesScreen = () => {
           title="Funcionários"
           subtitle="Gerencie seus colaboradores"
         />
+        {employees && employees.length > 0 && (
+          <View className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex-row items-center">
+            <Text className="text-gray-400 text-xs italic">
+              💡 Dica: Toque e segure em um colaborador para ver as opções (Editar/Excluir).
+            </Text>
+          </View>
+        )}
         {loading && (
           <View className="mt-4 space-y-4 gap-y-4">
             {Array.from({ length: 5 }).map((_, index) => (

@@ -5,7 +5,7 @@
 
 export async function generateGeminiResponse(prompt: string, contextData?: any): Promise<string> {
   const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error("Gemini API Key não configurada no .env (EXPO_PUBLIC_GEMINI_API_KEY).");
   }
@@ -13,21 +13,14 @@ export async function generateGeminiResponse(prompt: string, contextData?: any):
   // Lista resiliente de modelos prioritários (do mais novo ao estável)
   // Otimizada com base nos limites de cota reais do usuário (ex: Gemini 3.1 Flash Lite tem 500 RPD)
   const models = [
-    "gemini-3.5-flash",
-    "gemini-3.5-flash-latest",
-    "gemini-3.1-flash-lite",
-    "gemini-3-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-latest",
-    "gemini-pro"
+    "gemini-3.1-flash-lite"
   ];
 
   let lastError: any = null;
 
   for (const model of models) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       let fullPrompt = "";
 
@@ -53,7 +46,7 @@ INSTRUÇÕES IMPORTANTES:
 1. Responda de forma extremamente concisa, simpática e prestativa em português. Vá direto ao ponto!
 2. Esclareça a dúvida dele de maneira muito breve e direta no contexto do iFoodClub.
 3. Se ele estiver te cumprimentando, responda com uma saudação rápida e liste de forma muito sintética as coisas que você pode fazer (ex: ver restaurantes, pratos do dia, pedidos ou equipe).
-4. Evite textos longos, parágrafos grandes ou explicações demoradas. Use apenas markdown super simplificado (listas rápidas e negrito).`;
+4. Evite textos longos, parágrafos grandes ou explicações demoradas. Use apenas markdown super simplificado (listas rápidas e negrito), mas continue sendo cordial e educativo com pessoas de baixo entendimento em tecnologia`;
       }
 
       console.log(`🤖 [Chatbot Gemini] Tentando conectar via modelo: ${model}...`);
@@ -79,7 +72,7 @@ INSTRUÇÕES IMPORTANTES:
 
       const result = await response.json();
       const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-      
+
       if (!text) {
         throw new Error("Resposta do Gemini vazia.");
       }
