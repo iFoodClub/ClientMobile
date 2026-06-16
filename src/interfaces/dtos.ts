@@ -14,8 +14,11 @@ export interface IUpdateRestaurantDTO {
   name: string;
   cnpj: string;
   cep: string;
+  rua?: string;
   number: string;
   profileImage: string;
+  openingTime?: string;
+  closingTime?: string;
 }
 
 export interface IEmployeeDTO {

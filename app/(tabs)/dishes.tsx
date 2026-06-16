@@ -2,7 +2,10 @@ import PressableButton from "@/components/Button/PressableButton";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import DishCard from "@/components/Restaurant/Components/DishCard/DishCard";
 import DishCardSkeleton from "@/components/Restaurant/Components/DishCard/DishCardSkeleton";
+import { VoiceCommandButton } from "@/src/components/VoiceCommand/VoiceCommandButton";
+import { VoiceDishModal } from "@/src/components/VoiceCommand/VoiceDishModal";
 import { useAuthStore } from "@/src/store/authStore";
+import { voiceTabHref } from "@/src/utils/voiceNavigation";
 import React, { useState } from "react";
 
 import DishForm from "@/components/Forms/DishForm/DishForm";
@@ -14,8 +17,10 @@ import { useDishes } from "@/src/hooks/useDishes";
 import { IDishesResponse } from "@/src/interfaces/apiResponses";
 import { ICreateDishDTO } from "@/src/interfaces/interfaces";
 import DishRepository from "@/src/repository/dishRepository";
+import UploadRepository from "@/src/repository/uploadRepository";
 import { formatPriceToNumber } from "@/src/utils/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { router } from "expo-router";
 import { useForm } from "react-hook-form";
 import {
   FlatList,
@@ -27,9 +32,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const DishesScreen = () => {
-  const { user } = useAuthStore();
-  const { dishes, loading, fetchDishes } = useDishes(user?.restaurant?.id);
+  const { user, isRestaurant, isEmployee } = useAuthStore();
+  const employeeRestaurantId = user?.employee?.company?.selectedRestaurantId;
+  const ownerRestaurantId = user?.restaurant?.id;
+  const activeRestaurantId = isEmployee
+    ? employeeRestaurantId
+    : ownerRestaurantId;
+
+  const { dishes, loading, fetchDishes } = useDishes(activeRestaurantId);
   const [modalVisible, setModalVisible] = useState(false);
+  const [voiceDishModalOpen, setVoiceDishModalOpen] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const { showSuccess, showError } = useToastAll();
@@ -58,7 +70,8 @@ const DishesScreen = () => {
     control,
     handleSubmit,
     reset,
-    formState: { isDirty },
+    setValue,
+    watch,
   } = useForm<ICreateDishDTO>({
     mode: "onBlur",
   });
@@ -82,21 +95,18 @@ const DishesScreen = () => {
   }
 
   async function handleDelete() {
-    setDeleteLoading(true);
     if (!selectedDish?.restaurantId) return;
     try {
+      setDeleteLoading(true);
       await DishRepository.deleteDish(selectedDish.id);
       await fetchDishes();
       showSuccess("Prato removido com sucesso!");
-      setDeleteLoading(false);
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       showError("Erro ao remover prato.");
     } finally {
       setDeleteLoading(false);
       setRemoveModalVisible(false);
       setSelectedDish(null);
-      fetchDishes();
     }
   }
 
@@ -104,8 +114,20 @@ const DishesScreen = () => {
     try {
       setCreateLoading(true);
       if (!user?.restaurant?.id) return;
+
+      let finalImageUrl = data.image;
+      if (data.image && !data.image.startsWith("http")) {
+        const uploadRes = await UploadRepository.uploadImage(data.image, "pratos");
+        if (uploadRes.data?.success && uploadRes.data?.data?.url) {
+          finalImageUrl = uploadRes.data.data.url;
+        } else {
+          throw new Error("Erro no upload da imagem");
+        }
+      }
+
       data = {
         ...data,
+        image: finalImageUrl,
         price: formatPriceToNumber(data.price),
         restaurantId: user?.restaurant?.id,
       };
@@ -114,8 +136,7 @@ const DishesScreen = () => {
       setModalVisible(false);
       await fetchDishes();
       reset();
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       showError("Erro ao criar prato.");
     } finally {
       setCreateLoading(false);
@@ -126,8 +147,20 @@ const DishesScreen = () => {
     try {
       setCreateLoading(true);
       if (!selectedDish?.id) return;
+
+      let finalImageUrl = data.image;
+      if (data.image && !data.image.startsWith("http")) {
+        const uploadRes = await UploadRepository.uploadImage(data.image, "pratos");
+        if (uploadRes.data?.success && uploadRes.data?.data?.url) {
+          finalImageUrl = uploadRes.data.data.url;
+        } else {
+          throw new Error("Erro no upload da imagem");
+        }
+      }
+
       data = {
         ...data,
+        image: finalImageUrl,
         price: formatPriceToNumber(data.price),
       };
       await DishRepository.updateDish(data, selectedDish.id);
@@ -135,8 +168,7 @@ const DishesScreen = () => {
       setModalVisible(false);
       await fetchDishes();
       reset();
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       showError("Erro ao atualizar prato.");
     } finally {
       setCreateLoading(false);
@@ -144,6 +176,10 @@ const DishesScreen = () => {
   }
 
   async function handleSubmitDishForm(data: ICreateDishDTO) {
+    if (!data.image) {
+      showError("A foto do prato é obrigatória.");
+      return;
+    }
     if (selectedDish) {
       await handleEdit(data);
     } else {
@@ -156,11 +192,15 @@ const DishesScreen = () => {
       <SafeAreaView className="flex-1 bg-white p-4">
         <PageHeader
           title="Pratos"
-          subtitle="Gerencie os pratos do seu restaurante"
+          subtitle={
+            isEmployee
+              ? "Cardápio do restaurante da semana"
+              : "Gerencie os pratos do seu restaurante"
+          }
         />
-        <View className="flex-row flex-wrap gap-x-2 mt-4">
+        <View className="flex-row flex-wrap gap-x-3 mt-4">
           {Array.from({ length: 9 }).map((_, index) => (
-            <View key={index} className="w-[31%] mb-6">
+            <View key={index} className="w-[30%] mb-6">
               <DishCardSkeleton />
             </View>
           ))}
@@ -173,20 +213,36 @@ const DishesScreen = () => {
     <SafeAreaView className="flex-1 bg-white relative h-full ">
       <PageHeader
         title="Pratos"
-        subtitle="Gerencie os pratos do seu restaurante"
+        subtitle={
+          isEmployee
+            ? "Cardápio do restaurante da semana"
+            : "Gerencie os pratos do seu restaurante"
+        }
       />
+      {isRestaurant && dishes && dishes.length > 0 && (
+        <View className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex-row items-center">
+          <Text className="text-gray-400 text-xs italic">
+            💡 Dica: Toque e segure em um prato para ver as opções (Editar/Excluir).
+          </Text>
+        </View>
+      )}
       <FlatList
+        style={{ flex: 1 }}
         data={dishes || []}
         renderItem={({ item }) => (
           <DishCard
             dish={item}
-            onLongPress={(event) => handleLongPress(item, event)}
+            onLongPress={
+              isRestaurant
+                ? (event) => handleLongPress(item, event)
+                : () => { }
+            }
           />
         )}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={4}
+        numColumns={3}
         columnWrapperStyle={{
-          gap: 16,
+          gap: 12,
         }}
         ItemSeparatorComponent={() => <View className="h-4" />}
         contentContainerStyle={{
@@ -200,14 +256,14 @@ const DishesScreen = () => {
         )}
       />
 
-      {selectedDish && (
+      {isRestaurant && selectedDish && (
         <Pressable
           className="absolute inset-0 z-5"
           onPress={() => setSelectedDish(null)}
         />
       )}
 
-      {selectedDish && menuPosition && (
+      {isRestaurant && selectedDish && menuPosition && (
         <ActionMenu
           position={menuPosition}
           onEdit={handleEditClick}
@@ -231,19 +287,44 @@ const DishesScreen = () => {
         </Text>
       </ModalCustom>
 
-      <PressableButton
-        className="absolute bottom-8 right-8"
-        onPress={() => {
-          setModalVisible(true);
-          reset({
-            name: undefined,
-            description: undefined,
-            price: undefined,
-            image: undefined,
-          });
-        }}
-        icon={<AntDesign name="plus" size={24} color="white" />}
-      />
+      {isRestaurant && (
+        <PressableButton
+          className="absolute bottom-20 right-7"
+          onPress={() => {
+            setModalVisible(true);
+            reset({
+              name: undefined,
+              description: undefined,
+              price: undefined,
+              image: undefined,
+            });
+          }}
+          icon={<AntDesign name="plus" size={24} color="white" />}
+        />
+      )}
+
+      {isEmployee && (
+        <>
+          <VoiceCommandButton
+            mode="employee"
+            enabled={!loading}
+            onMatch={(m) => {
+              if (m.type === "PEDIDO_DO_DIA") {
+                setVoiceDishModalOpen(true);
+                return;
+              }
+              if (m.type === "NAVIGATE_TAB") {
+                router.push(voiceTabHref(m.tab));
+              }
+            }}
+          />
+          <VoiceDishModal
+            visible={voiceDishModalOpen}
+            onClose={() => setVoiceDishModalOpen(false)}
+            restaurantId={employeeRestaurantId}
+          />
+        </>
+      )}
       <CModal
         confirmText={selectedDish ? "Atualizar" : "Criar"}
         onClose={handleCancel}
@@ -253,7 +334,7 @@ const DishesScreen = () => {
         setModalVisible={setModalVisible}
         title={selectedDish ? "Editar prato" : "Novo prato"}
       >
-        <DishForm control={control} />
+        <DishForm control={control} setValue={setValue} watch={watch} />
       </CModal>
     </SafeAreaView>
   );

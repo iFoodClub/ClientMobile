@@ -1,4 +1,5 @@
 import {
+  IRestaurantDetailsResponse,
   IRestaurantOrdersResponse,
   IRestaurantResponse,
 } from "../interfaces/apiResponses";
@@ -11,7 +12,7 @@ class RestaurantRepository extends RepositoryBase {
   }
 
   async fetchSelectedRestaurant(id: number) {
-    return await this.api.get<IRestaurantResponse>(`/restaurant/${id}`);
+    return await this.api.get<IRestaurantDetailsResponse>(`/restaurant/${id}`);
   }
 
   async updateRestaurant(
@@ -27,6 +28,18 @@ class RestaurantRepository extends RepositoryBase {
     return await this.api.get<IRestaurantOrdersResponse[]>(
       `/restaurant/${restaurantId}/orders`
     );
+  }
+
+  async toggleFavorite(userId: number, restaurantId: number, userType: string) {
+    return await this.api.post<{ favorited: boolean }>("/Restaurant/favorites/toggle", {
+      userId,
+      restaurantId,
+      userType,
+    });
+  }
+
+  async fetchFavorites(userId: number) {
+    return await this.api.get<IRestaurantResponse[]>(`/Restaurant/favorites/${userId}`);
   }
 }
 

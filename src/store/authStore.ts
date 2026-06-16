@@ -16,6 +16,8 @@ type IAuthStore = {
   reset: () => void;
   updateSelectedRestaurant: (id: number) => void;
   updateUserRestaurant: (data: IUpdateRestaurantDTO) => void;
+  updateUserCompany: (data: any) => void;
+  updateUserEmployee: (data: any) => void;
   loginOffline: (perfilLocal: any) => void;
 
   user: IUserDetailsResponse | null;
@@ -24,7 +26,7 @@ type IAuthStore = {
   isEmployee: boolean;
 };
 
-export const useAuthStore = create<IAuthStore>((set, get) => ({
+export const useAuthStore = create<IAuthStore>((set, _get) => ({
   loading: false,
   token: "",
   isRestaurant: false,
@@ -90,7 +92,7 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
       return {
         user: {
           ...state.user,
-          company: { ...state.user.company, restaurantId: id },
+          company: { ...state.user.company, selectedRestaurantId: id },
         },
       };
     });
@@ -103,6 +105,32 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
         user: {
           ...state.user,
           restaurant: { ...state.user.restaurant, ...data },
+        },
+      };
+    });
+  },
+
+  updateUserCompany: (data: any) => {
+    set((state) => {
+      if (!state.user?.company) return state;
+      return {
+        user: {
+          ...state.user,
+          profileImage: data.profileImage ?? state.user.profileImage,
+          company: { ...state.user.company, ...data },
+        },
+      };
+    });
+  },
+
+  updateUserEmployee: (data: any) => {
+    set((state) => {
+      if (!state.user?.employee) return state;
+      return {
+        user: {
+          ...state.user,
+          profileImage: data.profileImage ?? state.user.profileImage,
+          employee: { ...state.user.employee, ...data },
         },
       };
     });
@@ -122,13 +150,25 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
         user: {
           id: perfilLocal.userId,
           email: perfilLocal.email,
+          name: perfilLocal.name || "",
+          token: "",
+          profileImage: perfilLocal.photo || "",
+          userType: UserType.restaurant,
           restaurant: {
             id: Number(perfilLocal.userId),
+            userId: Number(perfilLocal.userId),
+            cnpj: "",
+            cep: "",
+            rua: "",
+            cidade: "",
+            estado: "",
+            number: "",
+            complemento: "",
             ...perfilLocal.data,
             name: perfilLocal.name,
             image: perfilLocal.photo,
           },
-        },
+        } as IUserDetailsResponse,
         isRestaurant: true,
         isEmployee: false,
         isCompany: false,

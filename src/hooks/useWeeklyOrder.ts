@@ -1,15 +1,7 @@
 import { useState } from "react";
-import { DayOfWeek } from "../interfaces/interfaces";
 
-type Props = {};
-
-const useWeeklyOrder = (props: Props) => {
-  const [dayOrder, setDayOrder] = useState(0);
-
-  function getOrderOfDay(day: DayOfWeek) {
-    try {
-    } catch (error) {}
-  }
+export const useWeeklyOrder = () => {
+  const [dayOrder] = useState(0);
 
   return { dayOrder };
 };

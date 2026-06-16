@@ -8,55 +8,62 @@ const RestaurantCardSkeleton = () => {
 
   return (
     <Skeleton.Group show={true}>
-      <View className="flex flex-row items-center gap-x-4 w-full px-2">
-        {/* Usamos as novas cores em todos os skeletons */}
+      <View className="flex flex-row items-center py-4 border-b border-gray-50 w-full">
+        {/* Imagem do Restaurante - h-20 w-20 rounded-2xl */}
         <Skeleton
           colors={skeletonColors}
-          radius="round"
+          radius={16}
           height={80}
-          transition={{ type: "timing", duration: 50 }}
           width={80}
+          transition={{ type: "timing", duration: 1500 }}
         />
 
-        <View className="flex flex-col gap-y-2">
+        <View className="flex-1 ml-4 justify-center gap-y-2">
+          {/* Nome do Restaurante - text-base mb-1 */}
           <Skeleton
             colors={skeletonColors}
-            radius="round"
-            height={25}
-            transition={{ type: "timing", duration: 50 }}
-            width={200}
+            radius={4}
+            height={18}
+            width={"70%"}
+            transition={{ type: "timing", duration: 1500 }}
           />
-          <View className="flex flex-row gap-x-2">
+          
+          {/* Info: Nota + Categoria - text-xs */}
+          <View className="flex-row items-center gap-x-2">
             <Skeleton
               colors={skeletonColors}
-              radius="round"
-              height={25}
-              transition={{ type: "timing", duration: 50 }}
-              width={60}
+              radius={4}
+              height={12}
+              width={30}
+              transition={{ type: "timing", duration: 1500 }}
             />
             <Skeleton
               colors={skeletonColors}
-              radius="round"
-              height={25}
-              transition={{ type: "timing", duration: 50 }}
-              width={90}
+              radius={4}
+              height={12}
+              width={120}
+              transition={{ type: "timing", duration: 1500 }}
             />
           </View>
+
+          {/* Preço - text-xs */}
           <Skeleton
             colors={skeletonColors}
-            radius="round"
-            height={25}
-            transition={{ type: "timing", duration: 50 }}
-            width={190}
+            radius={4}
+            height={12}
+            width={"60%"}
+            transition={{ type: "timing", duration: 1500 }}
           />
         </View>
-        <View className="ml-auto">
+
+        {/* Ícone de Favorito */}
+        <View className="p-2">
           <Skeleton
             colors={skeletonColors}
-            radius="round"
-            height={30}
-            width={30}
-            transition={{ type: "timing", duration: 50 }}
+            radius={11}
+            height={22}
+            width={22}
+            transition={{ type: "timing", duration: 1500 }}
           />
         </View>
       </View>

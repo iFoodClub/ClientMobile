@@ -16,7 +16,29 @@ interface CustomInputProps<T extends FieldValues> extends TextInputProps {
   rules?: RegisterOptions<T, Path<T>>;
   icon?: React.ReactNode;
   maxLength?: number;
+  maskType?: "currency";
 }
+
+const formatCurrency = (text: string) => {
+  const cleanText = text.replace(/\D/g, "");
+  if (!cleanText) return "";
+  const cents = parseInt(cleanText, 10);
+  const value = cents / 100;
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+};
+
+const getDisplayValue = (val: any, maskType?: "currency") => {
+  if (maskType === "currency" && val !== undefined && val !== null && val !== "") {
+    if (typeof val === "string" && val.includes("R$")) {
+      return val;
+    }
+    return formatCurrency(val.toString());
+  }
+  return val;
+};
 
 const CustomInput = <T extends FieldValues>({
   control,
@@ -26,6 +48,7 @@ const CustomInput = <T extends FieldValues>({
   rules = {},
   icon,
   maxLength,
+  maskType,
   ...textInputProps
 }: CustomInputProps<T>) => {
   return (
@@ -46,7 +69,7 @@ const CustomInput = <T extends FieldValues>({
         }) => (
           <>
             <View
-              className={`flex-row items-center rounded-2xl px-4 py-1 border ${
+              className={`flex-row items-center rounded-xl px-4 py-0.5 border ${
                 error ? "border-red-500 bg-red-50" : "border-gray-100 bg-gray-50"
               }`}
             >
@@ -54,18 +77,25 @@ const CustomInput = <T extends FieldValues>({
               <TextInput
                 maxLength={maxLength}
                 keyboardType={keyboardType}
-                className="flex-1 h-12 text-gray-700 text-base"
+                className="flex-1 h-11 text-gray-700 text-sm"
                 onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
+                onChangeText={(text) => {
+                  if (maskType === "currency") {
+                    const formatted = formatCurrency(text);
+                    onChange(formatted);
+                  } else {
+                    onChange(text);
+                  }
+                }}
+                value={getDisplayValue(value, maskType)}
                 placeholderTextColor={"#9CA3AF"}
                 {...textInputProps}
               />
             </View>
 
-            <View className="h-6 mt-1">
+            <View className="min-h-[20px] mt-0.5">
               {error && (
-                <Text className="text-red-500 text-xs ml-1">{error.message}</Text>
+                <Text className="text-red-500 text-[10px] ml-1">{error.message}</Text>
               )}
             </View>
           </>

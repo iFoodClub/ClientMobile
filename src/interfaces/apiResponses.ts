@@ -95,6 +95,7 @@ export interface IEmployeePopulate {
   cpf: string;
   birthDate: string;
   vacation: boolean;
+  profileImage?: string;
 }
 
 export interface IRestaurantOrdersResponse {

@@ -1,23 +1,31 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "FoodClub",
+    "slug": "foodclub",
     "version": "1.0.0",
+    "backgroundColor": "#FF6D00",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "foodclub",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Usado para comandos de voz no FoodClub",
+        "NSMicrophoneUsageDescription": "Necessário para reconhecimento de voz"
+      }
     },
     "android": {
+      "permissions": [
+        "RECORD_AUDIO"
+      ],
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#FF6D00",
+        "foregroundImage": "./assets/images/adaptive-icon.png"
       },
+      "package": "com.bruno.foodclub",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -32,20 +40,28 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "imageWidth": 300,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#FF6D00",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#FF6D00"
           }
         }
       ],
       "expo-secure-store",
-      "expo-font"
+      "expo-font",
+      "expo-speech-recognition"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fbbcb8fa-8c1b-48f6-b8c4-1d42e88df819"
+      }
+    },
+    "owner": "pasqualbruno"
   }
 }

@@ -36,13 +36,14 @@ const CModal = ({
         statusBarTranslucent={true}
         onRequestClose={onClose}
       >
-        <Pressable
-          onPress={() => setModalVisible(false)}
-          className="flex-1 justify-center items-center bg-black/50"
-        >
-          <View className="w-full px-4 bg-white py-10 rounded-xl ">
-            <View className="mb-8">
-              <Text className="text-2xl font-semibold ">{title}</Text>
+        <View className="flex-1 justify-center items-center relative">
+          {/* Backdrop absoluto e independente (estático) */}
+          <View className="absolute inset-0 bg-black/50" />
+
+          {/* Caixa de conteúdo do Modal */}
+          <View className="w-[90%] px-6 bg-white py-6 rounded-3xl shadow-lg">
+            <View className="mb-6">
+              <Text className="text-xl font-bold ">{title}</Text>
               {subtitle && (
                 <Text className="text-textDescription">{subtitle}</Text>
               )}
@@ -68,7 +69,7 @@ const CModal = ({
               )}
             </View>
           </View>
-        </Pressable>
+        </View>
       </Modal>
     </View>
   );

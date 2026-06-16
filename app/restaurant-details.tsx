@@ -12,6 +12,7 @@ import employeeRepository from "@/src/repository/employeeRepository";
 import { useAuthStore } from "@/src/store/authStore";
 import { formatPrice } from "@/src/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
+import { useFavorites } from "@/src/hooks/useFavorites";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -26,6 +27,9 @@ const RestaurantDetails = () => {
     restaurantId: Number(id),
   });
   const { token, user, updateSelectedRestaurant, isEmployee } = useAuthStore();
+  const { favorites, toggleFavorite } = useFavorites();
+
+  const isFavorite = favorites.some(f => f.id === Number(id));
 
   function handleCancel() {
     setOpen(false);
@@ -115,6 +119,21 @@ const RestaurantDetails = () => {
         />
       )}
 
+      {/* Botão de Favorito - Apenas para Empresas */}
+      {user?.userType === UserType.company && (
+        <PressableButton
+          className={`absolute top-14 ${user?.userType === UserType.company ? 'right-20' : 'right-4'} z-10`}
+          icon={
+            <Ionicons 
+              name={isFavorite ? "heart" : "heart-outline"} 
+              size={22} 
+              color={isFavorite ? COLORS.primary : "white"} 
+            />
+          }
+          onPress={() => toggleFavorite(Number(id))}
+        />
+      )}
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <Image
           className="w-full h-40"
@@ -184,9 +203,16 @@ const RestaurantDetails = () => {
         </View>
 
         <View className="pt-6 px-4">
-          <Text className="text-xl font-semibold text-textBody mb-4">
-            Pratos
-          </Text>
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-xl font-semibold text-textBody">
+              Pratos
+            </Text>
+            {isEmployee && selectedRestaurant?.dishes && selectedRestaurant.dishes.length > 0 && (
+              <Text className="text-gray-400 text-xs italic">
+                💡 Toque e segure para definir pedido semanal
+              </Text>
+            )}
+          </View>
           <View className="flex flex-row flex-wrap gap-8">
             {loading &&
               Array.from({ length: 3 }).map((_, index) => (

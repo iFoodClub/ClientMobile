@@ -1,14 +1,14 @@
 import { create } from "zustand";
-import { IRestaurantResponse } from "../interfaces/apiResponses";
+import { IRestaurantDetailsResponse, IRestaurantResponse } from "../interfaces/apiResponses";
 import RestaurantRepository from "../repository/restaurantRepository";
 
 type IRestaurantStore = {
   restaurants: IRestaurantResponse[];
-  selectedRestaurant: IRestaurantResponse | null;
+  selectedRestaurant: IRestaurantDetailsResponse | null;
   loading: boolean;
   fetchRestaurants: () => Promise<void>;
   fetchSelectedRestaurant: (id: number) => Promise<void>;
-  setSelectedRestaurant: (restaurant: IRestaurantResponse | null) => void;
+  setSelectedRestaurant: (restaurant: IRestaurantDetailsResponse | null) => void;
 };
 
 export const useRestaurantStore = create<IRestaurantStore>()((set) => ({

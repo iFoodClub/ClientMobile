@@ -28,6 +28,8 @@ export interface IRestaurant {
   number: string;
   complemento: string;
   image: string;
+  openingTime?: string;
+  closingTime?: string;
 }
 export interface ICompany {
   id: number;
@@ -37,6 +39,8 @@ export interface ICompany {
   cep: string;
   number: string;
   restaurantId: number;
+  selectedRestaurantId?: number;
+  profileImage?: string;
 }
 
 export interface IBusiness {
@@ -82,22 +86,6 @@ export interface IUserDetailsResponse {
 export interface ILoginResponse {
   token: string;
   userDetails: IUserDetailsResponse;
-}
-
-export interface ICepResponse {
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  unidade: string;
-  bairro: string;
-  localidade: string;
-  uf: string;
-  estado: string;
-  regiao: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
 }
 
 export interface ICreateDishDTO {
